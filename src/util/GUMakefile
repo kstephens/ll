@@ -1,0 +1,62 @@
+# $Id: GUMakefile,v 1.1 2001/08/13 07:28:19 stephens Exp $
+
+PROJECT=util#
+
+###########################################################################
+
+INCLUDE_DIRS += ..
+
+###########################################################################
+
+NAME:=util#
+
+H_FILES = \
+	path.h \
+	ConfigInfo.h \
+	enum.h \
+	setenv.h \
+	sig.h \
+	signals.h \
+	errlist.h \
+	prime.h \
+	lockfile.h \
+	rc4.h \
+	ssprintf.h \
+	outbuf.h \
+	file.h \
+	host.h \
+	port.h
+
+C_FILES = \
+	path.c \
+	ConfigInfo.c \
+	enum.c \
+	setenv.c \
+	sig.c \
+	errlist.c \
+	prime.c \
+	lockfile.c \
+	rc4.c \
+	ssprintf.c \
+	outbuf.c \
+	file.c \
+	host.c \
+	port.c
+
+#DEPENDS_ON:=signals.h errlist.c#
+
+include $(GUM)/lib
+
+#################################################################
+
+signals.h : sigs.pl
+	perl sigs.pl < /usr/include/sys/signal.h > $@
+
+#################################################################
+
+errlist.c : errlist.pl
+	perl errlist.pl < /usr/include/sys/errno.h > $@
+
+#################################################################
+
+GARBAGE+=signals.h errlist.c#

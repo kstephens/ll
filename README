@@ -1,0 +1,377 @@
+-*- outline -*-
+
+* ll README
+
+** Preface
+
+Author: Kurt A. Stephens
+Contact: http://kurtstephens.com
+Version: 0.15
+Version Id: $Id: README,v 1.8 2008/01/03 12:43:08 stephens Exp $
+
+** Overview
+
+ll is an embeddable, pure, class-based, object Lisp system C library with multiple inheritance based on ideas from Scheme, Oaklisp and Dylan.  It differs from most implementations by its easy integration with the C programming language.  It integrates well with existing C applications better than Oaklisp (due to its namespace usage and proper tail-call implementation) and provide object-oriented features that do not exist in other embeddable Scheme environments like GNU's guile library.
+
+*** Compatiblity
+
+ll should be compatible with the Revised 5 Report, except for the macro facility.  ll supports lexical closures and proper tail recursion.  ll makes it easy to define new primitive methods in C.  In the future ll will handle calling in and out of C with a automatic C runtime system.  ll might also be made source-code compatable with GNU guile.
+
+*** Conventions
+
+ll uses the typical s-expression Scheme syntax for all expressions.
+All types are named with angle brackets ("<type>", "<object>", "<cons>", etc.)
+All type predicates are suffixed with '?' ("cons?", "object?", "number?", etc.)
+All mutating (setter) operations are begin with 'set-' and end with '!' ("set-car!", etc.)
+
+** Tutorial
+
+You should be familar with Scheme to understand the basics.
+
+Recommended reading:
+
+ [R5RS]  Revised 5 Report on the Algorithmic Language Scheme, ACM SIGPLAN Procedings, Vol. 33, Number 9.
+
+*** Messaging
+
+All values in ll are objects, even the internal objects and compiler are defined using objects.  All operations in ll happen by sending messages; the car position of a function call is a <operation> object, the cdr contains the reciever and any arguments.  The <operation> object is used as a key for looking up a method in the receiver's type.
+
+Message expresions take the form:
+
+  (^operation^ ^receiver^ . ^arguments^)
+
+or 
+
+  (^operation^)
+
+For example, the expression:
+
+  (car (cons 'x 'y))
+
+Sends the <operation> stored in the 'cons global to 'x with the argument 'y.  A method for the cons <operation> is stored in <object>, which <symbol> is a subtype.  Then the <operation> stored in the 'car global variable is send to the <cons> result.
+
+The root type of most objects is <object>.  The <type> type is also a subtype of <object>.
+
+The method for message expressions with no receiver (^operation^) are found within the <object> type.
+
+*** Type instantiation
+
+All <type> objects have zero or more supertypes and zero or more instance slots.  New types are created by sending the 'make <operation> to the '<type> object.
+
+  (make <type> ^supers^ ^slots^)
+
+Both ^supers^ and ^slots^ are <list> objects.
+
+For example, the <cons> type might be defined as:
+
+  (define <cons> (make <type> (list <object>) (list 'car 'cdr)))
+
+*** Object instantiation
+
+All <type> objects respond to 'make.  <type>:make allocates a new object of it's type and sends it an 'initialize message with the remaining arguments.
+
+For example, the expression:
+
+  (cons 'x 'y) => (make <mutable-cons> 'x 'y).
+
+In this example the <cons>:intitialize method might be implemented as:
+
+  (add-method (initialize (<cons> car cdr) self a d)
+     (set! car a)
+     (set! cdr d)
+     self)
+
+*** Operations
+
+New operations are created with (make <operation>).  <Operation> objects are anonymous.
+
+*** Settable Operations
+
+New settable operations are created with (make <settable-operation>).  Settable operations respond to (setter ^operation^).  Most of the accessor primitives, like 'car, are defined as <settable-operation> objects.
+
+For example; The 'car <operation> is defined:
+
+  (define car (make <settable-operation>))
+  (define set-car! (setter car))
+
+The compiler macro expands (set! (^op^ . ^args^) ^value^) to ((setter ^op^) . ^args^ ^value^)
+
+Thus (set! (car x) 'y) is ((setter car) x 'y).
+
+*** Methods
+
+New <method> objects are created and added to <type> objects using the following syntax:
+
+  (add-method (^op^ (^type^ . ^slots^) . ^formals^) . ^body^)
+
+^slots^ is a list of slots defined in ^type^ that are lexically bound in the ^body^.  You cannot access ^slots^ within super or types of ^type^ directly.  You must defined operations and methods to do so.
+
+For example, the car and set-car! <method> objects for <cons> types might be defined as:
+
+  (add-method (car (<cons> car) self) car)
+  (add-method ((setter car) (<cons> car) self new-car) (set! car new-car))
+
+A method with no ^formals^ must be added to <object> because all messages with no reciever and arguments is directed to <object>.
+
+'add-method forms can be lexically scoped within each other.
+
+*** Closures
+
+  Closures are actually anonymous <operation> objects with a <method> object added to the <object> type.  ll essentally macro expands:
+
+  (lambda ^formals^ . ^body^) ==>
+  (add-method (make <operation>) (<object>) . ^formals^) . ^body^)
+
+Note: the 'add-method form always returns the anonymous <operation>.
+
+*** Object Coercion
+
+All <type> objects respond to (coercer ^<type>^) which evaluates to an anonymous <operation> object that can be sent to an object to coerce it to a ^<type>^ object.
+
+  ((coercer <number>) "5") ==> (number->string "5") -> 5
+
+*** Memory Managment
+
+ll uses the Boehm garbage collector for memory managment.  If you link against the ll library you will need to make sure your other code uses GC_malloc() instead of malloc().
+
+*** Errors and the Debugger
+
+The debugger is invoked when the system sends the 'handle-error message to an <error> object.  <recoverable-errors> allow the user to use a new value to recover from the error by using (db exit ^value^).  <error> objects return to the top-level loop after (db exit).  <fatal-error> objects, which never get seen by the user, dump themselves and call the C abort() function.
+You can invoke the debugger by calling (debugger).  Eval (db help) within the debugger for more info. 
+
+** System Catalog
+
+*** Type Catalog
+
+Here is a list of the base system types.
+
+*** Operation Catalog
+
+Here is a list of the base system operations.  We use the <^type^>:^operation^' syntax to name them.
+
+** Building
+
+ll has been built on:
+  Windows 98 using cygwin
+  Linux using gcc 4.1
+
+You will need gcc to support proper tail recursion.
+To build ll unpack ll*.tgz into a directory.
+cd into src/ll.
+Run "make all" to build.
+
+** Packages
+
+*** llt
+
+llt is a simple interactive interpreter.  Running llt, creates an interpreter and begins a top-level read, eval, and print loop.
+
+*** ll C Interface
+
+**** Limitations
+
+'call/cc is partially supported.
+You should never longjmp from within ll to your C code as it will destroy the <catch> object chain.  Use ll_CATCH_BEGIN to define an escape <operation>.
+There is only one interpreter per process.
+ll cannot yet support threads.
+
+**** Headers
+
+ll.h contains all the declarations.
+
+**** Initialization
+
+You must call ll_init(&argc, &argv, &envp) from within your C main() function. ll_init() returns non-zero if the initialization fails.
+
+**** Values
+
+ll_v 
+  
+  Is the C typedef for an ll value.
+
+***** Constants
+
+ll_nil
+
+  Is the null <list> object. '()
+
+ll_undef
+
+  Is the <undefined> object. #u
+
+ll_unspec
+
+  Is the <unspecifed> object. #s.  All operations that evaluate to an unspecified value will return this object.  See [R5RS].
+
+ll_t
+
+  Is the true value. #t
+
+ll_f
+
+  Is the false value.  #f
+
+ll_eos
+
+  Is the <eof-object> value.
+
+ll_s(NAME)
+
+  Is the interned <symbol> of the name NAME.  The C indentifier NAME is translated using the following rules:
+
+  Leading underscores '_' are replaced with '%'.
+  "__" maps to "->".
+  "_" maps to  "-".
+  "ADD" maps to "+",
+  "SUB" maps to "-".
+  "MUL" maps to "*".
+  "DIV" maps to "/".
+  "NEG" maps to "-".
+  "C" maps to ":".
+  "S" maps to "*".
+  "Q" maps to "?".
+  "P" maps to "%".
+  "E" maps to "!".
+
+  Example: ll_s(__ADD__to_meQ) is the '%%+->to-me? symbol.
+See ll/symbol.h for a list of system symbol constants.
+
+***** Global Variables
+
+ll_g(GLOBAL_VAR_NAME)
+
+  Is the global value for the global variable named by the symbol ll_s(GLOBAL_VAR).
+
+ll_set_g(GLOBAL_VAR_NAME, ll_v ^value^)
+
+  Sets the global value to ^value^.
+
+ll_o(GLOBAL_VAR_NAME)
+
+  Is the <operation> object stored in the global variable.  It similar to ll_g(GLOBAL_VAR_NAME) except the ll_init() routine will allocate and define ll_g(NAME) as a <operation> (or <settable-operation> if a ll_o(set_'GLOBAL_VAR_NAME'E) is referenced).
+
+ll_type(NAME)
+
+  Is the <type> object stored in the global variable named "<^NAME^>".
+  See ll/globals.h for a list of system global names.
+
+***** Constructors
+
+SYNC THESE!!!!
+
+****** Fixnum (small integers)
+
+ll_v ll_make_fixnum(long x);
+long ll_unbox_fixnum(ll_v);
+long ll_UNBOX_fixnum(ll_v);
+
+****** Flonum (floating point reals)
+
+ll_v ll_make_flonum(float x);
+float ll_unbox_flonum(ll_v);
+float ll_UNBOX_flonum(ll_v);
+
+****** Pair and List
+
+ll_v ll_cons(ll_v car, ll_v cdr);
+ll_v ll_immutable_cons(ll_v car, ll_v cdr);
+ll_v ll_listn(int n, ll_v value, ...);
+ll_v ll_listv(int n, ll_v *values);
+
+****** String
+
+ll_v ll_make_string(char *buf, size_t size);
+ll_v ll_make_string_copy(const char *buf, size_t size);
+
+****** Vector
+
+ll_v ll_make_vector(ll_v *buf, size_t size);
+ll_v ll_make_vector_copy(const ll_v *buf, size_t size);
+
+****** Symbol
+
+ll_v ll_make_symbol(ll_v name);
+ll_v ll_make_symbol_(const char *name);
+
+****** Object
+
+Use ll_call(ll_o(make), _^N^(^type^, ^inits^ ...)) to construct other types.
+
+**** Messaging
+
+ll_v ll_call(ll_v op, _<nargs>(ll_v args ...));
+
+  Sends ^op^ with an argument list.
+  E.g.:
+
+    result = ll_call(ll_o(write), _2(object, port));
+
+**** Defining Primitive Types
+
+See ll/type.h for a list of all primitive types.
+
+**** Defining Primitive Methods
+
+ll_define_primitive(^type^, ^op^, _^nargs^(^formals^), _^n^(^options^ ...))
+{
+...
+}
+ll_define_primitive_end
+
+  Defines a primitive method object that is automatically added to ^type^ using ^op^.  If (^formals^) is prefixed with "_", the primitive has rest args.
+
+***** Primitive Method Body
+
+****** Primitive Method Body Values
+
+These can only be used within a ll_define_primitive()
+
+int ll_ARGC;
+
+  The number of arguments the method was called with.  Do not modify this value.
+
+ll_v *ll_ARGV;
+
+  A pointer to the argument vector the method was called with.
+
+ll_v ll_SELF;
+
+  Same as ll_ARG_0.
+
+ll_tsa_^type^ *ll_THIS;
+
+  A pointer to the C structure for the ll_SELF object.
+
+ll_v ll_OP;
+
+  The <operation> object the method was called with.
+
+****** Primitive Method Body Functions
+
+These can only be used within a ll_define_primitive().
+
+void ll_call_tail(op, _<nargs>(arglist ...));
+
+  Does a tail call within a ll_define_primitive.
+
+void ll_return(value);
+
+  Returns a value from a ll_define_primitive.
+
+ll_v ll_call_super(ll_v op, ll_v super, _<int nargs>(ll_v args ...));
+void ll_call_super_tail(ll_v op, ll_v super, _<int nargs>(ll_v args ...));
+
+  Send ^op^ to ll_SELF's supertype.  Do not include ll_SELF in the args list.
+
+**** Defining Macro Primitives
+
+Macros do lexical transformations to:
+
+ll_define_macro(^type^, ^car_symbol^, _^nargs^(^formals^), _^n^(^options^ ...))
+{
+...
+}
+ll_define_macro_end
+
+  Creates an operation that is bound to ^car_symbol^'s macro binding, that will transform s-exprs with objects of ^type^ in the cadr position.  See ll/syntax.c for implementations of the required R5RS library syntax.
+

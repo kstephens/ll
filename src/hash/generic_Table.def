@@ -1,0 +1,26 @@
+
+#ifndef __rcs_id__
+#ifndef __rcs_id_hash_generic_Table_def__
+#define __rcs_id_hash_generic_Table_def__
+static const char __rcs_id_hash_generic_Table_def[] = "$Id: generic_Table.def,v 1.2 1999/02/19 09:25:42 stephensk Exp $";
+#endif
+#endif /* __rcs_id__ */
+
+#define HASH(X)generic_##X
+
+struct generic_TableMethods;
+
+#define HASH_TABLE_DATA struct generic_TableMethods _methods;
+
+#define HASH_KEY void*
+#define HASH_KEY_HASH(X) (ht->_methods._hash)(X)
+#define HASH_KEY_EQUAL(X,Y) (ht->_methods._equal)(X, Y)
+#define HASH_KEY_SET(X,Y) ((X) = (ht->_methods._copy(Y)))
+#define HASH_KEY_FREE(X) (ht->_methods._free)(X)
+
+typedef struct generic_TableMethods {
+	unsigned int (*_hash)(HASH_KEY);
+	int (*_equal)(HASH_KEY a, HASH_KEY b);
+	void* (*_copy)(HASH_KEY);
+	void (*_free)(HASH_KEY);
+} generic_TableMethods;

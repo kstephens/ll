@@ -1,0 +1,241 @@
+/* -*- c -*- */
+#ifndef __rcs_id__
+#ifndef __rcs_id_hash_hash_def__
+#define __rcs_id_hash_hash_def__
+static const char __rcs_id_hash_hash_def[] = "$Id: hash.def,v 1.7 2007/09/17 07:01:45 stephens Exp $";
+#endif
+#endif /* __rcs_id__ */
+
+/*
+** Hash table template
+** Copyright 1998, 1999 Kurt A. Stephens, http://www.acm.org/~stephensk
+** $Id: hash.def,v 1.7 2007/09/17 07:01:45 stephens Exp $
+*/
+#ifndef HASH
+#define HASH(X) Hash##X
+#endif
+
+#ifndef HASH_EXTERN
+#define HASH_EXTERN
+#endif
+
+#ifndef HASH_VAL
+#define HASH_VAL unsigned int
+#endif
+
+#ifndef HASH_KEY
+#error "you must define HASH_KEY to a type"
+#endif
+#ifndef HASH_KEY_SET
+#define HASH_KEY_SET(X,Y) X = Y
+#endif
+#ifndef HASH_KEY_FREE
+#define HASH_KEY_FREE(X)
+#endif
+#ifndef HASH_KEY_EQUAL
+#define HASH_KEY_EQUAL(X,Y) (X)=(Y)
+#endif
+#ifndef HASH_KEY_HASH
+#error "you must define HASH_KEY_HASH(X) to a function that returns a HASH_VAL such that if HASH_KEY_EQUAL(X,Y) then HASH_KEY_HASH(X) == HASH_KEY_HASH(Y)"
+#endif
+
+#ifdef HASH_DATA
+#define HASH_DATA_DECL HASH_DATA _data;
+#define HASH_DATA_ARG ,HASH_DATA _data
+#define HASH_DATA_ARG_VAR ,_data
+#ifndef HASH_DATA_SET
+#define HASH_DATA_SET(X,Y) X = Y
+#endif
+#ifndef HASH_DATA_FREE
+#define HASH_DATA_FREE(X)
+#endif
+#else
+#define HASH_DATA_ARG
+#define HASH_DATA_ARG_VAR
+#define HASH_DATA HASH_KEY
+#endif
+
+#ifndef HASH_TABLE_DATA /* Define this to be struct elements that you want at the beginning of HASH(Table) */
+#define HASH_TABLE_DATA
+#endif
+
+#ifndef HASH_TABLE_FIXED_SIZE
+#define HASH_TABLE_FIXED_SIZE 0 /* Define this to non-zero for a fixed size table */
+#endif
+
+/* Choose a 2 ^ n - 1 >= X */
+#define HASH_TO_POW_2_MINUS_1(X) { unsigned _x = 1; while ( _x - 1 < (X) ) _x *= 2; (X) = _x - 1; }
+
+#ifndef HASH_TABLE_SIZE_TO_PRIME /* Define this to non-zero to force table size to be a prime number. */
+#define HASH_TABLE_SIZE_TO_PRIME 0
+#endif
+
+#if HASH_TABLE_SIZE_TO_PRIME
+/* Choose a prime >= X, where X == 2 ^ n - 1 */
+#define _HASH_TABLE_SIZE_TO_PRIME(X) (X) = *prime_ge(X)
+#else
+#define _HASH_TABLE_SIZE_TO_PRIME(X) 
+#endif
+
+#ifndef HASH_TABLE_SIZE_ADJUST /* Define this to adjust X before finding power of two bigger. */
+#define HASH_TABLE_SIZE_ADJUST(X) \
+	if ( ((X) & 1) == 0 ) (X) ++ \
+	/* { (X) = ((X) * 3) / 2; } */ \
+	/* HASH_TO_POW_2_MINUS_1(X) */
+#endif
+
+#ifndef HASH_TABLE_CAPACITY_ADJUST /* Define this to adjust capacity X before allocating a new bucket table. */
+#define HASH_TABLE_CAPACITY_ADJUST(X) HASH_TABLE_SIZE_ADJUST(X); _HASH_TABLE_SIZE_TO_PRIME(X)
+#endif
+
+#ifndef HASH_TABLE_COLLISIONS_THRESHOLD /* Define this to the limit in percent of allowable hash table collisions. */
+#define HASH_TABLE_COLLISIONS_THRESHOLD 25
+#endif
+
+#ifndef HASH_TABLE_COLLISIONS /* Define to non-zero if you want to keep track of hash collisions (useful for determining if you need an auto resize) */
+#define HASH_TABLE_COLLISIONS HASH_TABLE_COLLISIONS_THRESHOLD
+#endif
+
+#ifdef HASH_TABLE_COLLISIONS_THRESHOLD
+
+#define HASH_TABLE_COLLISIONS_THRESHOLD_CHECK(HT) \
+	(((HT)->_collisions * 100 / (HT)->_entriesLen) > HASH_TABLE_COLLISIONS_THRESHOLD)
+#define HASH_TABLE_NEW_CAPACITY(HT) \
+	(HASH_TABLE_COLLISIONS_THRESHOLD_CHECK(HT) ? \
+		(HT)->_entriesLen * (100 + HASH_TABLE_COLLISIONS_THRESHOLD) / 100 : \
+		(HT)->_nentries)
+#else
+#define HASH_TABLE_COLLISIONS_THRESHOLD_CHECK(HT) 0
+#endif
+
+#ifndef HASH_TABLE_NEW_CAPACITY
+#define HASH_TABLE_NEW_CAPACITY(HT) (HT)->_nentries
+#endif
+
+#ifndef HASH_TABLE_AUTO_RESIZE /* Define this to automatically resize the bucket array after add or delete. */
+
+#if HASH_TABLE_FIXED_SIZE == 0
+#define HASH_TABLE_AUTO_RESIZE(HT,GROWTH)if ( ((GROWTH) > 0) && ((HT)->_nentries > (HT)->_entriesLen) || (HASH_TABLE_COLLISIONS_THRESHOLD_CHECK(HT)) ) { HASH(TableResize)(HT, HASH_TABLE_NEW_CAPACITY(HT)); }
+#define HASH_TABLE_NENTRIES 1
+#endif
+
+#endif /* HASH_TABLE_AUTO_RESIZE */
+
+#ifndef HASH_SEARCH_MOVE_TO_FRONT /* Define to non-zero if you want to move the entry to the front of the list when found during the bucket search */
+#define HASH_SEARCH_MOVE_TO_FRONT 1
+#endif
+
+
+#ifndef HASH_TABLE_NENTRIES /* Define to non-zero if you want to keep track of the number of entries in the hash table */
+#define HASH_TABLE_NENTRIES 1
+#endif
+
+#ifndef HASH_KEEP_HASH /* Define to non-zero if you want to use a cached hash value to short-circuit bucket collision key comparasions. */
+#define HASH_KEEP_HASH 1
+#endif
+
+#ifndef HASH_CACHE /* Define to non-zero if you want to cache last lookup. */
+#define HASH_CACHE 1
+#endif
+
+typedef struct HASH(TableEntry) {
+  struct HASH(TableEntry) *_next; /* Points to the next entry with the same hash modulo */
+#if HASH_KEEP_HASH
+  HASH_VAL _hash; /* The hash value of the key */
+#endif
+  HASH_KEY _key; /* The hash key */
+#ifdef HASH_DATA_DECL
+  HASH_DATA_DECL /* The hash data */
+#endif
+} HASH(TableEntry);
+
+typedef struct HASH(Table) {
+  HASH_TABLE_DATA
+
+#if HASH_CACHE
+  struct HASH(TableEntry) **_cache; /* Maybe this will be slot 0, which might be faster to access on some computers. */
+#endif
+
+#if HASH_TABLE_NENTRIES != 0
+  unsigned int _nentries; /* The number of entries in the table */
+#endif
+#if HASH_TABLE_COLLISIONS != 0
+  unsigned int _collisions; /* The number of entries that share buckets in the table */
+#endif
+
+#if HASH_TABLE_FIXED_SIZE
+#define HASH_TABLE_SIZE(ht) HASH_TABLE_FIXED_SIZE
+  struct HASH(TableEntry) *_entries[HASH_TABLE_FIXED_SIZE];
+#else
+#define HASH_TABLE_SIZE(ht) (ht)->_entriesLen
+  struct HASH(TableEntry) **_entries;
+  unsigned int _entriesLen;
+#endif
+
+} HASH(Table);
+
+typedef struct HASH(TableIterator) {
+  unsigned int _i;
+  const struct HASH(TableEntry) *_e;
+} HASH(TableIterator);
+
+HASH_EXTERN void HASH(TableInit) ( HASH(Table) *ht, int capacity );
+/* Initialize the table for a given size */
+
+HASH_EXTERN size_t HASH(TableSize) ( HASH(Table) *ht );
+/* Get the size of the table */
+
+HASH_EXTERN size_t HASH(TableNEntries) ( HASH(Table) *ht );
+/* Get the number of entries in the table */
+
+HASH_EXTERN size_t HASH(TableCollisions) ( HASH(Table) *ht );
+/* Get the number of collisions in the table */
+
+HASH_EXTERN void HASH(TableResize) ( HASH(Table) *ht, int capacity );
+/* Resize the table */
+
+HASH_EXTERN void HASH(TableDestroy) ( HASH(Table) *ht );
+/* Destroy the table */
+
+HASH_EXTERN HASH_VAL HASH(TableHash) ( HASH(Table) *ht, HASH_KEY _key );
+/* Get the hash value for a key */
+
+HASH_EXTERN void HASH(TablePush_) ( HASH(Table) *ht, HASH_KEY _key HASH_DATA_ARG ,HASH_VAL _hash);
+HASH_EXTERN void HASH(TablePush) ( HASH(Table) *ht, HASH_KEY _key HASH_DATA_ARG);
+/* Push a value on to the table */
+
+/* Return 1 if a new value was added */
+HASH_EXTERN int HASH(TableAdd_) (HASH(Table) *ht, HASH_KEY _key HASH_DATA_ARG ,HASH_VAL _hash);
+HASH_EXTERN int HASH(TableAdd) (HASH(Table) *ht, HASH_KEY _key HASH_DATA_ARG);
+
+/* Return 1 if a value exists */
+HASH_EXTERN int HASH(TableIsSet_) (HASH(Table) *ht, HASH_KEY _key, HASH_VAL _hash);
+HASH_EXTERN int HASH(TableIsSet) (HASH(Table) *ht, HASH_KEY _key);
+
+/* Return a pointer to the data for _key, or 0 if not set */
+HASH_EXTERN HASH_DATA * HASH(TableGet_) (HASH(Table) *ht, HASH_KEY _key, HASH_VAL _hash);
+HASH_EXTERN HASH_DATA * HASH(TableGet) (HASH(Table) *ht, HASH_KEY _key);
+
+/* Return 1 if a value was removed */
+HASH_EXTERN int HASH(TableRemove_) (HASH(Table) *ht, HASH_KEY _key, HASH_VAL _hash);
+HASH_EXTERN int HASH(TableRemove) (HASH(Table) *ht, HASH_KEY _key);
+
+/* Dump hash table stats to fp. */
+HASH_EXTERN void HASH(TableStats) (HASH(Table) *ht, FILE *fp);
+
+/*
+** Iterators:
+**
+** HASH(TableIterator) i;
+** HASH(TableIteratorInit)(ht, &i)
+** while ( HASH(TableInteratorNext)(ht, &i) ) {
+**   HASH_KEY key = *HASH(TableIteratorKey)(ht, &i);
+**   HASH_DATA data = *HASH(TableIteratorData)(ht, &i);
+** }
+*/
+
+HASH_EXTERN void HASH(TableIteratorInit)(HASH(Table) *ht, HASH(TableIterator) *i);
+HASH_EXTERN int HASH(TableIteratorNext)(HASH(Table) *ht, HASH(TableIterator) *i);
+HASH_EXTERN HASH_KEY *HASH(TableIteratorKey)(HASH(Table) *ht, HASH(TableIterator) *i);
+HASH_EXTERN HASH_DATA *HASH(TableIteratorData)(HASH(Table) *ht, HASH(TableIterator) *i);
+

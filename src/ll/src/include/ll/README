@@ -1,0 +1,3 @@
+$Id: README,v 1.1 1999/03/04 07:02:07 stephensk Exp $
+These files are shadowed by the headers created by defs.sh.
+They are here for bootstrapping purposes.

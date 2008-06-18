@@ -1,0 +1,40 @@
+#ifndef __rcs_id__
+#ifndef __rcs_id_hash_hash_end_def__
+#define __rcs_id_hash_hash_end_def__
+static const char __rcs_id_hash_hash_end_def[] = "$Id: hash_end.def,v 1.5 1999/11/04 10:38:29 stephensk Exp $";
+#endif
+#endif /* __rcs_id__ */
+/*
+** Template Hash Table
+** Copyright 1998, 1999, Kurt A. Stephens, http://www.acm.org/~stephensk
+*/
+
+#undef HASH
+#undef HASH_EXTERN
+#undef HASH_VAL
+#undef HASH_KEY
+#undef HASH_KEY_SET
+#undef HASH_KEY_FREE
+#undef HASH_KEY_EQUAL
+#undef HASH_KEY_HASH
+#ifdef HASH_DATA
+#undef HASH_DATA
+#undef HASH_DATA_SET
+#undef HASH_DATA_FREE
+#endif
+#undef HASH_TABLE_DATA
+#undef HASH_TABLE_COLLISIONS
+#undef HASH_TABLE_COLLISIONS_THRESHOLD
+#ifdef HASH_TABLE_COLLISIONS_THRESHOLD_CHECK
+#undef HASH_TABLE_COLLISIONS_THRESHOLD_CHECK
+#endif
+#ifdef HASH_TABLE_NEW_CAPACITY
+#undef HASH_TABLE_NEW_CAPACITY
+#endif
+#undef HASH_SEARCH_MOVE_TO_FRONT
+#undef HASH_TABLE_AUTO_RESIZE
+#undef HASH_TABLE_NENTRIES
+#undef HASH_TABLE_SIZE
+#undef HASH_TABLE_SIZE_TO_PRIME
+#undef HASH_KEEP_HASH
+#undef HASH_CACHE

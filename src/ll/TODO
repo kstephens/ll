@@ -1,0 +1,12 @@
+$Id: TODO,v 1.14 2008/01/03 12:43:08 stephens Exp $
+
+TO DO:
+
+* bcompile.c : Use a separate environment to do the compilation in.
+
+* Add bignums using gmp library.
+
+* Use lcache for super lookups.
+
+* Finish this TO DO list!
+

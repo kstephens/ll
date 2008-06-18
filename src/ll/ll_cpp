@@ -1,0 +1,43 @@
+#!/bin/bash
+# $Id: ll_cpp,v 1.2 2007/09/13 00:26:07 stephens Exp $
+# Driver for gcc and mcpp
+
+#exec gcc -E --traditional-cpp -D__STDC__=1 "$@"
+
+# Get arguments and last argument as the input file.
+args=""
+file="$1"
+shift
+while [ $# -gt 0 ]
+do
+  args="$args $file"
+  file="$1"
+  shift
+done
+
+
+# Get a list of standard directories.
+incl=''
+read libraries libs < <(${CC} -print-search-dirs | grep libraries: | sed -e 's/: =/ /')
+OFS="$IFS"; IFS=":"
+for lib in $libs
+do
+  lib="$lib/include"
+  if [ -d "$lib" ]
+  then
+    incl="$incl -I$lib"
+  fi
+done
+IFS="$OFS"
+
+# set -x
+#dir="`dirname $file`"
+#dir="`cd $dir && /bin/pwd`"
+#file="$dir/`basename $file`"
+
+(
+${CC} -E -dM $args - < /dev/null | sort | uniq | grep -v ' __STDC__ '
+echo "#line 1 \"$file\""
+cat $file
+) | ${REAL_CPP} $args $incl -
+

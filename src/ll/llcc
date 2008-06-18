@@ -1,0 +1,108 @@
+#!/bin/bash
+#set -x
+
+o="$$"
+od='.'
+id='.'
+cd=''
+f=''
+t=''
+tmp="$$.tmp"
+opts=
+
+def='prim macro op bc error debug init global symbol type'
+
+prim_d_opts="- f ll_define_primitive - t ll_p_def"
+macro_d_opts="- f ll_define_macro - t ll_macro_def"
+op_d_opts="- f ll_o - t ll_o_def"
+bc_d_opts="- f ll_bc - t ll_bc_def"
+debug_d_opts="- f ll_DEBUG - t ll_DEBUG_def"
+init_d_opts="- f ll_INIT - t ll_INIT_def"
+error_d_opts="- f ll_e - t ll_e_def"
+global_d_opts="- f ll_g - t ll_g_def"
+symbol_d_opts="- f ll_s - t ll_s_def"
+type_d_opts="- f ll_type_def - t ll_type_def"
+
+
+mv_if_changed() {
+  local src="$1" dst="$2"
+  local ok=""
+
+  if cmp -s "$src" "$dst"
+  then
+    # echo "$dst unchanged" >&2
+    ok=''
+  else
+    echo "    $dst changed"
+    mv "$src" "$dst"
+    ok=1
+  fi
+  rm -f "$src"
+  [ -n "$ok" ]
+}
+
+
+sort_def() {
+  sort -u > "$tmp.sort"
+  (
+   grep -v "#undef" "$tmp.sort"
+   grep "#undef" "$tmp.sort"
+   )
+   rm "$tmp.sort"
+}
+
+collect() {
+  local d="$1" of="$od/${d}s.h"
+
+  sort_def > "$tmp.collect"
+  mv_if_changed "$tmp.collect" "$of"
+  true
+}
+
+
+while [ $# -gt 0 ]
+do
+  case "$1"
+  in
+    -)
+      var="$2"; val="$3"; shift 2
+      eval "$var='$val'"
+    ;;
+    --collect)
+      for d in $def
+      do
+	# set -x
+        find "$id" -type f -name "$d" | egrep -e "\\.llcc/$d\$" | xargs cat | collect "$d"
+        # set +x
+      done
+      exit 0
+    ;;
+    *)
+      for d in $def
+      do
+        eval d_opts='"$'${d}_d_opts'"'
+	d_file="$cd$1.llcc/$d"
+	_file="$cd$1.llcc/_"
+#	set -x
+	set -e
+	mkdir -p "`dirname $d_file`"
+	_file="$cd$1.llcc/_"
+	defs.sh - CPP "${CPP}" - CPPFLAGS "${CPPFLAGS}" - o "$d_file.tmp" $d_opts "$1" >/dev/null
+	set +e
+	# set -x
+	if mv_if_changed "$d_file.tmp" "$d_file"
+        then
+          echo "  $1 => $d_file"
+	  touch -f "$_file"
+	  of="$od/${d}s.h"
+	  cat "$d_file" "$of" | collect "$d"
+	fi
+#	set +x >/dev/null 2>&1
+      done
+    ;;
+  esac
+  shift
+done
+
+exit 0
+

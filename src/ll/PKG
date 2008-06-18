@@ -1,0 +1,8 @@
+NAME=ll
+VERSION=0.16
+RCS_ID="$Id: PKG,v 1.24 2008/01/03 12:43:08 stephens Exp $"
+DESC="An embeddable, pure, class-based, object Lisp system C library with multiple inheritance based on ideas from Scheme, Oaklisp and Dylan.  Clean namespace and proper tail calls in C."
+CHANGES_RELEASES="0.15 0.14 0.13 0.12 0.11 0.10 0.9 0.8 0.7 0.6 0.5 0.4 0.3 0.2 0.1"
+CATEGORY="Object Oriented"
+REQUIRES_PKGS="../util ../hash ../ccont ../gc_boehm"
+REQUIRES_OTHERS="gcc perl gnumake readline"

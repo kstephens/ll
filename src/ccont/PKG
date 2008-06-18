@@ -1,0 +1,8 @@
+NAME=ccont
+VERSION=0.2
+RCS_ID="$Id: PKG,v 1.2 2007/09/13 23:40:27 stephens Exp $"
+DESC="A C library for continuations."
+CHANGES_RELEASES="0.1"
+CATEGORY="Development Tools"
+REQUIRES_PKGS=""
+REQUIRES_OTHERS="gcc"

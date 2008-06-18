@@ -1,0 +1,7 @@
+NAME=hash
+VERSION=0.5
+RCS_ID="$Id: PKG,v 1.6 1999/10/13 17:34:58 stephensk Exp $"
+DESC="A C template library for efficient, configurable hash tables."
+CATEGORY="Development Tools"
+REQUIRES_PKGS="../util"
+REQUIRES_OTHERS=""
