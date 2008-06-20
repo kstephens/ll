@@ -477,7 +477,11 @@ ll_INIT(error, 280, "(fluid current-error), (fluid additional-error-properties)"
   ll_set_g(__building_internal_error, ll_f); 
   ll_bind_fluid(ll_s(current_error), ll_f);
   ll_bind_fluid(ll_s(additional_error_properties), ll_nil);
+#if 0
+  ll_bind_fluid(ll_s(error_handler), ll_o(error_start_debugger));
+#else
   ll_bind_fluid(ll_s(error_handler), ll_o(error_abort));
+#endif
 
   return 0;
 }
