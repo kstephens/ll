@@ -53,9 +53,12 @@ void _ll_add_method(ll_v type, ll_v op, ll_v meth)
       */
 #if ll_USE_TYPE_METH_ALIST
       o->_type_meth_alist = ll_cons(ll_cons(o->_lambda_type, o->_lambdaQ), o->_type_meth_alist);
-#else
+#endif
+#if ll_USE_OP_METH_ALIST
+      {
       ll_tsa_type *ot = ll_THIS_ISA(type, o->_lambda_type);
       ot->_op_meth_alist = ll_cons(ll_cons(op, o->_lambdaQ), ot->_op_meth_alist);
+      }
 #endif
       o->_lambda_type = ll_undef;
     } else {
@@ -87,7 +90,8 @@ void _ll_add_method(ll_v type, ll_v op, ll_v meth)
   /* Add a new method entry or set existing. */
 #if ll_USE_TYPE_METH_ALIST
   _ll_assq_set(&o->_type_meth_alist, type, meth);
-#else
+#endif
+#if ll_USE_OP_METH_ALIST
   _ll_assq_set(&t->_op_meth_alist, op, meth);
 #endif
 
@@ -119,7 +123,8 @@ void _ll_remove_method(ll_v type, ll_v op)
     /* Remove from method alist. */
 #if ll_USE_TYPE_METH_ALIST
     _ll_assq_delete(&o->_type_meth_alist, type);
-#else
+#endif
+#if ll_USE_OP_METH_ALIST
     _ll_assq_delete(&t->_op_meth_alist, op);
 #endif
   }
@@ -158,8 +163,12 @@ int _ll_lookup1(ll_v type)
   /* Search operation's type-meth map. */
   x = _ll_assq_to_front(&o->_type_meth_alist, type);
 #else
+#if ll_USE_OP_METH_ALIST
   /* Search type's op-meth map. */
   x = _ll_assq_to_front(&t->_op_meth_alist, ll_AR_OP);
+#else
+#error ll_USE_TYPE_METH_ALIST or ll_USE_OP_METH_ALIST must be 1 
+#endif
 #endif
 
   if ( ll_unbox_boolean(x) ) {

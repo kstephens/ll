@@ -25,6 +25,7 @@ ll_USE_LCACHE=1
 # Use a type-method-alist in <operation>
 # instead of a op-method-alist in <type>.
 ll_USE_TYPE_METH_ALIST=1
+ll_USE_OP_METH_ALIST=1
 
 # Record lookup cache stats.
 ll_LOOKUP_CACHE_STATS=0

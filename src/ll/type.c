@@ -108,7 +108,7 @@ ll_define_primitive(type,initialize, __3(self,supertypes,slot_names,doc), _0())
   ll_THIS->_size = ll_make_fixnum(0);
   ll_write_barrier_SELF();
 
-#if ! ll_USE_TYPE_METH_ALIST
+#if ll_USE_OP_METH_ALIST
   /* A new type as no methods */
   ll_THIS->_op_meth_alist = ll_nil;
 #endif
@@ -246,7 +246,7 @@ ll_define_primitive(type,type_slots,
 ll_define_primitive_end
 
 
-#if ! ll_USE_TYPE_METH_ALIST
+#if ll_USE_OP_METH_ALIST
 ll_define_primitive(type,type_op_meth_alist,
 		    _1(type), 
 		    _2(no_side_effect, "#t",

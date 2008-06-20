@@ -86,7 +86,7 @@ ll_type_def_slots(type)
   ll_type_def_slot(type, ll_v, slots_size)
      /* The size of this type's slot block. */
 
-#if ! ll_USE_TYPE_METH_ALIST
+#if ll_USE_OP_METH_ALIST
   ll_type_def_slot(type, ll_v, op_meth_alist)
      /* A map of (<op> . <meth>) */
 #endif

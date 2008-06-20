@@ -272,7 +272,7 @@ ll_INIT(type5, 130, "slots: supers, type-offset-alist")
     ll_TYPE_ref(tt) = *((*t)->type->_type);
     SLOT(tt, ll_type(type), supers) = ll_nil;
     SLOT(tt, ll_type(type), slots) = ll_nil;
-#if ! ll_USE_TYPE_METH_ALIST
+#if ll_USE_OP_METH_ALIST
     SLOT(tt, ll_type(type), op_meth_alist) = ll_nil;
 #endif
     SLOT(tt, ll_type(type), type_offset_alist) = ll_nil;
