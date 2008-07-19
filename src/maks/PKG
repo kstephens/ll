@@ -1,0 +1,7 @@
+NAME=maks
+VERSION=0.2
+DESC="A Makefile library.  Handles automatic header file dependencies and interpackage dependencies."
+CATEGORY="Development Tools"
+REQUIRES_PKGS="../bin"
+REQUIRES_OTHERS="gnumake sh"
+

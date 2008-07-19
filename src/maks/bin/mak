@@ -1,0 +1,29 @@
+#!/bin/sh
+
+HOME=`cd "$HOME" && pwd`
+if [ -z "$DEV_ROOT" ]
+then
+  DEV_ROOT="${HOME}/src"
+fi
+DEV_ROOT=`cd "$DEV_ROOT" && pwd`
+export DEV_ROOT
+
+if [ -z "$MAKS" ]
+then
+  MAKS='/home/stephens/src/maks'
+fi
+MAKS=`cd "$MAKS" && pwd`
+export MAKS
+
+if [ -z "$MAKE_ARCH" ]
+then
+  MAKE_ARCH=`uname`
+fi
+export MAKE_ARCH
+
+echo "HOME=$HOME"
+echo "DEV_ROOT=$DEV_ROOT"
+echo "MAKS=$MAKS"
+echo "MAKE_ARCH=$MAKE_ARCH"
+
+exec make ${1+"$@"}

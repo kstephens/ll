@@ -1,0 +1,21 @@
+# $Id: Makefile.use,v 1.5 2001/07/07 04:12:11 stephens Exp $
+#OPENGL_ROOT:=$(APPS)/dev#
+OPENGL_LIBDIR:=$(OPENGL_ROOT)#
+OPENGL_INCL:=$(OPENGL_ROOT)#
+
+MAKS_ARCH=$(MAKE_ARCH)#
+
+ifneq "$(strip $(findstring WIN,$(MAKS_ARCH)))" ""
+USE:=$(MAKS)/win32
+include $(MAKS)/use.mak
+
+OPENGL_LIBS := opengl32 glu32 glut32 m #
+endif
+
+ifneq "$(strip $(findstring Linux,$(MAKS_ARCH)))" ""
+OPENGL_LIBS := GL GLU glut m #
+endif
+
+INCLS:=$(INCLS) $(OPENGL_INCL)# 
+LIBS:=$(OPENGL_LIBS) $(LIBS)#
+
