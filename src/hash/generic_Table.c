@@ -6,6 +6,7 @@ static const char __rcs_id_hash_generic_Table_c[] = "$Id: generic_Table.c,v 1.2 
 #endif
 #endif /* __rcs_id__ */
 
+#include <string.h> /* memset() */
 
 #include "generic_Table.def"
 #include "hash.c"

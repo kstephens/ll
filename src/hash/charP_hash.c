@@ -9,7 +9,7 @@ static const char __rcs_id_hash_charP_hash_c[] = "$Id: charP_hash.c,v 1.2 2001/0
 #define HASH_EXTERN
 #endif
 
-HASH_EXTERN unsigned int strhash (const char *str)
+static unsigned int strhash (const char *str)
 {
   unsigned int hash = 0;
   while ( *str ) {
