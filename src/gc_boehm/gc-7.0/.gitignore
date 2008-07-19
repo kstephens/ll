@@ -1,0 +1,10 @@
+*.o
+*.lo
+.deps
+.libs
+*.la
+Makefile
+config.log
+config.status
+libtool
+bdw-gc.pc
