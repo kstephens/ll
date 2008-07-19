@@ -1,0 +1,7 @@
+NAME=ct
+VERSION=0.4
+DESC="A C library for manipulating C type information (debugging info) at runtime."
+RCS_ID="$Id: PKG,v 1.6 2001/06/02 10:13:30 stephens Exp $"
+CATEGORY="Development Tools"
+REQUIRES_PKGS="../hash ../util"
+REQUIRES_OTHERS="gcc perl objdump"

@@ -1,0 +1,89 @@
+/* $Id */
+
+#ifndef ct_t_D
+#define ct_t_D(N) ct_t_##N,
+#endif
+#ifndef ct_t_DV
+#define ct_t_DV(N,V) ct_t_##N = (V),
+#endif
+
+ct_t_DV(UNDEF, 0)
+
+/* intrinsic types: void, char, short, int, long, float, double, long double, and unsigned varients */
+ct_t_D(INTRINSIC)
+
+#define CT(N,T) ct_t_D(N)
+#include "ct.def"
+
+ct_t_D(INTRINSIC_END)
+/* scalar like */
+#ifndef ct_t_INTRINSICQ
+#define ct_t_INTRINSICQ(t) (ct_t_INTRINSIC < (t) && (t) < ct_t_INTRINSIC_END)
+#define ct_t_BITFIELDQ(t) (ct_t_BITFIELD < (t) && (t) < ct_t_BITFIELD_END)
+#define ct_t_ENUMQ(t) (ct_t_ENUM < (t) && (t) < ct_t_ENUM_END)
+#define ct_t_STORED_AS_INTRINSIC(t) ((t) < ct_t_ENUM_END)
+#endif
+
+ct_t_D(ELLIPSIS) /* for functions with varargs (...) */
+
+/* a bitfield type for every bitsize under the bits per int with unsigned and signed variations */
+ct_t_D(BITFIELD)
+ct_t_DV(BITFIELD_END, ct_t_BITFIELD + 2 * ct_BITS_PER_INT)
+
+/* enum {} */
+ct_t_D(ENUM)
+ct_t_DV(ENUM_END, ct_t_ENUM + 2048)
+
+/* struct {} */
+ct_t_D(STRUCT)
+ct_t_DV(STRUCT_END, ct_t_STRUCT + 2048)
+
+/* union {} */
+ct_t_D(UNION)
+ct_t_DV(UNION_END, ct_t_UNION + 2048)
+
+/* structure-like */
+#ifndef ct_t_STRUCTQ
+#define ct_t_STRUCTQ(t) (ct_t_STRUCT < (t) && (t) < ct_t_STRUCT_END)
+#define ct_t_UNIONQ(t) (ct_t_UNION < (t) && (t) < ct_t_UNION_END)
+#define ct_t_STRUCT_OR_UNIONQ(t) (ct_t_STRUCT < (t) && (t) < ct_t_UNION_END)
+#define ct_t_STRUCT_OR_UNION_OR_ENUMQ(t) (ct_t_ENUM < (t) && (t) < ct_t_UNION_END)
+#endif
+
+/* func(...) */
+ct_t_D(FUNC)
+ct_t_DV(FUNC_END, ct_t_FUNC + 2048)
+
+/* t[], t[size] */
+ct_t_D(ARRAY)
+ct_t_DV(ARRAY_END, ct_t_ARRAY + 2048)
+
+/* type * */
+ct_t_DV(P, 16384)
+#define CT(N,T) ct_t_DV(N##P, ct_t_##N + ct_t_P)
+#include "ct.def"
+
+/* type ** */
+ct_t_DV(PP,ct_t_P * 2)
+#define CT(N,T) ct_t_DV(N##PP, ct_t_##N + ct_t_PP)
+#include "ct.def"
+
+/* type *** */
+ct_t_DV(PPP,ct_t_P * 3)
+#define CT(N,T) ct_t_DV(N##PPP, ct_t_##N + ct_t_PPP)
+#include "ct.def"
+
+/* ptr-like */
+#ifndef ct_t_FUNCQ
+#define ct_t_FUNCQ(t) (ct_t_FUNC < (t) && (t) < ct_t_FUNC_END)
+#define ct_t_ARRAYQ(t) (ct_t_ARRAY < (t) && (t) < ct_t_ARRAY_END)
+#define ct_t_PTRQ(t) (ct_t_P < (t))
+#define ct_t_PTR(t) ((t)+ct_t_P)
+#define ct_t_PTR_LEVEL(t) ((t) / ct_t_P)
+#define ct_t_PTR_TO(t) ((t)-ct_t_P)
+#define ct_t_PTR_BASE(t) ((t)&(ct_t_P-1))
+#define ct_t_STORED_AS_PTRQ(t) (ct_t_FUNC < (t))
+#endif
+
+#undef ct_t_D
+#undef ct_t_DV
