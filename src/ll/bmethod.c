@@ -926,7 +926,7 @@ restart:
   case ll_bc(glo, 1, 1, 0): /* | value */
     {
       ll_v binding = GLOBAL_BINDING(glo);
-      _ll_PUSH(_ll_binding_value(binding));
+      _ll_PUSH(__ll_binding_value(binding));
     }
     break;
     
@@ -934,7 +934,7 @@ restart:
   case ll_bc(glo_, 1, 1, 0): /* | value */
     {
       ll_v binding = GLOBAL_BINDING_();
-      _ll_PUSH(_ll_binding_value(binding));
+      _ll_PUSH(__ll_binding_value(binding));
     }
     break;
     
@@ -1008,6 +1008,9 @@ restart:
 #if ll_BC_DEBUG_EXPR
       *(_ll_debug_expr = prev_debug_expr) = debug_expr;
 #endif
+      if ( bcCdebug ) {
+	fprintf(stderr, "lcache = %p\n", lcache);
+      }
       _ll_call_tailv_w_cache(op, n, lcache);
     }
     break;

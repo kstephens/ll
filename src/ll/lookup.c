@@ -41,6 +41,10 @@ void _ll_add_method(ll_v type, ll_v op, ll_v meth)
     goto done;
   }
 
+  /* Validate types. */
+  _ll_typecheck(ll_type(operation), &op);
+  _ll_typecheck(ll_type(method), &meth);
+  
   /* For the first time OR already a lambda? */
   if ( ll_EQ(o->_lambdaQ, ll_undef) || ll_NE(o->_lambdaQ, ll_f) ) {
     if ( ll_NE(o->_lambda_type, ll_undef) && ll_NE(o->_lambda_type, type) ) {
@@ -112,6 +116,8 @@ void _ll_remove_method(ll_v type, ll_v op)
 {
   ll_tsa_type *t = ll_THIS_ISA(type, type);
   ll_tsa_operation *o = ll_THIS_ISA(operation, op);
+
+  _ll_typecheck(ll_type(operation), &op);
 
   /* Invalidate the lookup cache */
   o->_cache_type = ll_f;
@@ -306,6 +312,11 @@ void  _ll_lookup_op_check(void)
 
   ll_assert_ref(ll_AR_OP);
 }
+
+
+#if 1
+#define _ll_lookup_op_check() ((void)0)
+#endif
 
 
 void _ll_lookup()

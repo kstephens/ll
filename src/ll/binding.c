@@ -65,11 +65,7 @@ ll_define_primitive_end
 ll_v _ll_binding_value(ll_v binding)
 {
   if ( ll_TYPE(binding) == ll_type(binding) ) {
-    ll_tsa_binding *ll_THIS =  ll_THIS_ISA(binding, binding);
-    if ( ! ll_unbox_boolean(ll_THIS->_locative) ) {
-      return(_ll_undefined_variable_error(ll_THIS->_symbol));
-    }
-    return *ll_unbox_locative(ll_THIS->_locative);
+    return __ll_binding_value(binding);
   } else {
     return ll_call(ll_o(binding_value), _1(binding));
   }

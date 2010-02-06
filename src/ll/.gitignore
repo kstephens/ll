@@ -6,3 +6,6 @@
 llt
 llt-save
 llt.strip
+*.gcda
+*.gcno
+*.gcov

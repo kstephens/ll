@@ -125,6 +125,11 @@ ll_define_primitive(object, _lcache_all, _0(), _0())
 ll_define_primitive_end
 
 
+#if 1
+#define _ll_lookup_op_check() ((void)0)
+#endif
+
+
 void _ll_lookup_w_cache(ll_lcache *c)
 {
   if ( c ) {
@@ -138,9 +143,13 @@ void _ll_lookup_w_cache(ll_lcache *c)
   op = ll_AR_OP;
   ll_assert_ref(op);
 
+#if 1
+#define STAT_INCR(N) ((void) 0)
+#else
 #define STAT_INCR(N) \
   ++ _ll_lcache_stat_global.N; \
   ++ c->_stat.N
+#endif
 
   STAT_INCR(_lookup_n);
 
