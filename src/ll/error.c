@@ -459,14 +459,18 @@ ll_define_primitive(object, _bad_typecheck, _2(self, type), _0())
 ll_define_primitive_end
 
 
-ll_v _ll_typecheck(ll_v type, ll_v *value)
+ll_v _ll_typecheck(ll_v type, ll_v *valuep)
 {
-  ll_v value_type = ll_TYPE(*value);
+  ll_v value_type = ll_TYPE(*valuep);
+  /* Does not match type exactly? */
   if ( ll_NE(value_type, type) ) {
-    return *value;
-  } else {
-    return *value = (ll_call(ll_call(ll_o(typechecker), _1(type)), _2(*value, type)));
+    /* Invoke the type's typechecker, if not still initializing. */
+    if ( ll_initialized ) {
+      *valuep = (ll_call(ll_call(ll_o(typechecker), _1(type)), _2(*valuep, type)));
+    }
   }
+  /* Return the value. */
+  return *valuep;
 }
 
 
