@@ -241,11 +241,6 @@ extern ll_v _ll_env;
 #define _ll_gv(B) (*ll_UNBOX_locative(ll_THIS_ISA(binding, (B))->_locative))
 #define _ll_gr(N) _ll_gv(ll_gb(N))
 
-ll_v _ll_binding_value(ll_v binding);
-void _ll_set_binding_valueE(ll_v binding, ll_v value);
-ll_v _ll_locative_binding_value(ll_v binding);
-
-
 /************************************************************************/
 /* operation references */
 
@@ -506,6 +501,12 @@ ll_v _ll_readonly_variable_error(ll_v name);
 ll_v _ll_typecheck_error(ll_v type, ll_v value);
 ll_v _ll_typecheck(ll_v type, ll_v *value);
 void _ll_additional_error_properties(int n, ...);
+
+
+/*************************************************************************/
+/* binding */
+
+#include "ll/binding.h"
 
 
 /*************************************************************************/
