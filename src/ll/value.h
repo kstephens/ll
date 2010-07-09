@@ -26,7 +26,12 @@ static const char __rcs_id_ll_value_h[] = "$Id: value.h,v 1.13 2008/05/26 02:25:
 **
 */
 
+//#if sizeof(void*) == sizeof(long long)
+#if defined(__x86_64)
+typedef unsigned long long ll_v;
+#else
 typedef unsigned long ll_v;
+#endif
 
 #define ll_INITIALIZED(X) (X)
 
@@ -71,7 +76,8 @@ ll_v *ll_unbox_locative(ll_v x);
 /* flonum */
 
 #define ll_TAG_flonum        2
-#ifdef i386
+
+#if defined(i386) /* && sizeof(float) == sizeof(long) */
 
 union ll_v_flonum {
   ll_v  v;
@@ -94,9 +100,36 @@ static __inline float ll_UNBOX_flonum(ll_v v)
   vf.v &= ~ 3UL;
   return vf.f;
 }
+#define _ll_flonum_supported 1
+#endif
 
-#else
-#error flonum only implemented for i386
+#if defined(__x86_64) /* && sizeof(double) == sizeof(long long) */
+union ll_v_flonum {
+  ll_v  v;
+  double f;
+};
+
+static __inline ll_v ll_BOX_flonum(double f)
+{
+  union ll_v_flonum vf;
+  vf.f = f;
+  vf.v &= ~ 3UL;
+  vf.v |= ll_TAG_flonum;
+  return vf.v;
+}
+
+static __inline float ll_UNBOX_flonum(ll_v v)
+{
+  union ll_v_flonum vf;
+  vf.v = v;
+  vf.v &= ~ 3UL;
+  return vf.f;
+}
+#define _ll_flonum_supported 1
+#endif
+
+#ifndef _ll_flonum_supported
+#error flonum only implemented for i386 and x86_64
 #endif
 
 #define ll_make_flonum(X)    ll_BOX_flonum(X)
@@ -109,7 +142,7 @@ float ll_unbox_flonum(ll_v x);
 /* boxed object reference */
 
 #define ll_TAG_ref           3
-#define ll_BOX_ref(X)        (((unsigned int)(X)) + ll_TAG_ref)
+#define ll_BOX_ref(X)        (((ll_v)(X)) + ll_TAG_ref)
 #define ll_make_ref(X)       ll_BOX_ref(X)
 #define ll_UNBOX_ref(X)      ((void*)((X) - ll_TAG_ref))
 #define ll_unbox_ref(X)      ll_UNBOX_ref(X)

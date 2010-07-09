@@ -17,32 +17,30 @@ int main(int argc, char **argv)
   double eps = 0.1;
 
   while ( 1.0 + eps != 1.0 && i < 1000 ) {
-    double x = x + eps;
+    double x = 1.0 + eps;
     ll_v v = ll_BOX_flonum(x);
     double vx = ll_UNBOX_flonum(v);
-    double v_vx = fabs(v - vx);
-    double error = fabs(1.0 - v / v_vx);
+    double abs_err = fabs(x - vx);
+    double rel_err = abs_err / x;
     
     eps *= 0.1;
     i ++;
 
-    /*
-      fprintf(stderr, "i = %d, eps = %g\n", i, eps);
-    */
-
     if ( verbose ) {
-      printf("x = %.22g, v = %lu, vx = %.22g, v / (v - vx) = %.22g\n", 
+      printf("/* i = %d, eps = %.30g, 1 + eps = %.30g*/\n", i, eps, 1.0 + eps);
+      printf("/* x = %.30g, v = %llu, abs_err = %.30g, rel_err = %.30g */\n", 
 	     (double) x, 
-	     (unsigned long) v, 
-	     (double) vx, 
-	     (double) error);
+	     (unsigned long long) v, 
+	     (double) abs_err, 
+	     (double) rel_err);
     }
-    if ( max_error < error ) {
-      max_error = error;
+    if ( max_error < rel_err ) {
+      max_error = rel_err;
     }
   }
 
   printf("#define ll_FLO_MAX_ERROR %.22g\n", (double) max_error);
+  printf("#define ll_FLO_DIGITS_FLT %.22g\n", (double) - log10(max_error));
   printf("#define ll_FLO_DIGITS %d\n", (int) (double) - log10(max_error));
 
   return 0;
