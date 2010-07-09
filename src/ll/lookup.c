@@ -308,6 +308,11 @@ void  _ll_lookup_op_check(void)
 }
 
 
+#if 1
+#define _ll_lookup_op_check() ((void)0)
+#endif
+
+
 void _ll_lookup()
 {
   /* FIXME: lcache may cause async signals to starve. */
