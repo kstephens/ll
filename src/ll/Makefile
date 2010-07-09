@@ -26,13 +26,15 @@ BUILD_ROOT:=$(CWD)#
 DEF_DIR=lib/ll#
 
 C_DEBUG=-g3
+C_PROFILE=-pg
+C_PROFILE=--coverage
 C_OPTIMIZE=-O3
 C_OPTIMIZE=-O2
 C_WARNINGS=-Wall
 CC = gcc
 export CC
 CPPFLAGS = -I.. -I$(dir $(DEF_DIR)) -Isrc/include# -I/usr/include 
-CFLAGS = $(C_OPTIMIZE) $(C_DEBUG) $(C_WARNINGS) $(CPPFLAGS)
+CFLAGS = $(C_OPTIMIZE) $(C_DEBUG) $(C_PROFILE) $(C_WARNINGS) $(CPPFLAGS)
 CPP = $(CC) -E
 
 C_FILES = \
@@ -301,10 +303,10 @@ runtime.o : $(DEF_DIR)/types.h runtime_type.h runtime.h
 $(DEF_DIR)/config.h : $(CONFIG_MAK)
 	perl -nl config.pl < $(CONFIG_MAK) > $@
 
-$(DEF_DIR)/floatcfg.h : $(DEF_DIR)/config.h floatcfg.c
-	$(CC) $(CFLAGS) floatcfg.c -lm -o floatcfg
-	./floatcfg > $@
-	rm -f floatcfg$(EXE)
+$(DEF_DIR)/floatcfg.h : $(DEF_DIR)/config.h value.h floatcfg.c
+	$(CC) $(CFLAGS) floatcfg.c -lm -o floatcfg$(EXE)
+	./floatcfg -v > $@
+	#rm -f floatcfg$(EXE)
 
 ########################################################################
 # Early DEFS
