@@ -29,8 +29,14 @@ static const char __rcs_id_ll_value_h[] = "$Id: value.h,v 1.13 2008/05/26 02:25:
 //#if sizeof(void*) == sizeof(long long)
 #if defined(__x86_64)
 typedef unsigned long long ll_v;
+typedef long long ll_v_word;
+#define ll_TAG_BIT 1LL
+#define ll_TAG_ZERO 0ULL
 #else
 typedef unsigned long ll_v;
+typedef long ll_v_word;
+#define ll_TAG_BIT 1L
+#define ll_TAG_ZERO 0UL
 #endif
 
 #define ll_INITIALIZED(X) (X)
@@ -44,27 +50,29 @@ typedef unsigned long ll_v;
 /***********************************************************************/
 /* tag extraction */
 
-#define ll_TAG(X) (((unsigned int) (X)) & 3)
+#define ll_TAG_BITS 2
+#define ll_TAG_MASK ((ll_TAG_BIT << ll_TAG_BITS) - 1)
+#define ll_TAG(X) (((ll_v) (X)) & ll_TAG_MASK)
 
 /***********************************************************************/
 /* fixnum */
 
 #define ll_TAG_fixnum        0
-#define ll_BOX_fixnum(X)     (((long)(X)) << 2)
+#define ll_BOX_fixnum(X)     (((ll_v_word)(X)) << ll_TAG_BITS)
 #define ll_make_fixnum(X)    ll_BOX_fixnum(X)
-#define ll_UNBOX_fixnum(X)   (((long)(X)) >> 2)
+#define ll_UNBOX_fixnum(X)   (((ll_v_word)(X)) >> ll_TAG_BITS)
 long ll_unbox_fixnum(ll_v x);
 /* #define ll_unbox_fixnum(X)ll_UNBOX_fixnum(X) */
 #define ll_ISA_fixnum(X)     (ll_TAG(X) == ll_TAG_fixnum)
 #define ll_TYPE_fixnum(X)    ll_type(fixnum)
-#define ll_MIN_fixnum        (((long)~0UL) >> 2)
-#define ll_MAX_fixnum        ((long)(~0UL >> 2))
+#define ll_MIN_fixnum        (((ll_v_word)~ll_TAG_ZERO) >> 2)
+#define ll_MAX_fixnum        ((ll_v_word)(~ll_TAG_ZERO >> 2))
 
 /***********************************************************************/
 /* locative */
 
 #define ll_TAG_locative      1
-#define ll_BOX_locative(X)   (((unsigned long)(X)) + ll_TAG_locative)
+#define ll_BOX_locative(X)   (((ll_v)(X)) + ll_TAG_locative)
 #define ll_make_locative(X)  ll_BOX_locative(X)
 #define ll_UNBOX_locative(X) ((ll_v*)((X) - ll_TAG_locative))
 /* #define ll_unbox_locative(X)ll_UNBOX_locative(X) */
@@ -88,7 +96,7 @@ static __inline ll_v ll_BOX_flonum(float f)
 {
   union ll_v_flonum vf;
   vf.f = f;
-  vf.v &= ~ 3UL;
+  vf.v &= ~ ll_TAG_MASK;
   vf.v |= ll_TAG_flonum;
   return vf.v;
 }
@@ -97,7 +105,7 @@ static __inline float ll_UNBOX_flonum(ll_v v)
 {
   union ll_v_flonum vf;
   vf.v = v;
-  vf.v &= ~ 3UL;
+  vf.v &= ~ ll_TAG_MASK;
   return vf.f;
 }
 #define _ll_flonum_supported 1
@@ -113,7 +121,7 @@ static __inline ll_v ll_BOX_flonum(double f)
 {
   union ll_v_flonum vf;
   vf.f = f;
-  vf.v &= ~ 3UL;
+  vf.v &= ~ ll_TAG_MASK;
   vf.v |= ll_TAG_flonum;
   return vf.v;
 }
@@ -122,7 +130,7 @@ static __inline float ll_UNBOX_flonum(ll_v v)
 {
   union ll_v_flonum vf;
   vf.v = v;
-  vf.v &= ~ 3UL;
+  vf.v &= ~ ll_TAG_MASK;
   return vf.f;
 }
 #define _ll_flonum_supported 1
@@ -196,6 +204,7 @@ typedef ct_v ll_v;
 /***********************************************************************/
 /* fixnum */
 
+/* FIXME: x86_64 */
 #define ll_TAG_fixnum       ct_t_long
 #define ll_BOX_fixnum(X)    ct_v_long(X)
 #define ll_make_fixnum(X)   ll_BOX_fixnum(X)
@@ -203,8 +212,8 @@ typedef ct_v ll_v;
 #define ll_unbox_fixnum(X)  ll_UNBOX_fixnum(X)
 #define ll_ISA_fixnum(X)    (ll_TAG(X) == ll_TAG_fixnum)
 #define ll_TYPE_fixnum(X)   ll_type(fixnum)
-#define ll_MIN_fixnum       (((long)~0UL) >> 1)
-#define ll_MAX_fixnum       ((long)(~0UL >> 1))
+#define ll_MIN_fixnum       (((ll_v_word)~ll_TAG_ZERO) >> 1)
+#define ll_MAX_fixnum       ((ll_v_word)(~ll_TAG_ZERO >> 1))
 
 /***********************************************************************/
 /* locative */

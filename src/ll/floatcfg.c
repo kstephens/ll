@@ -40,8 +40,7 @@ int main(int argc, char **argv)
   }
 
   printf("#define ll_FLO_MAX_ERROR %.22g\n", (double) max_error);
-  printf("#define ll_FLO_DIGITS_FLT %.22g\n", (double) - log10(max_error));
-  printf("#define ll_FLO_DIGITS %d\n", (int) (double) - log10(max_error));
+  printf("#define ll_FLO_DIGITS %d\n", (int) i);
 
   return 0;
 }
