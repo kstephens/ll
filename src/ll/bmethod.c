@@ -926,7 +926,7 @@ restart:
   case ll_bc(glo, 1, 1, 0): /* | value */
     {
       ll_v binding = GLOBAL_BINDING(glo);
-      _ll_PUSH(_ll_binding_value(binding));
+      _ll_PUSH(__ll_binding_value(binding));
     }
     break;
     
@@ -934,7 +934,7 @@ restart:
   case ll_bc(glo_, 1, 1, 0): /* | value */
     {
       ll_v binding = GLOBAL_BINDING_();
-      _ll_PUSH(_ll_binding_value(binding));
+      _ll_PUSH(__ll_binding_value(binding));
     }
     break;
     
