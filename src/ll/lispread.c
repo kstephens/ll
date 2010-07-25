@@ -43,8 +43,9 @@ RETURN(X)           Return a VALUE from the READ_DECL function.
 MALLOC(s)           Allocate memory buffer from lisp.
 REALLOC(p,s)        Reallocate a previously MALLOCed buffer from lisp.
 
-PEEKC(stream)       Peek a C char or EOF from the stream
-GETC(stream)        Read a C char or EOF from the stream
+PEEKC(stream)       Peek a C char or EOF from the stream.
+UNGETC(stream,c)    Used to implement PEEKC() if PEEKC is #undef.
+GETC(stream)        Read a C char or EOF from the stream.
 
 EOS                 The end-of-stream VALUE.
 CONS(X,Y)           Return a new lisp CONS object.
