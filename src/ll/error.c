@@ -466,7 +466,7 @@ ll_v _ll_typecheck(ll_v type, ll_v *valuep)
   if ( ll_NE(value_type, type) ) {
     /* Invoke the type's typechecker, if not still initializing. */
     if ( ll_initialized ) {
-      *valuep = (ll_call(ll_call(ll_o(typechecker), _1(type)), _2(*valuep, type)));
+      *valuep = (ll_call(ll_type_typechecker(type), _2(*valuep, type)));
     }
   }
   /* Return the value. */

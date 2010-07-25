@@ -150,7 +150,7 @@ do { \
 */
 #define __ll_call_tail_MOVE_ARGS(OP, ARGC) \
   ll_v __op = (OP); \
-  register int __argc = (ARGC); \
+  int __argc = (ARGC); \
   { \
     int ___argc = __argc; \
     const ll_v *__p = ((ll_v*) _ll_val_sp) + __argc; \
@@ -159,7 +159,7 @@ do { \
     _ll_VS_POP(ll_ARGV + ll_ARGC); \
     _ll_VS_PROBE(___argc); \
     while ( ___argc -- ) \
-      _ll_PUSH(*(-- __p)); \
+      __ll_PUSH(*(-- __p)); \
   }
 
 
@@ -189,6 +189,7 @@ do { \
 #define _ll_call_tailv_w_cache(OP, ARGC, CACHE) \
 do { \
   __ll_call_tail_MOVE_ARGS(OP, ARGC); \
+  ll_assert_ref(__op); \
   ___ll_call_tailv(__op, __argc, _ll_lookup_w_cache(CACHE));    \
 } while(0)
 

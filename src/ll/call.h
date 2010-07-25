@@ -30,7 +30,7 @@ void _ll_lookup(), _ll_lookup_super(ll_v super);
 #if ll_USE_LCACHE
 
 #include "lcache.h"
-#define _ll_LOOKUP_CACHE_STATIC static ll_lcache __ll_static_lcache = { __FILE__, __LINE__ };
+#define _ll_LOOKUP_CACHE_STATIC static ll_lcache __ll_static_lcache = { { }, __FILE__, __LINE__ };
 #define _ll_LOOKUP_CACHE &__ll_static_lcache
 
 #else

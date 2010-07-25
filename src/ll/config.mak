@@ -6,7 +6,7 @@ HAS_READLINE=1
 HAS_HISTORY=1
 
 # Enable assertions.
-ll_ASSERT_ENABLE=0
+ll_ASSERT_ENABLE=1
 
 # Use a machine word for ll_v.
 ll_v_WORD=1
@@ -20,7 +20,10 @@ ll_USE_GC_BOEHM=1
 ll_USE_GC_TREADMILL=0
 
 # Use a lookup cache at all call sites.
-ll_USE_LCACHE=1
+ll_USE_LCACHE=0
+
+# Increment operation version each time a method is added or removed from a method.
+ll_USE_OPERATION_VERSION=1
 
 # Use a type-method-alist in <operation>
 # instead of a op-method-alist in <type>.

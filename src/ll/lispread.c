@@ -1,10 +1,3 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_ll_lispread_c__
-#define __rcs_id_ll_lispread_c__
-static const char __rcs_id_ll_lispread_c[] = "$Id: lispread.c,v 1.15 2008/01/01 10:17:41 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 /*
 ** lispread.c - a generic lisp reader.
 ** Copyright 1998, 1999 Kurt A. Stephens http://www.acm.org/~stephensk
@@ -87,10 +80,21 @@ ERROR(format,...)   Raise an error using the printf() format.
 
 */
 
+#ifdef READ_DECL
+
 #include <ctype.h> /* isspace() */
 
 #ifndef SET
 #define SET(X,V) ((X) = (V))
+#endif
+
+#ifndef PEEKC
+#define PEEKC(stream) \
+  ({ int _pc = GETC(stream); if ( _pc != EOF ) UNGETC(stream, _pc); _pc; })
+#endif
+
+#ifndef READ_DEBUG_WHITESPACE
+#define READ_DEBUG_WHITESPACE 0
 #endif
 
 static
@@ -100,20 +104,20 @@ int eat_whitespace_peekchar(VALUE stream)
 
  more_whitespace:
   while ( (c = PEEKC(stream)) != EOF && isspace(c) ) {
-#if 0
-    fprintf(stderr, "eat_whitespace_peekchar(): got '%c'\n", (int) c);
+#if READ_DEBUG_WHITESPACE
+    fprintf(stderr, "  read: eat_whitespace_peekchar(): whitespace '%c'\n", (int) c);
     fflush(stderr);
 #endif
     GETC(stream);
   }
   if ( c == ';' ) {
-#if 0
-    fprintf(stderr, "eat_whitespace_peekchar(): got '%c'\n", (int) c);
+#if READ_DEBUG_WHITESPACE
+    fprintf(stderr, "  read: eat_whitespace_peekchar(): comment start '%c'\n", (int) c);
     fflush(stderr);
 #endif
     while ( (c = PEEKC(stream)) != EOF && c != '\n' ) {
-#if 0
-      fprintf(stderr, "eat_whitespace_peekchar(): got '%c'\n", (int) c);
+#if READ_DEBUG_WHITESPACE
+      fprintf(stderr, "  read: eat_whitespace_peekchar(): comment in '%c'\n", (int) c);
       fflush(stderr);
 #endif
       GETC(stream);
@@ -121,8 +125,34 @@ int eat_whitespace_peekchar(VALUE stream)
     goto more_whitespace;
   }
 
+#if READ_DEBUG_WHITESPACE
+  fprintf(stderr, "  read: eat_whitespace_peekchar(): done '%c'\n", (int) c);
+  fflush(stderr);
+#endif
+
   return(c);
 }
+
+#ifndef IMMUTABLE_CONS
+#define IMMUTABLE_CONS(X) X
+#endif
+
+#ifndef IMMUTABLE_VECTOR
+#define IMMUTABLE_VECTOR(X) X
+#endif
+
+#ifndef IMMUTABLE_STRING
+#define IMMUTABLE_STRING(X) X
+#endif
+
+#ifndef RETURN
+#define RETURN(X) return (X)
+#endif
+
+#ifndef ESCAPE_STRING
+#define ESCAPE_STRING(X) X
+#endif
+
 
 READ_DECL
 {
@@ -172,7 +202,7 @@ READ_DECL
           }
 
           SET_CDR(lc, READ_CALL());
-	  IMMUTABLE_CONS(lc);
+	  (void) IMMUTABLE_CONS(lc);
 
           c = eat_whitespace_peekchar(stream);
           GETC(stream);
@@ -186,13 +216,13 @@ READ_DECL
             SET(l, y);
           } else {
             SET_CDR(lc, y);
-	    IMMUTABLE_CONS(lc);
+	    (void) IMMUTABLE_CONS(lc);
           }
           SET(lc, y);
-	  IMMUTABLE_CONS(lc);
+	  (void) IMMUTABLE_CONS(lc);
         }
       }
-      IMMUTABLE_CONS(l);
+      (void) IMMUTABLE_CONS(l);
       RETURN(l);
       }
 
@@ -203,14 +233,25 @@ READ_DECL
       case EOF:
 	RETURN(ERROR("eos after '#'"));
 
+	/* #! sh-bang comment till eof */
       case '!':
-	while ( (c == PEEKC(stream)) != EOF && c != '\n' ) {
+#if READ_DEBUG_WHITESPACE
+	fprintf(stderr, "  read: #!\n");
+	fflush(stderr);
+#endif
+	GETC(stream);
+	while ( (c = PEEKC(stream)) != EOF && c != '\n' ) {
 	  GETC(stream);
 	}
     	goto try_again;
 
 	/* s-expr comment ala chez scheme */
       case ';':
+#if READ_DEBUG_WHITESPACE
+	fprintf(stderr, "  read: #;\n");
+	fflush(stderr);
+#endif
+	GETC(stream);
 	GETC(stream);
 	READ_CALL();
 	goto try_again;
@@ -386,10 +427,14 @@ READ_DECL
       s = STRING(buf, len);
       n = STRING_2_NUMBER(s, radix);
       if ( EQ(n, F) ) {
-        RETURN(STRING_2_SYMBOL(s));
-      } else {
-        RETURN(n);
+	n = STRING_2_SYMBOL(s);
+#ifdef NIL_SYMBOL
+        if ( EQ(n, NIL_SYMBOL) ) {
+	  n = NIL;
+	}
+#endif
       }
+      RETURN(n);
     }
       break;
 
@@ -402,3 +447,4 @@ READ_DECL
 READ_DECL_END
 #endif
 
+#endif

@@ -153,6 +153,16 @@ ll_define_primitive_end
 /*************************************************************************/
 
 
+ll_v ll_type_typechecker(ll_v type)
+{
+  if ( ll_TYPE(type) == ll_type(type) ) {
+    return ll_THIS_ISA(type, type)->_typechecker;
+  } else {
+    return ll_call(ll_o(typechecker), _1(type));
+  }
+}
+
+
 ll_define_primitive(type,make, __1(type,args), _0())
 {
   /* Get the instance's size */

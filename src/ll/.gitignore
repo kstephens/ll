@@ -9,3 +9,6 @@ llt.strip
 *.gcda
 *.gcno
 *.gcov
+*.sc
+*.oc
+*.i

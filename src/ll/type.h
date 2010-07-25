@@ -60,4 +60,6 @@ typedef volatile ll_stack_buffer       *ll_stack_buffer_p;
 #undef __ll_t_paste2
 #undef _ll_t_paste2
 
+ll_v ll_type_typechecker(ll_v type);
+
 #endif

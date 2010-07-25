@@ -10,13 +10,8 @@ static const char __rcs_id_ll_lcache_c[] = "$Id: lcache.c,v 1.12 2008/05/26 19:1
 #include <string.h> /* memset() */
 
 
-#if 0
-static ll_lcache *_ll_lcache_list = 0;
-static size_t _ll_lcache_count = 0;
-#else
 #define _ll_lcache_list  ll_runtime(lcache_list)
 #define _ll_lcache_count ll_runtime(lcache_count)
-#endif
 
 ll_lcache_stat _ll_lcache_stat_global;
 
@@ -96,7 +91,7 @@ ll_v _ll_lcache_to_object(ll_lcache *c)
   x = 
     ll_listn(3,
 	     ll_cons(ll_s(context), 
-		     ll_cons(ll_make_string(c->_file ? c->_file : "?", -1), 
+		     ll_cons(ll_make_string((char *) (c->_file ? c->_file : "?"), -1), 
 			     ll_make_fixnum(c->_line))
 		     ),
 	     ll_listn(7,
@@ -129,26 +124,30 @@ ll_define_primitive_end
 #define _ll_lookup_op_check() ((void)0)
 #endif
 
+#ifdef _ll_lookup_w_cache
+#undef _ll_lookup_w_cache
+#endif
 
-void _ll_lookup_w_cache(ll_lcache *c)
+void _ll_lookup_w_cache (ll_lcache *c)
 {
   if ( c ) {
   struct ll_lcache_elem *p = c->_elems;
   struct ll_lcache_elem *e = ll_lcache_end(c);
   ll_v isa = ll_RCVR_TYPE;
   ll_v op;
-
+  ll_v op_version;
   _ll_lookup_op_check();
 
   op = ll_AR_OP;
   ll_assert_ref(op);
+  op_version = ll_THIS_ISA(operation, op)->_version;
 
 #if 1
-#define STAT_INCR(N) ((void) 0)
-#else
 #define STAT_INCR(N) \
   ++ _ll_lcache_stat_global.N; \
   ++ c->_stat.N
+#else
+#define STAT_INCR(N) ((void) 0)
 #endif
 
   STAT_INCR(_lookup_n);
@@ -158,7 +157,7 @@ void _ll_lookup_w_cache(ll_lcache *c)
 
     if ( ll_EQ(p->_isa, isa) && ll_EQ(p->_op, op) ) {
       /* Has op been assocated with any new types or methods? */
-      if ( ll_NE(p->_version, ll_THIS_ISA(operation, op)->_version) ) {
+      if ( ll_NE(p->_version, op_version) ) {
 	STAT_INCR(_op_changed_n);
         goto update_cache;
       }
@@ -203,7 +202,8 @@ fill_cache:
       p->_hits = 1;
 
 update_cache:
-      p->_version = ll_THIS_ISA(operation, ll_AR_OP)->_version;
+      /* Keep track of the operation version. */
+      p->_version = op_version;
 
       STAT_INCR(_miss_n);
       

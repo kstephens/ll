@@ -26,11 +26,6 @@ typedef struct ll_lcache_stat {
 } ll_lcache_stat;
 
 typedef struct ll_lcache {
-  const char *_file;
-  int _line;
-  int _flags;
-  ll_lcache_stat _stat;
-  struct ll_lcache *_next;
   struct ll_lcache_elem {
     ll_v _op;        /* The <operation> searched for. */
     ll_v _version;   /* The <operation>'s version when the entry was created. */
@@ -40,6 +35,11 @@ typedef struct ll_lcache {
     ll_v _off;       /* Offset of the implementing type in the searched type. */
     unsigned long _hits;  /* The number of times this cache slot was hit. */
   } _elems[ll_lcache_SIZE];
+  const char *_file;
+  int _line;
+  int _flags;
+  ll_lcache_stat _stat;
+  struct ll_lcache *_next;
 } ll_lcache;
 
 #define ll_lcache_end(L) ((L)->_elems + ll_lcache_SIZE)

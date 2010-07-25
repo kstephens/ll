@@ -106,9 +106,11 @@ void _ll_add_method(ll_v type, ll_v op, ll_v meth)
 #endif
 
   /* Bump the operation version. */
-#if ll_USE_LCACHE
+#if ll_USE_OPERATION_VERSION
   o->_version = ll_BOX_fixnum(ll_UNBOX_fixnum(o->_version) + 1);
 #endif
+
+  (void) 0;
 }
 
 

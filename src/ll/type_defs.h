@@ -234,7 +234,7 @@ ll_type_def_slots(operation)
      /* If true, no methods can be added or removed. */
   ll_type_def_slot(operation, ll_v, properties)
      /* Additional properties. */
-#if ll_USE_LCACHE
+#if ll_USE_OPERATION_VERSION
   ll_type_def_slot(operation, ll_v, version)
      /* Incremented if method is added or removed. */
 #endif
