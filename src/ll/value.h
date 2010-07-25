@@ -1,13 +1,6 @@
 #ifndef _ll_value_h
 #define _ll_value_h
 
-#ifndef __rcs_id__
-#ifndef __rcs_id_ll_value_h__
-#define __rcs_id_ll_value_h__
-static const char __rcs_id_ll_value_h[] = "$Id: value.h,v 1.13 2008/05/26 02:25:46 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #include "ll/config.h"
 
 #if ll_v_WORD
@@ -50,7 +43,9 @@ typedef long ll_v_word;
 /***********************************************************************/
 /* tag extraction */
 
+#ifndef ll_TAG_BITS
 #define ll_TAG_BITS 2
+#endif
 #define ll_TAG_MASK ((ll_TAG_BIT << ll_TAG_BITS) - 1)
 #define ll_TAG(X) (((ll_v) (X)) & ll_TAG_MASK)
 
@@ -65,8 +60,8 @@ long ll_unbox_fixnum(ll_v x);
 /* #define ll_unbox_fixnum(X)ll_UNBOX_fixnum(X) */
 #define ll_ISA_fixnum(X)     (ll_TAG(X) == ll_TAG_fixnum)
 #define ll_TYPE_fixnum(X)    ll_type(fixnum)
-#define ll_MIN_fixnum        (((ll_v_word)~ll_TAG_ZERO) >> 2)
-#define ll_MAX_fixnum        ((ll_v_word)(~ll_TAG_ZERO >> 2))
+#define ll_MIN_fixnum        (((ll_v_word)~ll_TAG_ZERO) >> ll_TAG_BITS)
+#define ll_MAX_fixnum        ((ll_v_word)(~ll_TAG_ZERO >> ll_TAG_BITS))
 
 /***********************************************************************/
 /* locative */
