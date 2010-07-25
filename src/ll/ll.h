@@ -39,6 +39,10 @@ static const char __rcs_id_ll_ll_h[] = "$Id: ll.h,v 1.52 2008/05/25 23:08:41 ste
 #define ll_OFFSET_OF(T,E)((size_t)(&((T*)(0))->E))
 #endif
 
+#ifndef ll_ALIGN_OF
+#define ll_ALIGN_OF(T,E) __alignof__(typeof(((T*)(0))->E))
+#endif
+
 /*************************************************************************/
 /* mem mgmt */
 

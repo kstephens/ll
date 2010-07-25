@@ -627,7 +627,7 @@ restart:
     }
     
     {
-      ll_bc_t *pc_tmp = pc;
+      const ll_bc_t *pc_tmp = pc;
       _ll_bc_dump(&pc_tmp, 0, ll_AR_METH, 1);
     }
   }
@@ -976,9 +976,9 @@ restart:
     /* call */
 
   case ll_bc(csite_i, 1, 0, 0):
-#if ll_USE_LCACHE
     {
       int i = GET_4();
+#if ll_USE_LCACHE
       lcache = LCACHE ? &(LCACHE->_v[i]) : 0;
       if ( lcache ) {
 	ll_assert_msg(bc, LCACHE->_s > i, ("LCACHE->_s > i: LCACHE=%p, _s=%d, i=%d", (void*) LCACHE, (int) LCACHE->_s, (int) i));
@@ -986,8 +986,10 @@ restart:
       /*
 	fprintf(stderr, "  lcache %p\n", (void*) lcache);
       */
-    }
+#else
+      fprintf(stderr, "warning: csite_i %d not supported\n", (int) i);
 #endif
+    }
     break;
 
   case ll_bc(call, 1, - ARG(0), ARG(0) + 1): /* op args ... | rtn */
@@ -1007,6 +1009,11 @@ restart:
       int n = GET_4();
 #if ll_BC_DEBUG_EXPR
       *(_ll_debug_expr = prev_debug_expr) = debug_expr;
+#endif
+#if ll_USE_LCACHE
+      if ( bcCdebug ) {
+	fprintf(stderr, "lcache = %p, op = %s %s\n", lcache, ll_po(ll_TYPE(op)), ll_po(op));
+      }
 #endif
       _ll_call_tailv_w_cache(op, n, lcache);
     }
@@ -1052,8 +1059,10 @@ ll_define_primitive_end
 
 /********************************************************************/
 
-static void _ll_make_bmethod_lcache_vector(ll_v _bcm)
+static __inline
+void _ll_make_bmethod_lcache_vector(ll_v _bcm)
 {
+#if ll_USE_LCACHE
   ll_v lcache_size = ll_call(ll_o(property), _2(_bcm, ll_s(call_site_count)));
   ll_tsa_byte_code_method *bcm = ll_THIS_ISA(byte_code_method, _bcm);
 
@@ -1061,6 +1070,7 @@ static void _ll_make_bmethod_lcache_vector(ll_v _bcm)
     ll_unbox_boolean(lcache_size) ? 
     _ll_new_lcache_vector(ll_unbox_fixnum(ll_cdr(lcache_size))) :
     0;
+#endif
 }
 
 
@@ -1108,7 +1118,7 @@ static void _ll_make_bmethod(ll_v consts)
   m->_properties = _ll_PEEK();
 
   _ll_make_bmethod_lcache_vector(x);
-  
+
   if ( ll_BC_DUMP ) {
     ll_call(ll_o(_dump), _1(x));
   }

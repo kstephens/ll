@@ -12,7 +12,7 @@ if [ -n "${VALGRIND}" ]
 then
   EXEC_WITH="valgrind -q --error-limit=no "
 fi
-EXEC_WITH_GDB=gdb -x ./run.gdb --args#
+EXEC_WITH_GDB="gdb -x ./run.gdb --args"#
 
 #ifneq "$(strip $(EXEC_GDB))" ""
 #EXEC_WITH=$(EXEC_WITH_GDB)
@@ -28,8 +28,11 @@ t_passed() {
     echo "t $*: PASSED"
 }
 t_failed() {
+    echo "t $*: FAILED"
     errors=1
-    gdb -x ./run.gdb ${LLT} --args -p -e "$@"
+    set -x
+    gdb -x ./run.gdb --args ${LLT} -p -e "$@"
+    return 1
 }
 
 t() {
@@ -38,9 +41,7 @@ t() {
      t_passed "$@"
      return 0
    else
-     errors=1
-     echo "t $*: FAILED"
-     gdb -x ./run.gdb --args "$@"
+     t_failed "$@"
      return 1
    fi
 }

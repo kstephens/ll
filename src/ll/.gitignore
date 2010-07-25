@@ -6,3 +6,12 @@
 llt
 llt-save
 llt.strip
+floatcfg
+*.gcda
+*.gcno
+*.gcov
+*.sc
+*.oc
+*.i
+gmon.out
+

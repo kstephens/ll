@@ -753,7 +753,7 @@ ll_define_primitive(_ir, ___ir_emit_csite_check, _2(ir, c), _0())
 {
   ll_v x = ll_call(ll_o(__ir_bc), _2(ll_SELF, ll_ARG_1));
 
-  /* If its a call, increment the call site count. */
+  /* If it's a call, increment the call site count. */
   if ( ll_unbox_boolean(ll_caddr(x)) ) {
     ll_v call_site_i = ll_THIS->_call_site_count;
 
@@ -763,6 +763,7 @@ ll_define_primitive(_ir, ___ir_emit_csite_check, _2(ir, c), _0())
 
     ll_THIS->_call_site_count = ll__ADD(ll_THIS->_call_site_count, ll_make_fixnum(1)); 
 
+#if ll_USE_LCACHE
     if ( ll_DEBUG(compile_emit) > 0 ) {      
       ll_format(ll_undef, "  ~O emiting csite-i ~S for ~S\n", 
 		3,
@@ -773,6 +774,7 @@ ll_define_primitive(_ir, ___ir_emit_csite_check, _2(ir, c), _0())
     }
 
     ll_call(ll_o(___ir_emit_with_int), _3(ll_SELF, ll_s(csite_i), call_site_i));
+#endif
   }
 }
 ll_define_primitive_end

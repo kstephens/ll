@@ -17,7 +17,7 @@ static int PEEKC(ll_v stream)
   ll_v c = ll_call(ll_o(peek_char), _1(stream));
   return ll_EQ(c, ll_eos) ? EOF : ll_unbox_char(c);
 }
-
+#define PEEKC PEEKC
 
 static int GETC(ll_v stream)
 {

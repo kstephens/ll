@@ -73,6 +73,11 @@ const char *ll_po(ll_v x)
     return "()";
   } else if ( ll_EQ(isa, ll_type(fixnum)) ) {
     snprintf(n = get_buf(), BUF_SIZE, "%ld", (long) ll_unbox_fixnum(x));
+  } else if ( ll_EQ(isa, ll_type(flonum)) ) {
+    snprintf(n = get_buf(), BUF_SIZE, "%g", (double) ll_unbox_flonum(x));
+    if ( ! strchr(n, 'e') || ! strchr(n, '.') ) {
+      strcpy(strchr(n, '\0') - 1, ".0");
+    }
   } else if ( ll_EQ(isa, ll_type(char)) ) {
     snprintf(n = get_buf(), BUF_SIZE, "#\\%c", (int) ll_unbox_char(x));
   } else if ( ll_EQ(isa, ll_type(string)) || ll_EQ(isa, ll_type(mutable_string)) ) {

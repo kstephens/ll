@@ -65,7 +65,7 @@ ll_define_primitive_end
 ll_v _ll_binding_value(ll_v binding)
 {
   if ( ll_TYPE(binding) == ll_type(binding) ) {
-    __ll_binding_value(binding);
+    return __ll_binding_value(binding);
   } else {
     return ll_call(ll_o(binding_value), _1(binding));
   }

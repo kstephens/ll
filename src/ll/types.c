@@ -18,6 +18,7 @@ static const char __rcs_id_ll_type_c[] = "$Id: types.c,v 1.8 2008/05/24 20:44:08
 typedef struct ll_typedef_slot {
   const char *type;
   size_t _sizeof;
+  size_t _alignof;
   const char *name;
   size_t offset;
 } ll_typedef_slot;
@@ -57,7 +58,7 @@ typedef struct ll_typedef {
 #define _ll_type_def_super(N,T) &_ll_td_##T,
 #define _ll_type_def_supers_end(N) 0 },
 #define _ll_type_def_slots(N) {
-#define _ll_type_def_slot(N,T,S) { #T, sizeof(T), #S, ll_OFFSET_OF(ll_ts_##N, _##S) },
+#define _ll_type_def_slot(N,T,S) { #T, sizeof(T), ll_ALIGN_OF(ll_ts_##N, _##S), #S, ll_OFFSET_OF(ll_ts_##N, _##S) },
 #define _ll_type_def_slots_end(N) { 0 } },
 #define _ll_type_def_end(N) 0, ll_gi(N##Q), ll_gi(LT##N##GT), ll_OFFSET_OF(ll_tsa__runtime, _t_##N) };
 #include "ll/types_begin.h"
@@ -164,10 +165,16 @@ ll_INIT(type1, 30, "calculate type slot sizes and offsets")
   for ( t = _types; *t; ++ t ) {
     size_t t_sizeof = 0;
 
-    ll_assert_msg(init,(*t)->slots[(sizeof((*t)->slots)/sizeof((*t)->slots[0]))-1].name == 0, ("ll_typedef.slots[] too small"));
+    // fprintf(stderr, "  type %s:\n", (*t)->name); 
+    ll_assert_msg(init, (*t)->slots[(sizeof((*t)->slots)/sizeof((*t)->slots[0]))-1].name == 0, ("ll_typedef.slots[] too small"));
     for ( s = (*t)->slots; s->type; s ++ ) {
+      size_t a = t_sizeof % s->_alignof;
+      if ( a ) {
+	t_sizeof += s->_alignof - a;
+      }
+      // fprintf(stderr, "    slot %s @ %lu: sizeof %lu, alignof %lu\n", s->name, t_sizeof, s->_sizeof, s->_alignof);
       /* Make sure the C struct is layed out like the ll structure */
-      ll_assert_msg(init,s->offset == t_sizeof, ("sizeof(ll_tsa_%s) != calculated size; multiple inheritance?", (*t)->name));
+      ll_assert_msg(init, s->offset == t_sizeof, ("sizeof(ll_tsa_%s) != calculated size; multiple inheritance?: at slot %s", (*t)->name, s->name));
 
       /* s->_offset = t_sizeof; */
       t_sizeof += s->_sizeof;    

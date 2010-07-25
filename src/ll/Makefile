@@ -26,10 +26,12 @@ BUILD_ROOT:=$(CWD)#
 DEF_DIR=lib/ll#
 
 C_DEBUG=-g3
+#C_DEBUG+=-fverbose-asm 
 C_PROFILE=-pg
-C_PROFILE=--coverage
+#C_PROFILE=--coverage
 C_OPTIMIZE=-O3
-C_OPTIMIZE=-O2
+#C_OPTIMIZE=-O2
+#C_OPTIMIZE=
 C_WARNINGS=-Wall
 CC = gcc
 export CC
@@ -198,16 +200,17 @@ DEF_SOURCES = $(C_FILES)
 DEF_SOURCES_DEPS =
 DEF_FILES = 
 
-#MAKE_SAVE_I=YES
+MAKE_SAVE_I=YES
+MAKE_SAVE_I=
 
 %.o : %.c 
 	if test '$*.c' -nt '$*.c.llcc/_' -o ! -e '$*.c.llcc/_'; then make '$*.c.llcc/_' $(COLLECT); fi
 ifneq "$(MAKE_SAVE_I)" ""
-	$(CPP) $(CPPFLAGS) $*.c | sed -e 's/^#.*//' -e 's/;/;@/g' | tr '@' '\012' > $*.i
-	$(CC) $(CFLAGS) -c -S -o $*.s $*.i
-	$(CC) $(CFLAGS) -c -o $*.o $*.s
+	$(CPP) $(CPPFLAGS) -CC $*.c | sed -e 's/^#.*//' -e 's/;/;@/g' | tr '@' '\012' > $*.i
+	$(CC) $(CFLAGS) -Wa,-adlh -c -S -o $*.s $*.i >$*.sc
+	$(CC) $(CFLAGS) -Wa,-adlh -c -o $*.o $*.s >$*.oc
 else
-	$(CC) $(CFLAGS) -c -o $@ $*.c || ( rm -rf '$*.c.llcc'; exit 1 )
+	$(CC) $(CFLAGS) -Wa,-adlh -c -o $@ $*.c >$*.oc || ( rm -rf '$*.c.llcc'; exit 1 )
 	make '$*.c.llcc/_' $(COLLECT)
 endif
 
@@ -433,6 +436,7 @@ TAGS : $(C_FILES) $(H_FILES)
 clean : speed_test_clean
 	-mv llt$(EXE) llt-save$(EXE)
 	rm -f $(PRODUCTS) TAGS llt$(EXE) llt.strip$(EXE) floatcfg$(EXE) *core *.a *.o *.i *.s *.exe [0-9]*.tmp *~ .#*
+	rm -f *.gcda *.gcno *.gcov
 
 cleandefs :
 	rm -f $(DEFS) 

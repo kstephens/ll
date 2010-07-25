@@ -20,7 +20,7 @@ ll_define_primitive(operation, initialize, __1(op, lambdaQ), _0())
 #endif
   ll_THIS->_immutableQ = ll_f;
   ll_THIS->_properties = ll_nil;
-#if ll_USE_LCACHE
+#if ll_USE_OPERATION_VERSION
   ll_THIS->_version = ll_BOX_fixnum(0);
 #endif
   ll_write_barrier_SELF();
@@ -66,7 +66,7 @@ static __inline void _ll_init_operation(ll_tsa_operation *x)
 #endif
   x->_immutableQ = ll_f;
   x->_properties = ll_nil;
-#if ll_USE_LCACHE
+#if ll_USE_OPERATION_VERSION
   x->_version = ll_BOX_fixnum(0);
 #endif
   ll_write_barrier_pure(x);
