@@ -17,11 +17,25 @@ ll_v ll_make_ratnum(ll_v n, ll_v d)
 
 ll_define_primitive(ratnum, initialize, _3(r, n, d), _1(no_side_effect, "#t"))
 {
+  ll_v gcd;
+
   N = ll_ARG_1;
   D = ll_ARG_2;
-  if ( ll_unbox_boolean(ll_call(ll_o(negativeQ), _1(D))) ) {
-    N = ll_call(ll_o(_NEG), _1(N));
-    D = ll_call(ll_o(_NEG), _1(D));
+  if ( ll_negativeQ(D) ) {
+    N = ll__NEG(N);
+    D = ll__NEG(D);
+  }
+  if ( ll_zeroQ(D) ) {
+    ll_return(_ll_error(ll_re(divide_by_zero),
+			2,
+			ll_s(numerator), ll_ARG_1,
+			ll_s(denominator), ll_ARG_2));
+  }
+  gcd = ll_call(ll_o(gcd), _2(N, D));
+  N = ll__DIV(N, gcd);
+  D = ll__DIV(D, gcd);
+  if ( ll_oneQ(D) ) {
+    ll_return(N);
   }
   ll_return(ll_SELF);
 }

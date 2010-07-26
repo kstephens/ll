@@ -430,6 +430,7 @@ ll_v ll_quote(ll_v x);
 int ll_negativeQ(ll_v x);
 int ll_zeroQ(ll_v x);
 int ll_positiveQ(ll_v x);
+int ll_oneQ(ll_v x);
 ll_v ll_abs(ll_v x);
 
 ll_v ll_make_ratnum(ll_v n, ll_v d);

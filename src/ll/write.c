@@ -419,8 +419,8 @@ ll_define_primitive_end
 
 ll_define_primitive(fixnum, _write_port, _3(obj, port, op), _0())
 {
-  char buf[sizeof(ll_v) * 8 * 2];
-  if ( sizeof(ll_v) == sizeof(long long) ) {
+  char buf[sizeof(ll_v) * 8 + 2];
+  if ( sizeof(ll_v) > sizeof(long) ) {
     sprintf(buf, "%lld", (long long) ll_unbox_fixnum(OBJ));
   } else {
     sprintf(buf, "%ld", (long) ll_unbox_fixnum(OBJ));

@@ -230,6 +230,16 @@ int ll_zeroQ(ll_v x)
 }
 
 
+int ll_oneQ(ll_v x)
+{
+  if ( ll_ISA_fixnum(x) ) {
+    return ll_UNBOX_fixnum(x) == 1;
+  } else {
+    return ll_unbox_boolean(ll_call(ll_o(oneQ), _1(x)));
+  }
+}
+
+
 int ll_positiveQ(ll_v x)
 {
   if ( ll_ISA_fixnum(x) ) {

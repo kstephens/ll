@@ -38,6 +38,12 @@ ll_define_primitive(_ll_NUM, zeroQ, _1(x), _1(no_side_effect,"#t"))
 }
 ll_define_primitive_end
 
+ll_define_primitive(_ll_NUM, oneQ, _1(x), _1(no_side_effect, "#t"))
+{
+  ll_return(ll_make_boolean(_ll_NUM_UNBOX(ll_SELF)) == 1);
+}
+ll_define_primitive_end
+
 ll_define_primitive(_ll_NUM, positiveQ, _1(x), _1(no_side_effect,"#t"))
 {
   ll_return(ll_make_boolean(_ll_NUM_UNBOX(ll_SELF) > 0));
