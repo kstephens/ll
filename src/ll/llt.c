@@ -24,7 +24,7 @@ int main(int argc, char **argv, char **envp)
     for ( argi = 1; argi < argc; ++ argi ) {
       const char *arg = argv[argi];
       if ( arg[0] == '-' ) {
-	if ( ! strcmp("-h", arg) ) {
+	if ( ! strcmp("-h", arg) || ! strcmp("--help", arg) ) {
 	  if ( interactive == 1 ) {
 	    interactive = 0;
 	  }
