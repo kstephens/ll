@@ -160,6 +160,8 @@ ll_define_primitive(fixnum, _##N, _2(n1, n2), _1(no_side_effect,"#t")) \
     ll_return(ll_make_fixnum(ll_UNBOX_fixnum(ll_SELF) O ll_UNBOX_fixnum(ll_ARG_1))); \
   } else if ( ll_ISA_flonum(ll_ARG_1) ) { \
     ll_return(ll_make_flonum(ll_UNBOX_fixnum(ll_SELF) O ll_UNBOX_flonum(ll_ARG_1))); \
+  } else if ( ll_ISA_ratnum(ll_ARG_1) ) { \
+    ll_return(ll__##N(ll_make_ratnum_(ll_SELF, ll_BOX_fixnum(1)), ll_ARG_1)); \
   } else { \
     ll_return(_ll_typecheck(ll_type(number), &ll_ARG_1)); \
   } \
@@ -182,6 +184,8 @@ ll_define_primitive(fixnum, _##N, _2(n1, n2), _1(no_side_effect,"#t")) \
     ll_return(ll_make_boolean(ll_UNBOX_fixnum(ll_SELF) OP ll_UNBOX_fixnum(ll_ARG_1))); \
   } else if ( ll_ISA_flonum(ll_ARG_1) ) { \
     ll_return(ll_make_boolean(ll_UNBOX_fixnum(ll_SELF) OP ll_UNBOX_flonum(ll_ARG_1))); \
+  } else if ( ll_ISA_ratnum(ll_ARG_1) ) { \
+    ll_return(ll__##N(ll_make_ratnum_(ll_SELF, ll_BOX_fixnum(1)), ll_ARG_1)); \
   } else { \
     ll_return(_ll_typecheck(ll_type(number), &ll_ARG_1)); \
   } \
@@ -203,9 +207,10 @@ ll_define_primitive(fixnum, _DIV, _2(n1, n2), _1(no_side_effect,"#t"))
       ll_return(ll_make_fixnum(ll_UNBOX_fixnum(ll_SELF) / ll_UNBOX_fixnum(ll_ARG_1)));
     } else {
       /* FIXME: use rational! */
-      ll_return(ll_make_flonum((double) ll_UNBOX_fixnum(ll_SELF) / (double) ll_UNBOX_fixnum(ll_ARG_1))); 
+      ll_return(ll_make_ratnum(ll_SELF, ll_ARG_1)); 
     }
-  } else if ( ll_ISA_flonum(ll_ARG_1) ) { 
+  } 
+  else if ( ll_ISA_flonum(ll_ARG_1) ) { 
     if ( ll_UNBOX_flonum(ll_ARG_1) == 0 ) {
       ll_return(_ll_error(ll_re(divide_by_zero),
 			  2,
@@ -214,7 +219,11 @@ ll_define_primitive(fixnum, _DIV, _2(n1, n2), _1(no_side_effect,"#t"))
     } else {
       ll_return(ll_make_flonum(ll_UNBOX_fixnum(ll_SELF) / ll_UNBOX_flonum(ll_ARG_1))); 
     }
-  } else { 
+  }
+  else if ( ll_ISA_ratnum(ll_ARG_1) ) { 
+    ll_return(ll__DIV(ll_make_ratnum_(ll_SELF, ll_BOX_fixnum(1)), ll_ARG_1));
+  }
+  else { 
     ll_return(_ll_typecheck(ll_type(number), &ll_ARG_1)); 
   } 
 } 

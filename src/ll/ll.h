@@ -433,9 +433,13 @@ int ll_positiveQ(ll_v x);
 int ll_oneQ(ll_v x);
 ll_v ll_abs(ll_v x);
 
+#define ll_ISA_ratnum(X) ll_EQ(ll_TYPE(X), ll_type(ratnum))
+
+ll_v ll_make_ratnum_(ll_v n, ll_v d);
 ll_v ll_make_ratnum(ll_v n, ll_v d);
 ll_v ll_numerator(ll_v x);
 ll_v ll_denominator(ll_v x);
+ll_v ll_coerce_flonum(ll_v X);
 
 #define BOP(N,O) ll_v ll__##N(ll_v x, ll_v y);
 #define UOP(N,O) ll_v ll__##N(ll_v x);
