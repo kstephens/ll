@@ -1,11 +1,3 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_ll_bcompile1_c__
-#define __rcs_id_ll_bcompile1_c__
-static const char __rcs_id_ll_bcompile1_c[] = "$Id: bcompile1.c,v 1.3 2007/12/29 06:56:53 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-
-
 /***************************************************************************/
 
 /* 1st pass:
@@ -20,9 +12,9 @@ static const char __rcs_id_ll_bcompile1_c[] = "$Id: bcompile1.c,v 1.3 2007/12/29
 #include "bcompile.h"
 
 #if 0
-#define DEBUG_PRINTF fprintf
+#define DEBUG_PRINTF(X) fprintf X
 #else
-#define DEBUG_PRINTF (void)
+#define DEBUG_PRINTF(X) (void) 0
 #endif
 
 /***************************************************************************/
@@ -32,7 +24,7 @@ ll_define_primitive(_ir, _ir_compile1_body, _1(ir), _0())
 {
   ll_v newbody = ll_nil, *n = &newbody;
 
-  DEBUG_PRINTF(stderr, "(");
+  DEBUG_PRINTF((stderr, "("));
 
   ll_LIST_LOOP(ll_THIS->_body, x);
   {
@@ -50,7 +42,7 @@ ll_define_primitive(_ir, _ir_compile1_body, _1(ir), _0())
   }
   ll_LIST_LOOP_END;
 
-  DEBUG_PRINTF(stderr, ")");
+  DEBUG_PRINTF((stderr, ")"));
 
   ll_THIS->_body = newbody;
   ll_write_barrier_SELF();
@@ -173,7 +165,7 @@ ll_define_primitive(pair, _ir_compile1, _3(self, ir, car_posQ), _0())
   ll_v x = ll_THIS->_cdr;
   ll_v expr;
 
-  DEBUG_PRINTF(stderr, ".");
+  DEBUG_PRINTF((stderr, "."));
 
   ll_assert_ref(IR);
 
@@ -305,7 +297,7 @@ ll_define_primitive(pair, _ir_compile1, _3(self, ir, car_posQ), _0())
       
       ll_v var = ll_car(ll_cdr(x));
 
-      DEBUG_PRINTF(stderr, "\n 1 %s ", (char*) ll_po(var));
+      DEBUG_PRINTF((stderr, "\n 1 %s ", (char*) ll_po(var)));
 
       if ( 0 ) {
 	ll_format(ll_undef, "scope: (~S ~S ...)\n", 2, car, var);

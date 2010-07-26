@@ -1,12 +1,7 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_ll_cadr_h__
-#define __rcs_id_ll_cadr_h__
-static const char __rcs_id_ll_cadr_h[] = "$Id: cadr.h,v 1.2 1999/06/28 13:59:28 stephensk Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #ifndef _ll_CADR
-#define _ll_CADR(A,D) ll_v ll_c##A##D##r(ll_v x);
+#define _ll_CADR(A,D) \
+  ll_v ll_c##A##D##r(ll_v x); \
+  void ll_set_c##A##D##rE(ll_v x, ll_v v);
 #endif
 
 _ll_CADR(a,a)

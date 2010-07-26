@@ -1,11 +1,3 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_ll_sig_c__
-#define __rcs_id_ll_sig_c__
-static const char __rcs_id_ll_sig_c[] = "$Id: sig.c,v 1.12 2007/12/18 10:37:00 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-
-
 #include "ll.h"
 #include "call_int.h"
 #include "util/sig.h"
@@ -18,7 +10,7 @@ static const char __rcs_id_ll_sig_c[] = "$Id: sig.c,v 1.12 2007/12/18 10:37:00 s
 /****************************************************************************/
 
 
-#define ll_sig_proc(s) (*(ll_v*)((s)->user))
+#define ll_sig_proc(s) ((s)->user[0])
 
 
 static volatile int _ll_sig_queue_head, _ll_sig_queue_tail; /*@ Index into %_ll_sig_queue%. */
@@ -30,7 +22,7 @@ volatile int _ll_sig_pending; /*@ True if signals are pending service. */
 #endif
 
 
-static volatile sigdef * _ll_sig_queue[_ll_sig_queue_len]; /*@ Queue for signals to be serviced. */
+static sigdef * _ll_sig_queue[_ll_sig_queue_len]; /*@ Queue for signals to be serviced. */
 
 
 volatile int _ll_sig_disabled; /*@ True if signals are being ignored. */
@@ -71,12 +63,15 @@ void _ll_sig_handler(int sig)
 
   /* Append to tail of queue. */
   _ll_sig_disabled ++; /* Avoid reentry. */
+  assert(_ll_sig_disabled > 0);
 
   _ll_sig_queue[_ll_sig_queue_tail] = s;
   _ll_sig_queue_tail = (_ll_sig_queue_tail + 1) % _ll_sig_queue_len;
   _ll_sig_pending ++;
+  assert(_ll_sig_pending > 0);
 
   _ll_sig_disabled --;
+  assert(_ll_sig_disabled >= 0);
 
   /* Check for queue overrun. */
   ll_assert_msg(sig,_ll_sig_queue_tail !=  _ll_sig_queue_head, ("signal queue overrun (length %d)", _ll_sig_queue_len));
@@ -93,18 +88,22 @@ void _ll_sig_service()
 
     /* Remove from head of queue */
     _ll_sig_disabled ++; /* Avoid signal during queue processing */
+    assert(_ll_sig_disabled > 0);
 
-    s = (sigdef *) _ll_sig_queue[_ll_sig_queue_head];
+    s = _ll_sig_queue[_ll_sig_queue_head];
     _ll_sig_queue[_ll_sig_queue_head] = 0;
     _ll_sig_queue_head = (_ll_sig_queue_head + 1) % _ll_sig_queue_len;
     _ll_sig_pending --;
+    assert(_ll_sig_pending >= 0);
 
     _ll_sig_disabled --;
+    assert(_ll_sig_disabled >= 0);
 
     /* Apply the signal handler proc */
     if ( s ) {
       fprintf(stderr, "\n_ll_sig_service(): SIG%s\n", s->name);
-      ll_call(ll_sig_proc(s), _1(ll_make_fixnum(s->sig)));
+      ll_call((ll_v) ll_sig_proc(s), 
+	      _1(ll_make_fixnum(s->sig)));
     }
   }
 }
@@ -117,8 +116,8 @@ ll_define_primitive(fixnum, llCsignalCget,
 		    _1(sig), 
 		    _1(doc, "Gets the procedure that receives signal."))
 {
-  sigdef *s = sigdef_by_sig(ll_UNBOX_fixnum(ll_SELF));
-  ll_return(s ? ll_sig_proc(s) : ll_f);
+  volatile sigdef *s = sigdef_by_sig(ll_UNBOX_fixnum(ll_SELF));
+  ll_return(s ? (ll_v) ll_sig_proc(s) : ll_f);
 }
 ll_define_primitive_end
 
@@ -127,8 +126,8 @@ ll_define_primitive(string, llCsignalCget,
 		    _1(sig), 
 		    _1(doc, "Gets the procedure that receives the signal."))
 {
-  sigdef *s = sigdef_by_name(ll_THIS->_array);
-  ll_return(s ? ll_sig_proc(s) : ll_f);
+  volatile sigdef *s = sigdef_by_name(ll_THIS->_array);
+  ll_return(s ? (ll_v) ll_sig_proc(s) : ll_f);
 }
 ll_define_primitive_end
 
@@ -152,9 +151,9 @@ ll_v _ll_signal_setE(sigdef *s, ll_v proc)
 
   if ( s ) {
     void *handler;
-
-    prev = ll_sig_proc(s);
-    ll_sig_proc(s) = ll_ARG_1;
+    assert(sizeof(ll_v) <= sizeof(s->user[0]));
+    prev = (ll_v) ll_sig_proc(s);
+    ll_sig_proc(s) = (void*) ll_ARG_1;
     if ( ll_unbox_boolean(ll_ARG_1) ) {
       handler = _ll_sig_handler;
     } else {

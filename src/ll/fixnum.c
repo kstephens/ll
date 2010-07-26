@@ -1,10 +1,3 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_ll_fixnum_c__
-#define __rcs_id_ll_fixnum_c__
-static const char __rcs_id_ll_fixnum_c[] = "$Id: fixnum.c,v 1.21 2008/01/06 18:36:33 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #include "ll.h"
 
 
@@ -31,7 +24,7 @@ long ll_unbox_fixnum(ll_v x)
 
 ll_define_primitive(fixnum, oddQ, _1(x), _1(no_side_effect,"#t"))
 {
-  ll_return(ll_make_boolean(ll_UNBOX_fixnum(ll_SELF) % 2));
+  ll_return(ll_make_boolean(ll_UNBOX_fixnum(ll_SELF) % 2) != 0);
 }
 ll_define_primitive_end
 
@@ -291,3 +284,13 @@ ll_define_primitive_end
 
 
 /************************************************************************/
+
+
+ll_INIT(fixnum, 253, "fixnum constants")
+{
+  ll_set_g(SfixumCminS, ll_BOX_fixnum(ll_MIN_fixnum));
+  ll_set_g(SfixumCmaxS, ll_BOX_fixnum(ll_MAX_fixnum));
+
+  return 0;
+}
+

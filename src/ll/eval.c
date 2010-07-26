@@ -1,10 +1,3 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_ll_eval_c__
-#define __rcs_id_ll_eval_c__
-static const char __rcs_id_ll_eval_c[] = "$Id: eval.c,v 1.21 2008/05/24 21:04:05 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #include "ll.h"
 
 /************************************************************************/
@@ -122,8 +115,7 @@ ll_define_primitive_end
 ll_define_primitive(object, eval_stage_1, __1(obj, env), _0())
 {
   ll_v expr;
-  ll_v ir;
-  ll_v op;
+  // ll_v ir, op;
 
   expr = ll_SELF;
 

@@ -1,11 +1,3 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_ll_bcompile2_c__
-#define __rcs_id_ll_bcompile2_c__
-static const char __rcs_id_ll_bcompile2_c[] = "$Id: bcompile2.c,v 1.3 2008/05/26 07:57:42 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-
-
 /***************************************************************************/
 
 /*
@@ -20,9 +12,9 @@ static const char __rcs_id_ll_bcompile2_c[] = "$Id: bcompile2.c,v 1.3 2008/05/26
 #include "bcompile.h"
 
 #if 0
-#define DEBUG_PRINTF fprintf
+#define DEBUG_PRINTF(X) fprintf X
 #else
-#define DEBUG_PRINTF (void)
+#define DEBUG_PRINTF(X) (void) 0
 #endif
 
 /**********************************************************************/
@@ -325,7 +317,7 @@ ll_define_primitive(list, _ir_compile2_body, _3(body, ir, tail_posQ), _0())
 
   ll_assert_ref(IR);
 
-  DEBUG_PRINTF(stderr, "(");
+  DEBUG_PRINTF((stderr, "("));
 
   if ( ll_nullQ(x) ) {
     /* (lambda <formals>) => (lambda <formals> (if #f #f)) */
@@ -377,7 +369,7 @@ ll_define_primitive(list, _ir_compile2_body, _3(body, ir, tail_posQ), _0())
     ll_call_tail(ll_o(_ir_compile2), _3(e, IR, TAIL_POSQ));
   }
 
-  DEBUG_PRINTF(stderr, ")");
+  DEBUG_PRINTF((stderr, ")"));
 }
 ll_define_primitive_end
 
@@ -407,7 +399,7 @@ ll_define_primitive(_ir, _ir_compile2_body, _3(self, ir, tail_posQ), _0())
   */
   ll_assert_ref(IR);
 
-  DEBUG_PRINTF(stderr, "[");
+  DEBUG_PRINTF((stderr, "["));
 
   in_preamble = 0;
 
@@ -502,7 +494,7 @@ ll_define_primitive(_ir, _ir_compile2_body, _3(self, ir, tail_posQ), _0())
     ll_call(ll_o(_ir_emit_patch), _3(ll_SELF, ll_THIS->_probe_pos, ll_make_fixnum(max_stack_depth)));
   }
 
-  DEBUG_PRINTF(stderr, "]");
+  DEBUG_PRINTF((stderr, "]"));
 
 }
 ll_define_primitive_end
@@ -578,14 +570,14 @@ ll_define_primitive(pair, _ir_compile2, _3(self, ir, tail_posQ), _0())
     ll_return(ll_SELF);
   }
 
-  DEBUG_PRINTF(stderr, "*");
+  DEBUG_PRINTF((stderr, "*"));
 
   /* ll_format(ll_undef, "%ir-compile2 ~S\n", 1, ll_SELF); */
 
   if ( ll_EQ(car, ll_s(quote)) ) {
     /* (quote <x>) */
 
-  emit_constant:
+    // emit_constant:
     ll_call(ll_o(_ir_emit_constant), _2(IR, ll_car(x)));
   } else if ( ll_EQ(car, ll_s(_lambda)) ) {
     /* (%lambda #<%ir>) */
@@ -622,7 +614,7 @@ ll_define_primitive(pair, _ir_compile2, _3(self, ir, tail_posQ), _0())
     ll_v value = ll_car(values);
     ll_v b = ll_call(ll_o(_ir_var_scope), _2(IR, var));
    
-    DEBUG_PRINTF(stderr, "\n 2 %s ", (char*) ll_po(var));
+    DEBUG_PRINTF((stderr, "\n 2 %s ", (char*) ll_po(var)));
 
     /* If <var> is global, rewrite as:
     **   (%define '<var> <val> ...)
@@ -657,7 +649,7 @@ ll_define_primitive(pair, _ir_compile2, _3(self, ir, tail_posQ), _0())
 	ll_call(ll_o(_ir_compile2), _3(false_expr, IR, TAIL_POSQ));
       }
     } else {
-      ll_v ifpos, jmppos, falsepos, endpos;
+      ll_v ifpos, jmppos = 0, falsepos, endpos;
 
       /* Compile predicate */
       ll_call(ll_o(_ir_compile2), _3(pred, IR, ll_f));

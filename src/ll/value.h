@@ -48,6 +48,7 @@ typedef long ll_v_word;
 #endif
 #define ll_TAG_MASK ((ll_TAG_BIT << ll_TAG_BITS) - 1)
 #define ll_TAG(X) (((ll_v) (X)) & ll_TAG_MASK)
+#define ll_WORD_BITS (sizeof(ll_v) * 8)
 
 /***********************************************************************/
 /* fixnum */
@@ -60,8 +61,8 @@ long ll_unbox_fixnum(ll_v x);
 /* #define ll_unbox_fixnum(X)ll_UNBOX_fixnum(X) */
 #define ll_ISA_fixnum(X)     (ll_TAG(X) == ll_TAG_fixnum)
 #define ll_TYPE_fixnum(X)    ll_type(fixnum)
-#define ll_MIN_fixnum        (((ll_v_word)~ll_TAG_ZERO) >> ll_TAG_BITS)
-#define ll_MAX_fixnum        ((ll_v_word)(~ll_TAG_ZERO >> ll_TAG_BITS))
+#define ll_MIN_fixnum        (-((ll_v_word)(ll_TAG_BIT << (ll_WORD_BITS - ll_TAG_BITS - 1))))
+#define ll_MAX_fixnum        ((ll_v_word)((~ll_TAG_ZERO) >> (ll_TAG_BITS + 1)))
 
 /***********************************************************************/
 /* locative */

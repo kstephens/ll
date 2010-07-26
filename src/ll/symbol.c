@@ -17,7 +17,8 @@ static const char __rcs_id_ll_symbol_c[] = "$Id: symbol.c,v 1.28 2008/05/24 20:5
 /************************************************************************/
 
 
-#define HASH_EXTERN static
+/* Avoid "defined but not used" errors. */
+// #define HASH_EXTERN static
 #include "hash/charP_hash.c"
 
 #define HASH(X)_ll_symbol_##X
@@ -40,7 +41,7 @@ static const char __rcs_id_ll_symbol_c[] = "$Id: symbol.c,v 1.28 2008/05/24 20:5
 /************************************************************************/
 
 
-#define symtable (*(_ll_symbol_Table **)&ll_runtime(symbol_table))
+#define symtable ll_runtime(symbol_table)
 
 
 void _ll_symtable_init(int size)
@@ -48,14 +49,16 @@ void _ll_symtable_init(int size)
   if ( ! symtable ) {
     symtable = ll_malloc(sizeof(*symtable));
     _ll_symbol_TableInit(symtable, size);
+    _ll_symbol_TableSize(symtable);
+    _ll_symbol_TableNEntries(symtable);
+    _ll_symbol_TableCollisions(symtable);
+    _ll_symbol_TableCollisions(symtable);
   }
 }
 
 
 void _ll_intern_symbol(ll_v sym, ll_v str)
 {
-  const char *name = ll_ptr_string(str);
-
   /* Do not intern anonymous symbols. */
   if ( ll_EQ(str, ll_f) ) {
     return;
@@ -63,7 +66,10 @@ void _ll_intern_symbol(ll_v sym, ll_v str)
 
   ll_set_g(_symbols, ll_cons(sym, ll_g(_symbols)));
 
-  _ll_symbol_TablePush(symtable, name, sym);
+  {
+    const char *name = ll_ptr_string(str);
+    _ll_symbol_TablePush(symtable, name, sym);
+  }
 }
 
 

@@ -229,7 +229,7 @@ void _ll_print_trace(ll_v super)
   fprintf(stderr, "ll: trace: ");
 
   i = _ll_val_sp_end - _ll_val_sp;
-  fprintf(stderr, "%4d ", i);
+  fprintf(stderr, "%4lu ", (unsigned long) i);
 
   while ( i -- ) {
     fprintf(stderr, " ");

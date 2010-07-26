@@ -115,7 +115,7 @@ static const char __rcs_id_hash_hash_def[] = "$Id: hash.def,v 1.7 2007/09/17 07:
 #ifndef HASH_TABLE_AUTO_RESIZE /* Define this to automatically resize the bucket array after add or delete. */
 
 #if HASH_TABLE_FIXED_SIZE == 0
-#define HASH_TABLE_AUTO_RESIZE(HT,GROWTH)if ( ((GROWTH) > 0) && ((HT)->_nentries > (HT)->_entriesLen) || (HASH_TABLE_COLLISIONS_THRESHOLD_CHECK(HT)) ) { HASH(TableResize)(HT, HASH_TABLE_NEW_CAPACITY(HT)); }
+#define HASH_TABLE_AUTO_RESIZE(HT,GROWTH)if ( ((GROWTH) > 0) && (((HT)->_nentries > (HT)->_entriesLen) || (HASH_TABLE_COLLISIONS_THRESHOLD_CHECK(HT))) ) { HASH(TableResize)(HT, HASH_TABLE_NEW_CAPACITY(HT)); }
 #define HASH_TABLE_NENTRIES 1
 #endif
 

@@ -1,10 +1,3 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_ll_format_c__
-#define __rcs_id_ll_format_c__
-static const char __rcs_id_ll_format_c[] = "$Id: format.c,v 1.21 2008/01/06 18:36:33 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #include "ll.h"
 #include <string.h> /* strlen() */
 #include <stdarg.h>
@@ -116,7 +109,7 @@ ll_v _ll_formatv(ll_v port, const char *f, size_t fsize, const ll_v *argv, size_
 	  {
 	    x = GET;
 
-	  do_weak_ptr:
+	    // do_weak_ptr:
 
 	    if ( ll_ISA_ref(x) ) {
 	      char buf[32];

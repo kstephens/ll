@@ -1,13 +1,6 @@
 #ifndef _ll_symbol_h
 #define _ll_symbol_h
 
-#ifndef __rcs_id__
-#ifndef __rcs_id_ll_symbol_h__
-#define __rcs_id_ll_symbol_h__
-static const char __rcs_id_ll_symbol_h[] = "$Id: symbol.h,v 1.7 2008/05/24 20:44:08 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #include "ll/ll.h" /* ll_v */
 
 void _ll_symtable_init(int size);

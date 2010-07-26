@@ -1,10 +1,3 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_ll_bmethod_c__
-#define __rcs_id_ll_bmethod_c__
-static const char __rcs_id_ll_bmethod_c[] = "$Id: bmethod.c,v 1.43 2008/01/06 18:36:33 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #include "ll.h"
 #include "ll/config.h"
 #include "call_int.h"
@@ -94,7 +87,7 @@ int _ll_bc_nargs(int bc)
 
 int _ll_bc_get_args(const ll_bc_t **_bc, long *args)
 {
-  ll_bc_t *pc = *_bc;
+  const ll_bc_t *pc = *_bc;
   int nargs;
 
   nargs = _ll_bc_nargs(GET_1());
@@ -198,7 +191,8 @@ int prompt(const char *pr)
   fflush(stderr);
 
   cmd[0] = '\0';
-  fgets(cmd, sizeof(cmd), stdin);
+  if ( ! fgets(cmd, sizeof(cmd), stdin) )
+    return -1;
 
   switch ( cmd[0] ) {
   case 'q': case 'Q': case '\0':
@@ -254,11 +248,11 @@ int _ll_bc_dump(const ll_bc_t **_pc, int *stack_depth, ll_v meth, int show_stack
   pc_save = pc;
   bcode = *pc;
 
-  sprintf(bp, "BC: %p: %04u : %p : %03d : %12s", 
+  sprintf(bp, "BC: %p: %04lu : %p : %03lu : %12s", 
 	  (void*) ll_UNBOX_ref(METH->_code), 
 	  pc - CODE, 
 	  (void*) _ll_val_sp, 
-	  stack_depth ? *stack_depth : 0,
+	  (unsigned long) (stack_depth ? *stack_depth : 0),
 	  (const char*) _ll_bc_name(bcode));
   bp = strchr(bp, '\0');
   
@@ -348,7 +342,7 @@ ll_define_primitive(byte_code_method, _dump, _1(bmeth), _0())
       lines = 0;
     }
 
-    bcode = _ll_bc_dump(&pc, &stack_depth, ll_SELF, 0);
+    bcode = _ll_bc_dump((const ll_bc_t **) &pc, &stack_depth, ll_SELF, 0);
 
     if ( bcode == 0 )
       break;
@@ -578,7 +572,7 @@ ll_define_primitive(object, _bmethod_apply, __0(args), _0())
     bcCdebug = _ll_bc_debug_at_start;
   }
 
-restart:
+  // restart:
   pc = CODE;
 #if ll_BC_METER
   bcode = 0;

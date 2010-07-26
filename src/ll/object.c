@@ -170,3 +170,14 @@ ll_define_primitive(object, _get_tag, _1(object), _1(no_side_effect,"#t"))
 ll_define_primitive_end
 
 
+/***********************************************************/
+
+ll_INIT(object, 252, "object constants")
+{
+  ll_set_g(SobjectCtagCbitsS, ll_BOX_fixnum(ll_TAG_BITS));
+  ll_set_g(SobjectCrefCsizeS, ll_BOX_fixnum(sizeof(ll_v)));
+  ll_set_g(SobjectCptrCsizeS, ll_BOX_fixnum(sizeof(void*)));
+
+  return 0;
+}
+

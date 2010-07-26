@@ -1,11 +1,3 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_ll_type_struct_h__
-#define __rcs_id_ll_type_struct_h__
-static const char __rcs_id_ll_type_struct_h[] = "$Id: type_struct.h,v 1.4 2008/01/06 23:10:25 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-
-
 #ifndef _ll_type_def
 
 

@@ -1,12 +1,5 @@
 #ifndef _ll_ll_h
 
-#ifndef __rcs_id__
-#ifndef __rcs_id_ll_ll_h__
-#define __rcs_id_ll_ll_h__
-static const char __rcs_id_ll_ll_h[] = "$Id: ll.h,v 1.52 2008/05/25 23:08:41 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #define _ll_ll_h
 
 /*************************************************************************/
@@ -357,6 +350,8 @@ ll_v ll_locative_cdr(ll_v x);
 #define ll_LIST_LOOP(L,X) do{ ll_v _##X = (L); while ( ! ll_nullQ(_##X) ) { ll_v X = ll_car(_##X); _##X = ll_cdr(_##X)
 #define ll_LIST_LOOP_REF(L,X) do{ ll_v _##X = (L); while ( ! ll_nullQ(_##X) ) { ll_v* X = &ll_CAR(_##X); _##X = ll_cdr(_##X)
 #define ll_LIST_LOOP_END }}while(0)
+
+size_t _ll_list_length(ll_v l);
 
 ll_v ll_listn(int n, ...);
 ll_v ll_listv(int n, const ll_v *v);

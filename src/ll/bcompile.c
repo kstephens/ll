@@ -1,11 +1,3 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_ll_bcompile_c__
-#define __rcs_id_ll_bcompile_c__
-static const char __rcs_id_ll_bcompile_c[] = "$Id: bcompile.c,v 1.50 2008/05/26 12:25:32 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-
-
 /* 
    1st pass:
 
@@ -755,8 +747,6 @@ ll_define_primitive(_ir, ___ir_emit_csite_check, _2(ir, c), _0())
 
   /* If it's a call, increment the call site count. */
   if ( ll_unbox_boolean(ll_caddr(x)) ) {
-    ll_v call_site_i = ll_THIS->_call_site_count;
-
     if ( 0 && ll_DEBUG(compile_emit) > 0 ) {      
       ll_format(ll_undef, "  ~O emiting csite-i for ~S\n", 2, ll_SELF, x);
     }
@@ -764,6 +754,9 @@ ll_define_primitive(_ir, ___ir_emit_csite_check, _2(ir, c), _0())
     ll_THIS->_call_site_count = ll__ADD(ll_THIS->_call_site_count, ll_make_fixnum(1)); 
 
 #if ll_USE_LCACHE
+    {
+    ll_v call_site_i = ll_THIS->_call_site_count;
+
     if ( ll_DEBUG(compile_emit) > 0 ) {      
       ll_format(ll_undef, "  ~O emiting csite-i ~S for ~S\n", 
 		3,
@@ -774,6 +767,7 @@ ll_define_primitive(_ir, ___ir_emit_csite_check, _2(ir, c), _0())
     }
 
     ll_call(ll_o(___ir_emit_with_int), _3(ll_SELF, ll_s(csite_i), call_site_i));
+    }
 #endif
   }
 }
@@ -938,7 +932,7 @@ ll_define_primitive_end
 
 ll_define_primitive(_ir, _ir_emit_patch, _3(ir, ploc, dloc), _0())
 {
-  size_t i = ll_unbox_fixnum(ll_ARG_1);
+  // size_t i = ll_unbox_fixnum(ll_ARG_1);
   long x = ll_unbox_fixnum(ll_ARG_2);
 
   if ( ll_DEBUG(compile_emit) ) {

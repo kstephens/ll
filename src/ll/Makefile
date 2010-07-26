@@ -32,7 +32,7 @@ C_PROFILE=-pg
 C_OPTIMIZE=-O3
 #C_OPTIMIZE=-O2
 #C_OPTIMIZE=
-C_WARNINGS=-Wall
+C_WARNINGS=-Wall -Werror
 CC = gcc
 export CC
 CPPFLAGS = -I.. -I$(dir $(DEF_DIR)) -Isrc/include# -I/usr/include 
