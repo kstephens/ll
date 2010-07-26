@@ -1,11 +1,3 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_ll_named_c__
-#define __rcs_id_ll_named_c__
-static const char __rcs_id_ll_named_c[] = "$Id: named.c,v 1.15 2008/05/26 08:58:38 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-
-
 #include "ll.h"
 #include "named.h"
 
@@ -20,7 +12,7 @@ static struct {
 static int map_n;
 
 
-#define BUF_SIZE 32
+#define BUF_SIZE 64
 
 static char *get_buf()
 {
@@ -72,7 +64,7 @@ const char *ll_po(ll_v x)
   } else if ( ll_EQ(x, ll_nil) ) {
     return "()";
   } else if ( ll_EQ(isa, ll_type(fixnum)) ) {
-    snprintf(n = get_buf(), BUF_SIZE, "%ld", (long) ll_unbox_fixnum(x));
+    snprintf(n = get_buf(), BUF_SIZE, "%lld", (long long) ll_unbox_fixnum(x));
   } else if ( ll_EQ(isa, ll_type(flonum)) ) {
     snprintf(n = get_buf(), BUF_SIZE, "%g", (double) ll_unbox_flonum(x));
     if ( ! strchr(n, 'e') || ! strchr(n, '.') ) {
@@ -101,11 +93,11 @@ const char *ll_po(ll_v x)
      tn = ll_po_(isa);
 
      if ( tn ) {
-       snprintf(n = get_buf(), BUF_SIZE, "#<%s #p%lu>", tn, (unsigned long) ll_UNBOX_ref(x));
+       snprintf(n = get_buf(), BUF_SIZE, "#<%s #p%llu>", tn, (unsigned long long) ll_UNBOX_ref(x));
        return n;
      }
 
-     snprintf(n = get_buf(), BUF_SIZE, "#<#<type #p%lu> #p%lu>", (unsigned long) ll_UNBOX_ref(isa), (unsigned long) ll_UNBOX_ref(x));
+     snprintf(n = get_buf(), BUF_SIZE, "#<#<type #p%llu> #p%llu>", (unsigned long long) ll_UNBOX_ref(isa), (unsigned long long) ll_UNBOX_ref(x));
    }
 
    return n;
