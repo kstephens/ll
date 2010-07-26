@@ -288,8 +288,8 @@ ll_define_primitive_end
 
 ll_INIT(fixnum, 253, "fixnum constants")
 {
-  ll_set_g(SfixumCminS, ll_BOX_fixnum(ll_MIN_fixnum));
-  ll_set_g(SfixumCmaxS, ll_BOX_fixnum(ll_MAX_fixnum));
+  ll_set_g(SfixnumCminS, ll_BOX_fixnum(ll_MIN_fixnum));
+  ll_set_g(SfixnumCmaxS, ll_BOX_fixnum(ll_MAX_fixnum));
 
   return 0;
 }
