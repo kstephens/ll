@@ -604,6 +604,19 @@ ll_type_def_slots_end(flonum)
 ll_type_def_end(flonum)
 
 
+/* <ratnum> are rationals. */
+ll_type_def(ratnum, type)
+ll_type_def_supers(ratnum)
+  ll_type_def_super(ratnum, exact)
+  ll_type_def_super(ratnum, rational)
+ll_type_def_supers_end(ratnum)
+ll_type_def_slots(ratnum)
+  ll_type_def_slot(ratnum, ll_v, numerator)
+  ll_type_def_slot(ratnum, ll_v, denominator)
+ll_type_def_slots_end(ratnum)
+ll_type_def_end(ratnum)
+
+
 /******************************************************************/
 
 

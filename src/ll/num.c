@@ -1,10 +1,3 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_ll_num_c__
-#define __rcs_id_ll_num_c__
-static const char __rcs_id_ll_num_c[] = "$Id: num.c,v 1.8 2007/12/18 10:37:00 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #include "ll.h"
 #include <math.h>
 

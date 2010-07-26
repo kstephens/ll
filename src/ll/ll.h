@@ -427,6 +427,15 @@ ll_v ll_quote(ll_v x);
 /*************************************************************************/
 /* number */
 
+int ll_negativeQ(ll_v x);
+int ll_zeroQ(ll_v x);
+int ll_positiveQ(ll_v x);
+ll_v ll_abs(ll_v x);
+
+ll_v ll_make_ratnum(ll_v n, ll_v d);
+ll_v ll_numerator(ll_v x);
+ll_v ll_denominator(ll_v x);
+
 #define BOP(N,O) ll_v ll__##N(ll_v x, ll_v y);
 #define UOP(N,O) ll_v ll__##N(ll_v x);
 

@@ -1,4 +1,3 @@
-# $Id: config.mak,v 1.12 2008/01/07 06:05:24 stephens Exp $
 
 # Has GNU Readline.
 HAS_READLINE=1
@@ -22,7 +21,7 @@ ll_USE_GC_TREADMILL=0
 # Use a lookup cache at all call sites.
 ll_USE_LCACHE=0
 
-# Increment operation version each time a method is added or removed from a method.
+# Increment operation version each time a method is added or removed from an operation.
 ll_USE_OPERATION_VERSION=1
 
 # Use a type-method-alist in <operation>
@@ -31,7 +30,7 @@ ll_USE_TYPE_METH_ALIST=1
 ll_USE_OP_METH_ALIST=1
 
 # Record lookup cache stats.
-ll_LOOKUP_CACHE_STATS=0
+ll_LOOKUP_CACHE_STATS=1
 
 # Store C FILE and LINE information in <message> objects.
 ll_USE_FILE_LINE=0

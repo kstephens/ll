@@ -438,6 +438,15 @@ ll_define_primitive(flonum, _write_port, _3(obj, port, op), _0())
 ll_define_primitive_end
 
 
+ll_define_primitive(ratnum, _write_port, _3(obj, port, op), _0())
+{
+  ll_call(ll_o(_write_port), _3(ll_THIS->_numerator, PORT, OP));
+  ll_write_string(PORT, "/", 1);
+  ll_call_tail(ll_o(_write_port), _3(ll_THIS->_denominator, PORT, OP));
+}
+ll_define_primitive_end
+
+
 ll_define_primitive(locative, _write_port, _3(obj, port, op), _0())
 {
   ll_format(PORT, "#<locative ~L>", 1, OBJ); /* tail? */

@@ -62,15 +62,6 @@ ll_define_primitive_end
 /************************************************************************/
 
 
-ll_define_primitive(integer, inexact__exact, _1(z), _1(no_side_effect,"#t"))
-{
-  ll_return(ll_SELF);
-}
-ll_define_primitive_end
-
-/************************************************************************/
-
-
 ll_INIT(integer, 254, "integer constants")
 {
   return 0;

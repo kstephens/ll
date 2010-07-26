@@ -1,10 +1,3 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_ll_number_c__
-#define __rcs_id_ll_number_c__
-static const char __rcs_id_ll_number_c[] = "$Id: number.c,v 1.14 2007/12/18 10:37:00 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #include "ll.h"
 #include "call_int.h"
 
@@ -215,6 +208,55 @@ ll_define_primitive_end
 
 
 /************************************************************************/
+
+
+int ll_negativeQ(ll_v x)
+{
+  if ( ll_ISA_fixnum(x) ) {
+    return ll_UNBOX_fixnum(x) < 0;
+  } else {
+    return ll_unbox_boolean(ll_call(ll_o(negativeQ), _1(x)));
+  }
+}
+
+
+int ll_zeroQ(ll_v x)
+{
+  if ( ll_ISA_fixnum(x) ) {
+    return ll_UNBOX_fixnum(x) == 0;
+  } else {
+    return ll_unbox_boolean(ll_call(ll_o(zeroQ), _1(x)));
+  }
+}
+
+
+int ll_positiveQ(ll_v x)
+{
+  if ( ll_ISA_fixnum(x) ) {
+    return ll_UNBOX_fixnum(x) > 0;
+  } else {
+    return ll_unbox_boolean(ll_call(ll_o(positiveQ), _1(x)));
+  }
+}
+
+
+ll_v ll_abs(ll_v x)
+{
+  return ll_call(ll_o(abs), _1(x));
+}
+
+
+ll_v ll_numerator(ll_v x)
+{
+  return ll_call(ll_o(numerator), _1(x));
+}
+
+
+ll_v ll_denominator(ll_v x)
+{
+  return ll_call(ll_o(denominator), _1(x));
+}
+
 
 #define BOP(N,O) ll_v ll__##N(ll_v x, ll_v y) { return(ll_call(ll_o(_##N), _2(x, y))); }
 #define UOP(N,O) ll_v ll__##N(ll_v x) { return(ll_call(ll_o(_##N), _1(x))); }

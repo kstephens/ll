@@ -66,9 +66,11 @@ C_FILES = \
   undef.c \
   bool.c \
   number.c \
+  rational.c \
   integer.c \
   fixnum.c \
   flonum.c \
+  ratnum.c \
   char.c \
   string.c \
   symbol.c \

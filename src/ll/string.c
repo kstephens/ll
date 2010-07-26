@@ -177,10 +177,27 @@ ll_define_primitive_end
 
 ll_define_primitive(string, string__number, __1(str,radix), _1(no_side_effect,"#t"))
 {
-  char *v = ll_THIS->_array;
+  const char *v = (const char *) ll_THIS->_array;
   size_t l = ll_THIS->_length;
-  double acc = 0;
+  int is_rational = 0;
+  ll_v numerator = ll_f;
+  ll_v denominator = ll_f;
   int radix;
+
+  if ( ll_ARGC >= 2 ) {
+    radix = ll_unbox_fixnum(ll_ARG_1);
+    if ( ! (0 < radix && radix <= 36) ) {
+      ll_return(ll_f);
+    }
+  } else {
+    radix = 10;
+  }
+
+ again:
+  {
+  double acc_d = 0;
+  ll_v_word acc_i = 0;
+  int acc_i_overflow = 0;
   int neg = 0;
   int has_sign = 0;
   int has_digits = 0;
@@ -192,15 +209,7 @@ ll_define_primitive(string, string__number, __1(str,radix), _1(no_side_effect,"#
   int is_float = 0;
   int exponent = 0;
   int c;
-
-  if ( ll_ARGC >= 2 ) {
-    radix = ll_unbox_fixnum(ll_ARG_1);
-    if ( ! (0 < radix && radix <= 36) ) {
-      ll_return(ll_f);
-    }
-  } else {
-    radix = 10;
-  }
+  ll_v n;
 
   if ( PEEK() == '+' ) {
     READ();
@@ -282,6 +291,12 @@ ll_define_primitive(string, string__number, __1(str,radix), _1(no_side_effect,"#
       /* a '_' within a digit string is padding */
     } else if ( (has_digits || has_radix) && c == '_' ) {
       continue;
+    } else if ( c == '/' ) {
+      if ( is_rational || has_dot || has_exp || ! has_digits ) {
+	ll_return(ll_f);
+      }
+      is_rational = 1;
+      break;
     } else if ( c == '.' ) {
       if ( has_dot || has_radix )
 	ll_return(ll_f);
@@ -328,9 +343,19 @@ ll_define_primitive(string, string__number, __1(str,radix), _1(no_side_effect,"#
 
     /* c is within the radix? */
     if ( 0 <= c && c < radix ) {
-      acc *= radix;
-      acc += c;
       has_digits = 1;
+      acc_d *= radix;
+      acc_d += c;
+      {
+	ll_v_word new_acc_i = (acc_i * radix + c);
+	/* Check for int overflow. */
+	if ( new_acc_i < acc_i ) {
+	  acc_i_overflow = 1;
+	  is_float = 1;
+	} else {
+	  acc_i = new_acc_i;
+	}
+      }
       if ( has_dot ) {
 	exponent --;
       }
@@ -340,35 +365,54 @@ ll_define_primitive(string, string__number, __1(str,radix), _1(no_side_effect,"#
   }
 
   /* If we didn't get any digits, it's not a number */
-  if ( l || ! has_digits ) {
+  if ( ! has_digits ) {
     ll_return(ll_f);
   }
 
   /* Handle sign */
   if ( neg ) {
-    acc = - acc;
+    acc_d = - acc_d;
+    acc_i = - acc_i;
   }
 
-  /* Was it 15##?  Make it float */
+  /* Was it "15##"?  Make it float */
   if ( has_hash_digit ) {
     is_float = 1;
   }
 
   /* Is is a float */
   if ( is_float ) {
-    acc *= pow(radix, exponent);
+    acc_d *= pow(radix, exponent);
  
-    /* fprintf(stderr, "string->number: %.22g == %.22g\n", (double) acc, (double) ll_unbox_flonum(ll_make_flonum(acc))); */
+    /* fprintf(stderr, "string->number: %.22g == %.22g\n", (double) acc_d, (double) ll_unbox_flonum(ll_make_flonum(acc_d))); */
 
-    ll_return(ll_make_flonum(acc));
+    n = ll_make_flonum(acc_d);
+  } else {
+    /* Check for fixnum overflow. */
+    if ( ll_MIN_fixnum <= acc_i && acc_i <= ll_MAX_fixnum ) {
+      n = ll_make_fixnum(acc_i);
+    } else {
+      ll_return(ll_f);
+    }
+  }
+  
+  if ( is_rational ) {
+    if ( ll_EQ(numerator, ll_f) ) {
+      numerator = n;
+      // fprintf(stderr, "  string->number: numerator %.22g %lld\n", acc_d, (long long) acc_i); 
+      goto again;
+    } else {
+      if ( l ) {
+	ll_return(ll_f);
+      }
+      denominator = n;
+      // fprintf(stderr, "  string->number: denominator %.22g %lld\n", acc_d, (long long) acc_i); 
+      n = ll_make_ratnum(numerator, denominator);
+    }
   }
 
-  /* Check for overflow */
-  if ( (long) acc != (long) ll_unbox_fixnum(ll_make_fixnum((long) acc)) ) {
-    ll_return(ll_f);
+  ll_return(n);
   }
-
-  ll_return(ll_make_fixnum((long) acc));
 }
 ll_define_primitive_end
 

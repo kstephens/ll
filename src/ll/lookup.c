@@ -1,10 +1,3 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_ll_lookup_c__
-#define __rcs_id_ll_lookup_c__
-static const char __rcs_id_ll_lookup_c[] = "$Id: lookup.c,v 1.35 2008/05/27 04:06:41 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #include "ll.h"
 #include "call_int.h"
 #include "assert.h"
