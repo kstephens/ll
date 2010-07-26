@@ -66,6 +66,7 @@ C_FILES = \
   undef.c \
   bool.c \
   number.c \
+  integer.c \
   fixnum.c \
   flonum.c \
   char.c \
@@ -436,7 +437,7 @@ TAGS : $(C_FILES) $(H_FILES)
 clean : speed_test_clean
 	-mv llt$(EXE) llt-save$(EXE)
 	rm -f $(PRODUCTS) TAGS llt$(EXE) llt.strip$(EXE) floatcfg$(EXE) *core *.a *.o *.i *.s *.exe [0-9]*.tmp *~ .#*
-	rm -f *.gcda *.gcno *.gcov
+	rm -f *.gcda *.gcno *.gcov *.oc
 
 cleandefs :
 	rm -f $(DEFS) 

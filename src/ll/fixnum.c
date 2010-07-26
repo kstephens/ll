@@ -95,63 +95,6 @@ ll_define_primitive(fixnum, _gcd, _2(n1, n2), _1(no_side_effect,"#t"))
 ll_define_primitive_end
 
 
-ll_define_primitive(integer, _lcm, _2(n1, n2), _1(no_side_effect,"#t"))
-{
-  ll_v d = ll_call(ll_o(_gcd), _2(ll_ARG_0, ll_ARG_1));
-
-  ll_call_tail(ll_o(abs), _1(ll_call(ll_o(_MUL), _2(ll_ARG_0, (ll_call(ll_o(_DIV), _2(ll_ARG_1, d)))))));
-}
-ll_define_primitive_end
-
-
-/************************************************************************/
-
-
-ll_define_primitive(fixnum, numerator, _1(q), _1(no_side_effect,"#t"))
-{
-  ll_return(ll_SELF);
-}
-ll_define_primitive_end
-
-
-ll_define_primitive(fixnum, denominator, _1(q), _1(no_side_effect,"#t"))
-{
-  ll_return(ll_BOX_fixnum(1));
-}
-ll_define_primitive_end
-
-
-/************************************************************************/
-
-
-ll_define_primitive(fixnum, floor, _1(x), _1(no_side_effect,"#t"))
-{
-  ll_return(ll_SELF);
-}
-ll_define_primitive_end
-
-
-ll_define_primitive(fixnum, ceiling, _1(x), _1(no_side_effect,"#t"))
-{
-  ll_return(ll_SELF);
-}
-ll_define_primitive_end
-
-
-ll_define_primitive(fixnum, truncate, _1(x), _1(no_side_effect,"#t"))
-{
-  ll_return(ll_SELF);
-}
-ll_define_primitive_end
-
-
-ll_define_primitive(fixnum, round, _1(x), _1(no_side_effect,"#t"))
-{
-  ll_return(ll_SELF);
-}
-ll_define_primitive_end
-
-
 /************************************************************************/
 
 
@@ -168,13 +111,6 @@ ll_define_primitive_end
 ll_define_primitive(fixnum, exact__inexact, _1(z), _1(no_side_effect,"#t"))
 {
   ll_return(ll_make_flonum(ll_UNBOX_fixnum(ll_SELF)));
-}
-ll_define_primitive_end
-
-
-ll_define_primitive(fixnum, inexact__exact, _1(z), _1(no_side_effect,"#t"))
-{
-  ll_return(ll_SELF);
 }
 ll_define_primitive_end
 
