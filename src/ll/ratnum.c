@@ -135,12 +135,20 @@ ll_define_primitive_end
 
 ll_define_primitive(ratnum, _ADD, _2(x, y), _1(no_side_effect, "#t"))
 {
+  if ( ll_ISA_fixnum(ll_ARG_1) ) {
+    ll_return(ll_make_ratnum(ll__ADD(N, ll__MUL(ll_ARG_1, D)), D));
+  } else {
+  }
 }
 ll_define_primitive_end
 
 
 ll_define_primitive(ratnum, _SUB, _2(x, y), _1(no_side_effect, "#t"))
 {
+  if ( ll_ISA_fixnum(ll_ARG_1) ) {
+    ll_return(ll_make_ratnum(ll__SUB(N, ll__MUL(ll_ARG_1, D)), D));
+  } else {
+  }
 }
 ll_define_primitive_end
 

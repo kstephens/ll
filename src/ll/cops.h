@@ -16,7 +16,9 @@ BOP(bxor,^)
 BOP(ADD,+)
 BOP(SUB,-)
 BOP(MUL,*)
+#ifndef DIV_SKIP
 BOP(DIV,/)
+#endif
 UOP(NEG,-)
 
 ROP(EQ,==)
