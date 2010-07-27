@@ -71,6 +71,7 @@ C_FILES = \
   fixnum.c \
   flonum.c \
   ratnum.c \
+  bignum.c \
   char.c \
   string.c \
   symbol.c \
@@ -116,6 +117,7 @@ ifneq "$(strip $(HAS_HISTORY))" "0"
 LIBS += -lhistory
 endif
 
+LIBS += -lgmp
 LIBS += -lm
 
 EARLY_H = \

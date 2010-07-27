@@ -155,7 +155,7 @@ ll_INIT(fluid1, 90, "bindings list")
 }
 
 
-ll_INIT(fluid2, 255, "top-level fluid bindings")
+ll_INIT(fluid2, 256, "top-level fluid bindings")
 {
   ll_bind_fluid(ll_s(_top_level_fluid_bindings), ll_f);
   ll_set_g(_top_level_fluid_bindings, ll_g(_fluid_bindings));

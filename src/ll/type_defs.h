@@ -1,13 +1,3 @@
-#if 0
-#ifndef __rcs_id__
-#ifndef __rcs_id_ll_type_defs_h__
-#define __rcs_id_ll_type_defs_h__
-static const char __rcs_id_ll_type_defs_h[] = "$Id: type_defs.h,v 1.5 2008/05/26 12:21:38 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-#endif
-
-
 /******************************************************************/
 
      /* <properties-mixin> objects can perform property methods. */
@@ -615,6 +605,18 @@ ll_type_def_slots(ratnum)
   ll_type_def_slot(ratnum, ll_v, denominator)
 ll_type_def_slots_end(ratnum)
 ll_type_def_end(ratnum)
+
+
+/* <bignum> are integers that cannot fit in <fixnum>. */
+ll_type_def(bignum, type)
+ll_type_def_supers(bignum)
+  ll_type_def_super(bignum, exact)
+  ll_type_def_super(bignum, integer)
+ll_type_def_supers_end(bignum)
+ll_type_def_slots(bignum)
+  ll_type_def_slot(bignum, mpz_t, n)
+ll_type_def_slots_end(bignum)
+ll_type_def_end(bignum)
 
 
 /******************************************************************/

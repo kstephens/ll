@@ -147,11 +147,22 @@ int ll_init(int *argcp, char ***argvp, char ***envp)
 
     ll_initializing ++;
 
+    /* Defaults. */
+    for ( i = 0; (p = _ll_inits[i ++]); ) {
+      if ( ! p->name ) {
+	p->name = "";
+      }
+      if ( ! p->desc ) {
+	p->desc = "";
+      }
+    }
+
     /* Sort initializers by priority. */
     for (i = 0; _ll_inits[i]; i ++)
       ;
     qsort(_ll_inits, i, sizeof(_ll_inits[0]), init_cmp);
 
+    /* Scan for priority clashes. */
     for ( i = 0; (p = _ll_inits[i ++]); ) {
       int clash = 0;
 
@@ -167,11 +178,24 @@ int ll_init(int *argcp, char ***argvp, char ***envp)
 	pri_clash ++;
       }
 
-      if ( print_inits || clash ) {
+      if ( clash ) {
+	ll_init_print(p, " <= CLASH\n");
+      }
+    }
+
+    if ( print_inits > 1 || pri_clash ) {
+      fprintf(stderr, "\nll init schedule:\n");
+      for ( i = 0; (p = _ll_inits[i ++]); ) {
+	ll_init_print(p, ": SCHEDULED\n");
+      }
+    }
+
+    ll_assert_msg(init, pri_clash == 0, ( "%d inits clashed", pri_clash));
+
+
+    for ( i = 0; (p = _ll_inits[i ++]); ) {
+      if ( print_inits ) {
 	ll_init_print(p, 0);
-	if ( clash ) {
-	  fprintf(stderr, " <= CLASH\n");
-	}
       }
 
       rtn = (p->func)(argcp, argvp, envp);
@@ -192,7 +216,6 @@ int ll_init(int *argcp, char ***argvp, char ***envp)
     }
 
     ll_assert_msg(init, i > 1, ("inits.h might be empty"));
-    ll_assert_msg(init, pri_clash == 0, ( "%d inits clashed", pri_clash));
 
     ll_initializing --;
     ll_initialized ++;

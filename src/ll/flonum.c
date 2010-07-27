@@ -35,7 +35,7 @@ ll_v ll_coerce_flonum(ll_v x)
   else if ( ll_ISA_fixnum(x) ) {
     return ll_make_flonum(ll_UNBOX_fixnum(x));
   }
-  else if ( ll_ISA_ratnum(x) ) {
+  else if ( ll_ISA_ratnum(x) || ll_ISA_bignum(x) ) {
     return ll_call(ll_o(exact__inexact), _1(x));
   }
   else {
