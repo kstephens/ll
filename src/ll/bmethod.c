@@ -248,9 +248,9 @@ int _ll_bc_dump(const ll_bc_t **_pc, int *stack_depth, ll_v meth, int show_stack
   pc_save = pc;
   bcode = *pc;
 
-  sprintf(bp, "BC: %p: %04lu : %p : %03lu : %12s", 
+  sprintf(bp, "BC: %p: %04ld : %p : %03lu : %12s", 
 	  (void*) ll_UNBOX_ref(METH->_code), 
-	  pc - CODE, 
+	  (long) (pc - CODE), 
 	  (void*) _ll_val_sp, 
 	  (unsigned long) (stack_depth ? *stack_depth : 0),
 	  (const char*) _ll_bc_name(bcode));

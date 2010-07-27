@@ -1,12 +1,4 @@
 
-#ifndef __rcs_id__
-#ifndef __rcs_id_ll_vec_h__
-#define __rcs_id_ll_vec_h__
-static const char __rcs_id_ll_vec_h[] = "$Id: vec.h,v 1.3 2008/01/06 18:36:33 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-
-
 #define __ll_VEC_NAME(VEC,NAME)ll_##NAME##_##VEC
 #define _ll_VEC_NAME(VEC,NAME)__ll_VEC_NAME(VEC,NAME)
 
@@ -14,6 +6,7 @@ ll_v _ll_VEC_NAME(_ll_VEC,make)(_ll_VEC_ELEM_TYPE *v, size_t s);
 _ll_VEC_ELEM_TYPE *_ll_VEC_NAME(_ll_VEC,ptr)(ll_v x);
 
 size_t _ll_VEC_NAME(_ll_VEC,len)(ll_v x);
+void _ll_VEC_NAME(_ll_VEC,set_len)(ll_v x, size_t size);
 
 ll_v _ll_VEC_NAME(_ll_VEC,make_copy)(const _ll_VEC_ELEM_TYPE *v, size_t s);
 

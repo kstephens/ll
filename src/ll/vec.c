@@ -670,6 +670,21 @@ size_t _ll_VEC_NAME(_ll_VEC,len)(ll_v x)
 }
 
 
+
+void _ll_VEC_NAME(_ll_VEC,set_len)(ll_v x, size_t s)
+{
+  _ll_VEC_NAME(_ll_VEC,tsa) *self;
+  ll_v type = ll_TYPE(x);
+
+  if ( ll_EQ(type, ll_type(_ll_VEC_MUTABLE)) ) {
+    self = ll_THIS_ISA(_ll_VEC, x);
+    self->_length = s;
+  } else {
+    ll_unbox_fixnum(ll_call(ll_o(PASTE2(_ll_VEC,_set_lengthE)), _2(x, ll_BOX_fixnum(s))));
+  }
+}
+
+
 #undef _ll_VEC_MUTABLE
 #undef _ll_VEC_SUPER
 #undef _ll_VEC

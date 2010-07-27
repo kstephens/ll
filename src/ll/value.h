@@ -23,9 +23,11 @@
 #if defined(__x86_64)
 typedef unsigned long long ll_v;
 typedef long long ll_v_word;
+#define ll_v_BITS 64
 #define ll_TAG_BIT 1LL
 #define ll_TAG_ZERO 0ULL
 #else
+#define ll_v_BITS 32
 typedef unsigned long ll_v;
 typedef long ll_v_word;
 #define ll_TAG_BIT 1L

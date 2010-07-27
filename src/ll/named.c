@@ -64,7 +64,11 @@ const char *ll_po(ll_v x)
   } else if ( ll_EQ(x, ll_nil) ) {
     return "()";
   } else if ( ll_EQ(isa, ll_type(fixnum)) ) {
-    snprintf(n = get_buf(), BUF_SIZE, "%lld", (long long) ll_unbox_fixnum(x));
+    if ( sizeof(ll_v_word) > sizeof(long) ) {
+      snprintf(n = get_buf(), BUF_SIZE, "%lld", (long long) ll_unbox_fixnum(x));
+    } else { 
+      snprintf(n = get_buf(), BUF_SIZE, "%ld", (long) ll_unbox_fixnum(x));
+    }
   } else if ( ll_EQ(isa, ll_type(flonum)) ) {
     snprintf(n = get_buf(), BUF_SIZE, "%g", (double) ll_unbox_flonum(x));
     if ( ! strchr(n, 'e') || ! strchr(n, '.') ) {
@@ -93,11 +97,19 @@ const char *ll_po(ll_v x)
      tn = ll_po_(isa);
 
      if ( tn ) {
-       snprintf(n = get_buf(), BUF_SIZE, "#<%s #p%llu>", tn, (unsigned long long) ll_UNBOX_ref(x));
+#if ll_v_BITS == 64
+	 snprintf(n = get_buf(), BUF_SIZE, "#<%s #p%llu>", tn, (unsigned long long) ll_UNBOX_ref(x));
+#else
+	 snprintf(n = get_buf(), BUF_SIZE, "#<%s #p%lu>", tn, (unsigned long) ll_UNBOX_ref(x));
+#endif
        return n;
      }
 
-     snprintf(n = get_buf(), BUF_SIZE, "#<#<type #p%llu> #p%llu>", (unsigned long long) ll_UNBOX_ref(isa), (unsigned long long) ll_UNBOX_ref(x));
+#if ll_v_BITS == 64
+       snprintf(n = get_buf(), BUF_SIZE, "#<#<type #p%llu> #p%llu>", (unsigned long long) ll_UNBOX_ref(isa), (unsigned long long) ll_UNBOX_ref(x));
+#else
+       snprintf(n = get_buf(), BUF_SIZE, "#<#<type #p%lu> #p%lu>", (unsigned long) ll_UNBOX_ref(isa), (unsigned long) ll_UNBOX_ref(x));
+#endif
    }
 
    return n;

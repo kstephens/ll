@@ -1,5 +1,5 @@
 #include "ll.h"
-
+#include <string.h> /* strlen() */
 
 /************************************************************************/
 
@@ -49,7 +49,10 @@ ll_v ll_coerce_bignum(ll_v n)
 {
   ll_v r;
 
-  if ( ll_ISA_fixnum(n) ) {
+  if ( ll_ISA_bignum(n) ) {
+    return n;
+  }
+  else if ( ll_ISA_fixnum(n) ) {
     r = ll_make_bignum_(ll_UNBOX_fixnum(n));
   }
   else if ( ll_ISA_flonum(n) ) {
@@ -188,8 +191,9 @@ ll_define_primitive_end
 ll_define_primitive(bignum, number__string, __1(z, radix), _1(no_side_effect, "#t"))
 {
   int r = ll_ARGC >= 2 ? ll_UNBOX_fixnum(ll_ARG_1) : 10;
-  ll_v str = ll_make_string(0, mpz_sizeinbase (Xn, r) + 2);
+  ll_v str = ll_make_copy_string(0, mpz_sizeinbase (Xn, r) + 2);
   mpz_get_str(ll_ptr_string(str), r, Xn);
+  ll_set_len_string(str, strlen(ll_ptr_string(str)));
   ll_return(str);
 }
 
