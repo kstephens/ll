@@ -419,6 +419,7 @@ ll_define_primitive_end
 
 ll_define_primitive(fixnum, _write_port, _3(obj, port, op), _0())
 {
+  /* FIXME: handle radix. */
   char buf[sizeof(ll_v) * 8 + 2];
   if ( sizeof(ll_v) > sizeof(long) ) {
     sprintf(buf, "%lld", (long long) ll_unbox_fixnum(OBJ));
@@ -449,6 +450,16 @@ ll_define_primitive(ratnum, _write_port, _3(obj, port, op), _0())
   ll_call_tail(ll_o(_write_port), _3(ll_THIS->_denominator, PORT, OP));
 }
 ll_define_primitive_end
+
+
+ll_define_primitive(bignum, _write_port, _3(obj, port, op), _0())
+{
+  /* FIXME: handle radix. */
+  ll_v str = ll_call(ll_o(number__string), _1(ll_SELF));
+  ll_call_tail(ll_o(_output_string), _2(PORT, str));
+}
+ll_define_primitive_end
+
 
 
 ll_define_primitive(locative, _write_port, _3(obj, port, op), _0())
