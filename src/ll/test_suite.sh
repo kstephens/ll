@@ -30,8 +30,11 @@ t_passed() {
 t_failed() {
     echo "t $*: FAILED"
     errors=1
-    set -x
-    gdb -x ./run.gdb --args ${LLT} -p -e "$@"
+    if [ -n "$RETRY_WITH_GDB" ]
+    then
+      set -x
+      gdb -x ./run.gdb --args ${LLT} -p -e "$@"
+    fi
     return 1
 }
 
@@ -75,14 +78,17 @@ t '(zero?     *bignum:max*)'
 t '(positive? *bignum:max*)'
 t '(exact->inexact *bignum:max*)'
 t '(number->string (+ *bignum:max* 1)'
-t '(load "lib/ll/type.ll") (type-ancestors <fixnum>)'
+t '(gcd (+ *fixnum:max* 1) 2)'
+t '(gcd 2 (+ *fixnum:max* 1))'
 t '(load "lib/ll/test/slot_closure.ll")'
-t '(load "test/locative.scm")'
-t '(load "test/lambda.scm")'
-t '(load "test/closed.scm")'
-t '(load "test/mycons.scm")'
-t '(load "test/body_define.scm")'
-t '(load "test/tak_test.scm")'
+t '(load "lib/ll/test/locative.scm")'
+t '(load "lib/ll/test/lambda.scm")'
+t '(load "lib/ll/test/closed.scm")'
+t '(load "lib/ll/test/mycons.scm")'
+t '(load "lib/ll/test/number.scm")'
+t '(load "lib/ll/test/body_define.scm")'
+t '(load "lib/ll/type.ll") (type-ancestors <fixnum>)'
+t '(load "lib/ll/test/tak_test.scm")'
 t '(posix:chdir "lib/ll/test") (load "test.scm") (test-sc4)'
 t '(load "pp.scm") (pretty-print nil)'
 

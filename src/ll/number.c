@@ -10,7 +10,7 @@ ll_define_primitive(object, ADD, __0(x), _1(no_side_effect,"#t"))
   ll_v x;
 
   if ( ll_ARGC == 0 ) {
-    x = ll_make_fixnum(0);
+    x = ll_BOX_fixnum(0);
   } else {
     int i;
 
@@ -29,7 +29,7 @@ ll_define_primitive(object, MUL, __0(x), _1(no_side_effect,"#t"))
   ll_v x;
 
   if ( ll_ARGC == 0 ) {
-    x = ll_make_fixnum(1);
+    x = ll_BOX_fixnum(1);
   } else {
     int i;
 
@@ -64,7 +64,7 @@ ll_define_primitive(number, DIV, __1(x,y), _1(no_side_effect,"#t"))
 {
 
   if ( ll_ARGC == 1 ) {
-    ll_call_tail(ll_o(_DIV), _2(ll_make_fixnum(1), ll_SELF));
+    ll_call_tail(ll_o(_DIV), _2(ll_BOX_fixnum(1), ll_SELF));
   } else {
     int i;
     ll_v x = ll_ARG_1;
@@ -83,7 +83,7 @@ ll_define_primitive_end
 ll_define_primitive(object, gcd, __0(n), _1(no_side_effect,"#t"))
 {
   if ( ll_ARGC == 0 ) {
-    ll_return(ll_make_fixnum(0));
+    ll_return(ll_BOX_fixnum(0));
   } else {
     /* From Knuth, v. 2, p. 341 */
     int k = ll_ARGC - 1;
@@ -102,7 +102,7 @@ ll_define_primitive_end
 ll_define_primitive(object, lcm, __0(n), _1(no_side_effect,"#t"))
 {
   if ( ll_ARGC == 0 ) {
-    ll_return(ll_make_fixnum(1));
+    ll_return(ll_BOX_fixnum(1));
   } else {
     int k = ll_ARGC - 1;
     ll_v d = ll_ARGV[k];
@@ -128,7 +128,7 @@ ll_define_primitive_end
 
 ll_define_primitive(real, imag_part, _1(z), _1(no_side_effect,"#t"))
 {
-  ll_return(ll_make_fixnum(0));
+  ll_return(ll_BOX_fixnum(0));
 }
 ll_define_primitive_end
 
@@ -142,7 +142,7 @@ ll_define_primitive_end
 
 ll_define_primitive(real, angle, _1(z), _1(no_side_effect,"#t"))
 {
-  ll_return(ll_make_fixnum(0));
+  ll_return(ll_BOX_fixnum(0));
 }
 ll_define_primitive_end
 
@@ -269,6 +269,12 @@ int ll_positiveQ(ll_v x)
 ll_v ll_abs(ll_v x)
 {
   return ll_call(ll_o(abs), _1(x));
+}
+
+
+ll_v ll_modulo(ll_v x, ll_v y)
+{
+  return ll_call(ll_o(modulo), _2(x, y));
 }
 
 

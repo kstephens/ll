@@ -182,15 +182,15 @@ ll_define_primitive(string, string__number, __1(str,radix), _1(no_side_effect,"#
   int is_rational = 0;
   ll_v numerator = ll_f;
   ll_v denominator = ll_f;
-  int radix;
+  int default_radix = 0;
 
-  if ( ll_ARGC >= 2 ) {
-    radix = ll_unbox_fixnum(ll_ARG_1);
-    if ( ! (0 < radix && radix <= 36) ) {
+  if ( ll_ARGC > 1 ) {
+    default_radix = ll_unbox_fixnum(ll_ARG_1);
+    if ( ! (0 < default_radix && default_radix <= 36) ) {
       ll_return(ll_f);
     }
   } else {
-    radix = 10;
+    default_radix = 10;
   }
 
  again:
@@ -199,6 +199,7 @@ ll_define_primitive(string, string__number, __1(str,radix), _1(no_side_effect,"#
   ll_v_word acc_i = 0;
   int acc_i_overflow = 0;
   int neg = 0;
+  int radix = default_radix;
   int has_sign = 0;
   int has_digits = 0;
   int has_radix = 0;
@@ -210,11 +211,14 @@ ll_define_primitive(string, string__number, __1(str,radix), _1(no_side_effect,"#
   int exponent = 0;
   int c;
   ll_v n;
+  const char *first_digit = 0;
+  const char *last_digit;
 
   if ( PEEK() == '+' ) {
     READ();
     has_sign = 1;
   } else if ( PEEK() == '-' ) {
+    if ( ! first_digit ) first_digit = v;
     READ();
     has_sign = 1;
     neg = 1;
@@ -272,6 +276,10 @@ ll_define_primitive(string, string__number, __1(str,radix), _1(no_side_effect,"#
     }
   }
 
+  if ( ! first_digit ) 
+    first_digit = v;
+  last_digit = 0;
+
   while ( l ) {
     c = READ();
     /* [0-9] */
@@ -292,6 +300,7 @@ ll_define_primitive(string, string__number, __1(str,radix), _1(no_side_effect,"#
     } else if ( (has_digits || has_radix) && c == '_' ) {
       continue;
     } else if ( c == '/' ) {
+      last_digit = v - 1;
       if ( is_rational || has_dot || has_exp || ! has_digits ) {
 	ll_return(ll_f);
       }
@@ -351,7 +360,6 @@ ll_define_primitive(string, string__number, __1(str,radix), _1(no_side_effect,"#
 	/* Check for int overflow. */
 	if ( new_acc_i < acc_i ) {
 	  acc_i_overflow = 1;
-	  is_float = 1;
 	} else {
 	  acc_i = new_acc_i;
 	}
@@ -363,6 +371,9 @@ ll_define_primitive(string, string__number, __1(str,radix), _1(no_side_effect,"#
       ll_return(ll_f);
     }
   }
+
+  if ( ! last_digit ) 
+    last_digit = v;
 
   /* If we didn't get any digits, it's not a number */
   if ( ! has_digits ) {
@@ -389,10 +400,13 @@ ll_define_primitive(string, string__number, __1(str,radix), _1(no_side_effect,"#
     n = ll_make_flonum(acc_d);
   } else {
     /* Check for fixnum overflow. */
-    if ( ll_MIN_fixnum <= acc_i && acc_i <= ll_MAX_fixnum ) {
+    if ( ! acc_i_overflow && ll_MIN_fixnum <= acc_i && acc_i <= ll_MAX_fixnum ) {
       n = ll_make_fixnum(acc_i);
     } else {
-      ll_return(ll_f);
+      ll_v str = ll_make_copy_string(first_digit, last_digit - first_digit);
+      // ll_format(ll_f, "  string->number: ~S => bignum ...\n", 1, str); 
+      n = ll_call(ll_o(make), _3(ll_type(bignum), str, ll_BOX_fixnum(radix)));
+      // ll_format(ll_f, "  string->number: ~S => bignum ~S\n", 2, str, n);
     }
   }
   
@@ -408,6 +422,7 @@ ll_define_primitive(string, string__number, __1(str,radix), _1(no_side_effect,"#
       denominator = n;
       // fprintf(stderr, "  string->number: denominator %.22g %lld\n", acc_d, (long long) acc_i); 
       n = ll_make_ratnum(numerator, denominator);
+      // ll_format(ll_f, "  string->number: ~S => ratnum ~S\n", 2, ll_SELF, n);
     }
   }
 

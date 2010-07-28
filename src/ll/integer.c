@@ -1,6 +1,50 @@
 #include "ll.h"
 
+
 /************************************************************************/
+
+
+ll_v ll_make_integer(ll_v_word x)
+{
+  if ( (ll_MIN_fixnum <= x && x <= ll_MAX_fixnum) ) {
+    return ll_BOX_fixnum(x);
+  }
+  return ll_make_bignum_(x);
+}
+
+
+ll_v ll_make_integer_d(double x)
+{
+  if ( (ll_MIN_fixnum <= x && x <= ll_MAX_fixnum) ) {
+    return ll_BOX_fixnum(x);
+  }
+  return ll_make_bignum_d(x);
+}
+
+
+/************************************************************************/
+
+ll_define_primitive(integer, _gcd, _2(n1, n2), _1(no_side_effect,"#t"))
+{
+  ll_v u, v, r;
+
+  /* Euclid from Knuth, V2, P.337 */
+
+  u = ll_abs(ll_ARG_0);
+  v = ll_abs(ll_ARG_1);
+  
+  while ( ! ll_zeroQ(v) ) {
+    // ll_format(ll_f, "  integer:gcd u=~S v=~S\n", 2, u, v);
+    r = ll_modulo(u, v);
+    u = v;
+    v = r;
+  }
+  // ll_format(ll_f, "  integer:%gcd(~S, ~S) => ~S\n", 3, ll_ARG_0, ll_ARG_1, u);
+
+  ll_return(u);
+}
+ll_define_primitive_end
+
 
 ll_define_primitive(integer, _lcm, _2(n1, n2), _1(no_side_effect,"#t"))
 {

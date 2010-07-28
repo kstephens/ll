@@ -256,7 +256,7 @@ ll_v _ll_method_not_found_error()
 	  ll_po(ll_AR_OP),
 	  ll_po(ll_TYPE(ll_SELF)));
   abort();
-  ll_abort();
+  ll_abort("_ll_method_not_found_error()");
 
   */
 

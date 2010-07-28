@@ -55,17 +55,21 @@ ll_define_primitive_end
 
 ll_define_primitive(fixnum, modulo, _2(n1, n2), _1(no_side_effect,"#t"))
 {
-  long n1, n2, m;
-  n1 = ll_UNBOX_fixnum(ll_ARG_0);
-  n2 = ll_unbox_fixnum(ll_ARG_1);
-
-  m = n1 % n2;
-
-  if ( ((n2 > 0) ^ (m < 0)) == 0 ) {
+  if ( ll_ISA_bignum(ll_ARG_1) ) {
+    ll_call_tail(ll_o(modulo), _2(ll_coerce_bignum(ll_SELF), ll_ARG_1));
+  } else {
+    long n1, n2, m;
+    n1 = ll_UNBOX_fixnum(ll_ARG_0);
+    n2 = ll_unbox_fixnum(ll_ARG_1);
+    
+    m = n1 % n2;
+    
+    if ( ((n2 > 0) ^ (m < 0)) == 0 ) {
       m = n2 + m;
+    }
+    
+    ll_return(ll_make_fixnum(m));
   }
-
-  ll_return(ll_make_fixnum(m));
 }
 ll_define_primitive_end
 
@@ -77,11 +81,15 @@ ll_define_primitive(fixnum, _gcd, _2(n1, n2), _1(no_side_effect,"#t"))
 {
   long u, v, r;
 
+  if ( ! ll_ISA_fixnum(ll_ARG_1) ) {
+    ll_call_tail(ll_o(_gcd), _2(ll_ARG_1, ll_ARG_0));
+  }
+
   /* Euclid from Knuth, V2, P.337 */
 
   u = ll_UNBOX_fixnum(ll_ARG_0);
   if ( u < 0 ) u = - u;
-  v = ll_unbox_fixnum(ll_ARG_1);
+  v = ll_UNBOX_fixnum(ll_ARG_1);
   if ( v < 0 ) v = - v;
   
   while ( v ) {
@@ -155,45 +163,45 @@ ll_define_primitive_end
 
 #define BOP(N,O) \
 ll_define_primitive(fixnum, _##N, _2(n1, n2), _1(no_side_effect,"#t")) \
-{ \
-  if ( ll_ISA_fixnum(ll_ARG_1) ) { \
+{									\
+  if ( ll_ISA_fixnum(ll_ARG_1) ) {					\
     ll_return(ll_make_fixnum(ll_UNBOX_fixnum(ll_SELF) O ll_UNBOX_fixnum(ll_ARG_1))); \
-  } else if ( ll_ISA_flonum(ll_ARG_1) ) { \
+  } else if ( ll_ISA_flonum(ll_ARG_1) ) {				\
     ll_return(ll_make_flonum(ll_UNBOX_fixnum(ll_SELF) O ll_UNBOX_flonum(ll_ARG_1))); \
-  } else if ( ll_ISA_ratnum(ll_ARG_1) ) { \
+  } else if ( ll_ISA_ratnum(ll_ARG_1) ) {				\
     ll_return(ll__##N(ll_make_ratnum_(ll_SELF, ll_BOX_fixnum(1)), ll_ARG_1)); \
-  } else if ( ll_ISA_bignum(ll_ARG_1) ) { \
-    ll_return(ll__##N(ll_make_bignum_(ll_UNBOX_fixnum(ll_SELF)), ll_ARG_1)); \
-  } else { \
-    ll_return(_ll_typecheck(ll_type(number), &ll_ARG_1)); \
-  } \
-} \
+  } else if ( ll_ISA_bignum(ll_ARG_1) ) {				\
+    ll_return(ll__##N(ll_coerce_bignum(ll_SELF), ll_ARG_1));		\
+  } else {								\
+    ll_return(_ll_typecheck(ll_type(number), &ll_ARG_1));		\
+  }									\
+}									\
 ll_define_primitive_end
 
 
 #define UOP(N,O) \
 ll_define_primitive(fixnum, _##N, _1(n), _1(no_side_effect,"#t")) \
-{ \
-  ll_return(ll_make_fixnum( O ll_UNBOX_fixnum(ll_SELF))); \
-} \
+{								  \
+  ll_return(ll_make_fixnum( O ll_UNBOX_fixnum(ll_SELF)));	  \
+}								  \
 ll_define_primitive_end
 
 
 #define ROP(N,OP) \
 ll_define_primitive(fixnum, _##N, _2(n1, n2), _1(no_side_effect,"#t")) \
-{ \
-  if ( ll_ISA_fixnum(ll_ARG_1) ) { \
+{									\
+  if ( ll_ISA_fixnum(ll_ARG_1) ) {					\
     ll_return(ll_make_boolean(ll_UNBOX_fixnum(ll_SELF) OP ll_UNBOX_fixnum(ll_ARG_1))); \
-  } else if ( ll_ISA_flonum(ll_ARG_1) ) { \
+  } else if ( ll_ISA_flonum(ll_ARG_1) ) {				\
     ll_return(ll_make_boolean(ll_UNBOX_fixnum(ll_SELF) OP ll_UNBOX_flonum(ll_ARG_1))); \
-  } else if ( ll_ISA_ratnum(ll_ARG_1) ) { \
+  } else if ( ll_ISA_ratnum(ll_ARG_1) ) {				\
     ll_return(ll__##N(ll_make_ratnum_(ll_SELF, ll_BOX_fixnum(1)), ll_ARG_1)); \
-  } else if ( ll_ISA_bignum(ll_ARG_1) ) { \
-    ll_return(ll__##N(ll_make_bignum_(ll_UNBOX_fixnum(ll_SELF)), ll_ARG_1)); \
-  } else { \
-    ll_return(_ll_typecheck(ll_type(number), &ll_ARG_1)); \
-  } \
-} \
+  } else if ( ll_ISA_bignum(ll_ARG_1) ) {				\
+    ll_return(ll__##N(ll_coerce_bignum(ll_SELF), ll_ARG_1));		\
+  } else {								\
+    ll_return(_ll_typecheck(ll_type(number), &ll_ARG_1));		\
+  }									\
+}									\
 ll_define_primitive_end
 
 
@@ -210,19 +218,22 @@ ll_define_primitive(fixnum, _DIV, _2(n1, n2), _1(no_side_effect,"#t"))
     } else if ( (ll_UNBOX_fixnum(ll_SELF) % ll_UNBOX_fixnum(ll_ARG_1)) == 0 ) {
       ll_return(ll_make_fixnum(ll_UNBOX_fixnum(ll_SELF) / ll_UNBOX_fixnum(ll_ARG_1)));
     } else {
-      /* FIXME: use rational! */
       ll_return(ll_make_ratnum(ll_SELF, ll_ARG_1)); 
     }
   } 
   else if ( ll_ISA_flonum(ll_ARG_1) ) { 
+#if 0
     if ( ll_UNBOX_flonum(ll_ARG_1) == 0 ) {
       ll_return(_ll_error(ll_re(divide_by_zero),
 			  2,
 			  ll_s(numerator), ll_SELF,
 			  ll_s(denominator), ll_ARG_1));
-    } else {
-      ll_return(ll_make_flonum(ll_UNBOX_fixnum(ll_SELF) / ll_UNBOX_flonum(ll_ARG_1))); 
-    }
+    } 
+    else
+#endif
+      {
+	ll_return(ll_make_flonum(ll_UNBOX_fixnum(ll_SELF) / ll_UNBOX_flonum(ll_ARG_1))); 
+      }
   }
   else if ( ll_ISA_bignum(ll_ARG_1) ) {
     ll_return(ll__DIV(ll_make_bignum_(ll_UNBOX_fixnum(ll_SELF)), ll_ARG_1));

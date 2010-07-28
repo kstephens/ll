@@ -160,7 +160,7 @@ ll_define_primitive(error, error_abort, _1(self), _0())
   fflush(stdout);
   fflush(stderr);
   ll_format(ll_undef, "\nll: abort: ~S\n~S\n", 2, ll_TYPE(ll_SELF), ll_SELF);
-  ll_abort();
+  ll_abort("<error>:error-abort");
 }
 ll_define_primitive_end
 
@@ -229,13 +229,13 @@ void _ll_additional_error_properties(int n, ...)
 }
 
 
-void ll_abort()
+void _ll_abort(const char *file, int lineno, const char *msg)
 {
   static int aborting;
 
   if ( ! aborting ) {
     ++ aborting;
-    fprintf(stderr, "\nll: abort\n");
+    fprintf(stderr, "\nll: abort: %s:%d: %s\n", file, lineno, msg);
     ll_call(ll_o(print_backtrace), _1(ll_make_ref(_ll_ar_sp)));
   }
   fprintf(stderr, "\nll: aborting\n");
@@ -276,7 +276,7 @@ ll_define_primitive(fatal_error, handle_error, _1(self), _0())
     ll_call(ll_o(print_backtrace), _1(ll_make_ref(_ll_ar_sp)));
   }
 
-  ll_abort();
+  ll_abort("<fatal-error>:handle-error");
 }
 ll_define_primitive_end
 
@@ -337,7 +337,7 @@ ll_v _ll_errorv(ll_v type, int argc, const ll_v *argv)
   }
   fprintf(stderr, "\n");
 
-  ll_abort();
+  ll_abort("_ll_errorv()");
 
   return(rtn);
 }

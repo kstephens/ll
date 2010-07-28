@@ -95,7 +95,7 @@ ll_define_primitive(pair, _ir_compile2_export, _2(self, ir), _0())
     index = ll_call(ll_o(_ir_const_index), _2(IR, var));
   } else
   if ( ll_EQ(type, ll_s(glo)) ) {
-    ll_abort();
+    ll_abort("<pair>:%ir-compile2-export");
   }
 
   /* undef export is a local from a car-pos sub lambda */
@@ -209,7 +209,7 @@ ll_define_primitive(symbol, _ir_compile2_gen, _4(self, ir, tail_posQ, mode), _0(
     } 
     else {
       ll_format(ll_undef, "bad mode ~S\n", 1, mode);
-      ll_abort();
+      ll_abort("bad mode");
     }
 
     ll_call(ll_o(_ir_emit_with_int), _3(IR, isn, index));

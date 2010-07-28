@@ -12,8 +12,13 @@ ll_v _ll_formatv(ll_v port, const char *f, size_t fsize, const ll_v *argv, size_
   ll_v trace_save = ll_DEBUG(trace);
   ll_DEBUG_SET(trace, ll_make_fixnum(0));
 
-  if ( ll_EQ(port, ll_undef) ) {
+  if ( ll_EQ(port, ll_undef) || ll_EQ(port, ll_nil) ) {
     port = ll_call(ll_o(current_output_port), _0());
+    ll_assert_ref(port);
+  }
+
+  if ( ll_EQ(port, ll_f) ) {
+    port = ll_call(ll_o(current_error_port), _0());
     ll_assert_ref(port);
   }
 
@@ -154,6 +159,10 @@ ll_v ll_format(ll_v port, const char *f, int n, ...)
   ll_v *v;
   va_list vap;
   va_start(vap, n);
+
+  if ( n > 64 || n < 0 ) {
+    ll_abort("ll_format(): probably forgot arg_count before arguments");
+  }
 
 #if 0 /* ll_C_ARGS_ON_STACK */
   v = (void*) vap;

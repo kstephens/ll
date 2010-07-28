@@ -57,23 +57,29 @@ typedef long ll_v_word;
 
 #define ll_TAG_fixnum        0
 #define ll_BOX_fixnum(X)     (((ll_v_word)(X)) << ll_TAG_BITS)
-#define ll_make_fixnum(X)    ll_BOX_fixnum(X)
 #define ll_UNBOX_fixnum(X)   (((ll_v_word)(X)) >> ll_TAG_BITS)
+#define ll_make_fixnum ll_make_integer
 long ll_unbox_fixnum(ll_v x);
-/* #define ll_unbox_fixnum(X)ll_UNBOX_fixnum(X) */
 #define ll_ISA_fixnum(X)     (ll_TAG(X) == ll_TAG_fixnum)
 #define ll_TYPE_fixnum(X)    ll_type(fixnum)
-#define ll_MIN_fixnum        (-((ll_v_word)(ll_TAG_BIT << (ll_WORD_BITS - ll_TAG_BITS - 1))))
 #define ll_MAX_fixnum        ((ll_v_word)((~ll_TAG_ZERO) >> (ll_TAG_BITS + 1)))
+
+#ifndef ll_SYMETRICAL_fixnum
+#define ll_SYMETRICAL_fixnum 1
+#endif
+#if ll_SYMETRICAL_fixnum
+#define ll_MIN_fixnum        (-ll_MAX_fixnum)
+#else
+#define ll_MIN_fixnum        (-((ll_v_word)(ll_TAG_BIT << (ll_WORD_BITS - ll_TAG_BITS - 1))))
+#endif
 
 /***********************************************************************/
 /* locative */
 
 #define ll_TAG_locative      1
 #define ll_BOX_locative(X)   (((ll_v)(X)) + ll_TAG_locative)
-#define ll_make_locative(X)  ll_BOX_locative(X)
 #define ll_UNBOX_locative(X) ((ll_v*)((X) - ll_TAG_locative))
-/* #define ll_unbox_locative(X)ll_UNBOX_locative(X) */
+#define ll_make_locative(X)  ll_BOX_locative(X)
 ll_v *ll_unbox_locative(ll_v x);
 #define ll_ISA_locative(X)   (ll_TAG(X) == ll_TAG_locative)
 #define ll_TYPE_locative(X)  ll_type(locative)
@@ -110,6 +116,7 @@ static __inline float ll_UNBOX_flonum(ll_v v)
 #endif
 
 #if defined(__x86_64) /* && sizeof(double) == sizeof(long long) */
+
 union ll_v_flonum {
   ll_v  v;
   double f;

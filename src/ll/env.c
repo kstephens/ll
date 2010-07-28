@@ -465,6 +465,7 @@ ll_INIT(env1, 10, "create a raw environment")
         _ll_make_raw_binding();
     
 #if ll_GLOBAL_VARS
+    {
     ll_tsa_binding *b = ll_THIS_ISA(binding, x);
     b->_locative = ll_BOX_locative(gvi->_gvp);
     ll_write_barrier_ptr_pure(b);
@@ -476,6 +477,7 @@ ll_INIT(env1, 10, "create a raw environment")
 
     if ( 0 /* ll_DEBUG(init_env) */ ) {
       fprintf(stderr, "\n  %s %p", gvi->_name, gvi->_gvp);
+    }
     }
 #endif
     ll_write_barrier_ptr_pure(_ll_env_bindings);
