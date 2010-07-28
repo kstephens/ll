@@ -1,6 +1,9 @@
 ; $Id: mycons.scm,v 1.4 2008/01/01 10:19:17 stephens Exp $
 (load "ll_test.scm")
 
+;(let ((x #f))
+(define x #f)
+
 (newline)(write 'read)(newline)
 (ll:test:assert <fixnum> (get-type 0))
 (ll:test:assert <fixnum> (get-type 1))
@@ -14,6 +17,22 @@
 (ll:test:assert <ratnum> (get-type 1/-12345678910))
 (ll:test:assert <ratnum> (get-type -1/-12345678910))
 
+(newline)(write 'numerical-tower)(newline)
+(set! x -10)
+(ll:test:assert #t (number?   x))
+(ll:test:assert #t (real?     x))
+(ll:test:assert #t (rational? x))
+(ll:test:assert #t (integer?  x))
+(set! x 123456789012345678901234567890)
+(ll:test:assert #t (number?   x))
+(ll:test:assert #t (real?     x))
+(ll:test:assert #t (rational? x))
+(ll:test:assert #t (integer?  x))
+(set! x 1/2)
+(ll:test:assert #t (number?   x))
+(ll:test:assert #t (real?     x))
+(ll:test:assert #t (rational? x))
+(ll:test:assert #f (integer?  x))
 
 (newline)(write '*?)(newline)
 (ll:test:assert #f       (negative? 0))
@@ -116,5 +135,7 @@
 (ll:test:assert 4/3 (/ 4 3))
 (ll:test:assert 123456789012345678901234567890 (/ 246913578024691357802469135780 2))
 (ll:test:assert 246913578024691357802469135780 (/ 123456789012345678901234567890 1/2))
+
+; )
 
 (newline)'ok
