@@ -12,10 +12,13 @@ static const char __rcs_id_ll_assert_c[] = "$Id: assert.c,v 1.2 2001/01/15 03:44
 
 
 static int _abort_code = 0;
-
+static const char *_abort_file = 0;
+static int _abort_line = 0;
 
 void __ll_assert_1(const char *name, const char *expr, int code, const char *file, int line, const char *func)
 {
+  _abort_file = file;
+  _abort_line = line;
   _abort_code = code;
   fprintf(stderr, "\nll: %s, assertion: \"%s\", file: \"%s\", line: %d, func: \"%s\"",
 	  name,
@@ -40,7 +43,7 @@ void __ll_assert_2(const char *format, ...)
   va_end(vap);
 
   if ( _abort_code )
-    ll_abort();
+    _ll_abort(_abort_file, _abort_line, "ll_assert()");
 
   _abort_code = 0;
 }

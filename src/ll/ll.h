@@ -194,7 +194,8 @@ ll_v _ll_typecheck(ll_v type, ll_v *value);
 ll_v _ll_readonly_variable(ll_v var);
 ll_v _ll_undefined_variable(ll_v var);
 
-void ll_abort();
+void _ll_abort(const char *file, int lineno, const char *msg);
+#define ll_abort(msg) _ll_abort(__FILE__, __LINE__, msg) 
 
 /*************************************************************************/
 /* types */
@@ -434,6 +435,7 @@ int ll_zeroQ(ll_v x);
 int ll_positiveQ(ll_v x);
 int ll_oneQ(ll_v x);
 ll_v ll_abs(ll_v x);
+ll_v ll_modulo(ll_v x, ll_v y);
 
 ll_v ll_coerce_flonum(ll_v X);
 
@@ -441,6 +443,7 @@ ll_v ll_coerce_flonum(ll_v X);
 
 ll_v ll_make_ratnum_(ll_v n, ll_v d);
 ll_v ll_make_ratnum(ll_v n, ll_v d);
+ll_v ll_coerce_ratnum(ll_v n);
 ll_v ll_numerator(ll_v x);
 ll_v ll_denominator(ll_v x);
 
@@ -513,7 +516,6 @@ ll_v ll_format(ll_v port, const char *format, int nargs, ...);
 /*************************************************************************/
 /* errors */
 
-void ll_abort();
 ll_v _ll_error(ll_v type, int nargs, ...);
 ll_v _ll_argc_error();
 ll_v _ll_range_error(ll_v name, ll_v value, long low, long high);

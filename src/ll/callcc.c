@@ -24,7 +24,7 @@ ll_define_primitive(object, _continuation_apply, _1(result), _0())
   CCont_call(cc->_cc, (void *) ll_ARG_0); /* unportable! */
 
   /* NOTREACHED */
-  ll_abort();
+  ll_abort("<object>:%continuation-apply");
 }
 ll_define_primitive_end
 
