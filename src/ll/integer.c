@@ -2,6 +2,26 @@
 
 /************************************************************************/
 
+ll_define_primitive(integer, _gcd, _2(n1, n2), _1(no_side_effect,"#t"))
+{
+  ll_v u, v, r;
+
+  /* Euclid from Knuth, V2, P.337 */
+
+  u = ll_abs(ll_ARG_0);
+  v = ll_abs(ll_ARG_1);
+  
+  while ( ! ll_zeroQ(v) ) {
+    r = ll_modulo(u, v);
+    u = v;
+    v = r;
+  }
+
+  ll_return(u);
+}
+ll_define_primitive_end
+
+
 ll_define_primitive(integer, _lcm, _2(n1, n2), _1(no_side_effect,"#t"))
 {
   ll_v d = ll_call(ll_o(_gcd), _2(ll_ARG_0, ll_ARG_1));
