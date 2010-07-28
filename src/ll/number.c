@@ -272,6 +272,12 @@ ll_v ll_abs(ll_v x)
 }
 
 
+ll_v ll_modulo(ll_v x, ll_v y)
+{
+  return ll_call(ll_o(modulo), _2(x, y));
+}
+
+
 ll_v ll_numerator(ll_v x)
 {
   return ll_call(ll_o(numerator), _1(x));

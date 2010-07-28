@@ -7,7 +7,8 @@
 #define Xn ll_THIS->_numerator
 #define Xd ll_THIS->_denominator
 
-#define Yr ll_THIS_ISA(ratnum, Y)
+#define _r(Y) ll_THIS_ISA(ratnum, Y)
+#define Yr _r(Y)
 #define Yn Yr->_numerator
 #define Yd Yr->_denominator
 
@@ -30,6 +31,19 @@ ll_v ll_make_ratnum(ll_v n, ll_v d)
 }
 
 
+ll_v ll_coerce_ratnum(ll_v n)
+{
+  if ( ll_ISA_ratnum(n) ) {
+    return n;
+  }
+  else if ( ll_ISA_fixnum(n) || ll_ISA_bignum(n) ) {
+    return ll_make_ratnum_(n, ll_BOX_fixnum(1));
+  }
+  else {
+    ll_abort("ll_coerce_ratnum()");
+    return ll_f;
+  }
+}
 
 
 ll_define_primitive(ratnum, initialize, _3(r, n, d), _1(no_side_effect, "#t"))
@@ -95,27 +109,6 @@ ll_define_primitive_end
 ll_define_primitive(ratnum, evenQ, _1(x), _1(no_side_effect, "#t"))
 {
   ll_return(ll_f);
-}
-ll_define_primitive_end
-
-
-/************************************************************************/
-
-
-ll_define_primitive(ratnum, quotient, _2(n1, n2), _1(no_side_effect, "#t"))
-{
-}
-ll_define_primitive_end
-
-
-ll_define_primitive(ratnum, remainder, _2(n1, n2), _1(no_side_effect, "#t"))
-{
-}
-ll_define_primitive_end
-
-
-ll_define_primitive(ratnum, modulo, _2(n1, n2), _1(no_side_effect, "#t"))
-{
 }
 ll_define_primitive_end
 
@@ -244,6 +237,31 @@ ll_define_primitive(ratnum, _DIV, _2(x, y), _1(no_side_effect, "#t"))
 }
 ll_define_primitive_end
 
+
+
+#define BOP(N,OP)
+#define UOP(N,OP)
+#define ROP(NOP,OP) \
+ll_define_primitive(ratnum, _##NOP, _2(n1, n2), _1(no_side_effect,"#t")) \
+{									\
+  if ( ll_ISA_flonum(ll_ARG_1) ) {					\
+    ll_return(ll_make_boolean(ll_coerce_flonum(ll_SELF) OP ll_UNBOX_flonum(ll_ARG_1))); \
+  } else {								\
+    ll_v xn, yn;							\
+    ll_ARG_1 = ll_coerce_ratnum(ll_ARG_1);				\
+    if ( ll_EQ(ll_THIS->_denominator, _r(ll_ARG_1)->_denominator) ) {	\
+      xn = ll_THIS->_numerator;						\
+      yn = _r(ll_ARG_1)->_numerator;					\
+    } else {								\
+      xn = ll__MUL(ll_THIS->_numerator, _r(ll_ARG_1)->_denominator);	\
+      yn = ll__MUL(  _r(Y)->_numerator,      ll_THIS->_denominator);	\
+    }									\
+    ll_return(ll__##NOP(xn, yn));					\
+  }									\
+}									\
+ll_define_primitive_end
+
+#include "cops.h"
 
 /************************************************************************/
 
