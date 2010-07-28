@@ -243,7 +243,7 @@ ll_INIT(op2, 181, "create and install the <operation> objects")
       op = _ll_make_operation();
     } 
     else {
-      ll_abort();
+      ll_abort("bad operation type");
     }
 
     _ll_set_gi(x[i].gi, 
