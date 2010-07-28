@@ -237,6 +237,9 @@ ll_define_primitive(bignum, _ADD, _2(x, y), _1(no_side_effect, "#t"))
     mpz_add(Rn, Xn, Yn);
     ll_return(r);
   } 
+  else if ( ll_ISA_ratnum(Y) ) {
+    ll_return(ll__ADD(ll_make_ratnum_(ll_SELF, ll_BOX_fixnum(1)), Y));
+  } 
   else {
     ll_return(_ll_typecheck(ll_type(number), &ll_ARG_1));
   }
@@ -256,6 +259,9 @@ ll_define_primitive(bignum, _SUB, _2(x, y), _1(no_side_effect, "#t"))
     ll_v r = ll_make_bignum_(0);
     mpz_sub(Rn, Xn, Yn);
     ll_return(r);
+  }
+  else if ( ll_ISA_ratnum(Y) ) {
+    ll_return(ll__SUB(ll_make_ratnum_(ll_SELF, ll_BOX_fixnum(1)), Y));
   } 
   else {
     ll_return(_ll_typecheck(ll_type(number), &ll_ARG_1)); 
@@ -277,6 +283,9 @@ ll_define_primitive(bignum, _MUL, _2(x, y), _1(no_side_effect, "#t"))
     mpz_mul(Rn, Xn, Yn);
     ll_return(r);
   } 
+  else if ( ll_ISA_ratnum(Y) ) {
+    ll_return(ll__MUL(ll_make_ratnum_(ll_SELF, ll_BOX_fixnum(1)), Y));
+  } 
   else {
     ll_return(_ll_typecheck(ll_type(number), &ll_ARG_1)); 
   }
@@ -296,6 +305,9 @@ ll_define_primitive(bignum, _DIV, _2(x, y), _1(no_side_effect, "#t"))
     ll_v r = ll_make_bignum_(0);
     mpz_div(Rn, Xn, Yn);
     ll_return(r);
+  }
+  else if ( ll_ISA_ratnum(Y) ) {
+    ll_return(ll__DIV(ll_make_ratnum_(ll_SELF, ll_BOX_fixnum(1)), Y));
   } 
   else {
     ll_return(_ll_typecheck(ll_type(number), &ll_ARG_1)); 

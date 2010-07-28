@@ -125,6 +125,8 @@ ll_define_primitive(flonum, _##N, _2(self, x), _1(no_side_effect,"#t")) \
     ll_return(ll_make_flonum(ll_UNBOX_flonum(ll_SELF) O ll_UNBOX_flonum(ll_ARG_1))); \
   } else if ( ll_ISA_fixnum(ll_ARG_1) ) { \
     ll_return(ll_make_flonum(ll_UNBOX_flonum(ll_SELF) O ll_UNBOX_fixnum(ll_ARG_1))); \
+  } else if ( ll_ISA_bignum(ll_ARG_1) ) { \
+    ll_return(ll__##N(ll_SELF, ll_coerce_flonum(ll_ARG_1)));	\
   } else if ( ll_ISA_ratnum(ll_ARG_1) ) { \
     ll_return(ll_make_flonum(ll_UNBOX_flonum(ll_SELF) O ll_UNBOX_flonum(ll_coerce_flonum(ll_ARG_1)))); \
   } else { \
@@ -143,19 +145,21 @@ ll_define_primitive_end
 
 
 #define ROP(N,OP) \
-ll_define_primitive(flonum, _##N, _2(self, x), _1(no_side_effect,"#t")) \
-{ \
-  if ( ll_ISA_flonum(ll_ARG_1) ) { \
-    ll_return(ll_make_boolean(ll_UNBOX_flonum(ll_SELF) OP ll_UNBOX_flonum(ll_ARG_1))); \
-  } else if ( ll_ISA_fixnum(ll_ARG_1) ) { \
-    ll_return(ll_make_boolean(ll_UNBOX_flonum(ll_SELF) OP ll_UNBOX_fixnum(ll_ARG_1))); \
-  } else if ( ll_ISA_ratnum(ll_ARG_1) ) { \
-    ll_return(ll_make_boolean(ll_UNBOX_flonum(ll_SELF) OP ll_UNBOX_flonum(ll_coerce_flonum(ll_ARG_1)))); \
-  } else { \
-    ll_return(_ll_typecheck(ll_type(number), &ll_ARG_1)); \
-  } \
-} \
-ll_define_primitive_end
+  ll_define_primitive(flonum, _##N, _2(self, x), _1(no_side_effect,"#t")) \
+  {									\
+    if ( ll_ISA_flonum(ll_ARG_1) ) {					\
+      ll_return(ll_make_boolean(ll_UNBOX_flonum(ll_SELF) OP ll_UNBOX_flonum(ll_ARG_1))); \
+    } else if ( ll_ISA_fixnum(ll_ARG_1) ) {				\
+      ll_return(ll_make_boolean(ll_UNBOX_flonum(ll_SELF) OP ll_UNBOX_fixnum(ll_ARG_1))); \
+    } else if ( ll_ISA_bignum(ll_ARG_1) ) {				\
+      ll_return(ll__##N(ll_SELF, ll_coerce_flonum(ll_ARG_1)));		\
+    } else if ( ll_ISA_ratnum(ll_ARG_1) ) {				\
+      ll_return(ll_make_boolean(ll_UNBOX_flonum(ll_SELF) OP ll_UNBOX_flonum(ll_coerce_flonum(ll_ARG_1)))); \
+    } else {								\
+      ll_return(_ll_typecheck(ll_type(number), &ll_ARG_1));		\
+    }									\
+  }									\
+  ll_define_primitive_end
 
 #include "cops.h"
 

@@ -162,6 +162,8 @@ ll_define_primitive(fixnum, _##N, _2(n1, n2), _1(no_side_effect,"#t")) \
     ll_return(ll_make_flonum(ll_UNBOX_fixnum(ll_SELF) O ll_UNBOX_flonum(ll_ARG_1))); \
   } else if ( ll_ISA_ratnum(ll_ARG_1) ) { \
     ll_return(ll__##N(ll_make_ratnum_(ll_SELF, ll_BOX_fixnum(1)), ll_ARG_1)); \
+  } else if ( ll_ISA_bignum(ll_ARG_1) ) { \
+    ll_return(ll__##N(ll_make_bignum_(ll_UNBOX_fixnum(ll_SELF)), ll_ARG_1)); \
   } else { \
     ll_return(_ll_typecheck(ll_type(number), &ll_ARG_1)); \
   } \
@@ -186,6 +188,8 @@ ll_define_primitive(fixnum, _##N, _2(n1, n2), _1(no_side_effect,"#t")) \
     ll_return(ll_make_boolean(ll_UNBOX_fixnum(ll_SELF) OP ll_UNBOX_flonum(ll_ARG_1))); \
   } else if ( ll_ISA_ratnum(ll_ARG_1) ) { \
     ll_return(ll__##N(ll_make_ratnum_(ll_SELF, ll_BOX_fixnum(1)), ll_ARG_1)); \
+  } else if ( ll_ISA_bignum(ll_ARG_1) ) { \
+    ll_return(ll__##N(ll_make_bignum_(ll_UNBOX_fixnum(ll_SELF)), ll_ARG_1)); \
   } else { \
     ll_return(_ll_typecheck(ll_type(number), &ll_ARG_1)); \
   } \
@@ -219,6 +223,9 @@ ll_define_primitive(fixnum, _DIV, _2(n1, n2), _1(no_side_effect,"#t"))
     } else {
       ll_return(ll_make_flonum(ll_UNBOX_fixnum(ll_SELF) / ll_UNBOX_flonum(ll_ARG_1))); 
     }
+  }
+  else if ( ll_ISA_bignum(ll_ARG_1) ) {
+    ll_return(ll__DIV(ll_make_bignum_(ll_UNBOX_fixnum(ll_SELF)), ll_ARG_1));
   }
   else if ( ll_ISA_ratnum(ll_ARG_1) ) { 
     ll_return(ll__DIV(ll_make_ratnum_(ll_SELF, ll_BOX_fixnum(1)), ll_ARG_1));
