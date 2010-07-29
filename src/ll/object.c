@@ -1,11 +1,3 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_ll_object_c__
-#define __rcs_id_ll_object_c__
-static const char __rcs_id_ll_object_c[] = "$Id: object.c,v 1.16 2008/05/26 07:48:08 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-
-
 #include "ll.h"
 #include <string.h> /* memcpy() */
 
@@ -129,6 +121,7 @@ ll_define_primitive(object, clone, _1(object), _0())
     size_t size = ll_unbox_fixnum(ll_call(ll_o(type_size), _1(t)));
     ll_v x = _ll_allocate_type(t);
     memcpy(ll_UNBOX_ref(x), ll_UNBOX_ref(ll_SELF), size);
+    // ll_format(ll_f, "\n  clone ~W => ~W (size ~S) \n", 3, ll_SELF, x, ll_BOX_fixnum(size));
     ll_call_tail(ll_o(initialize_clone), _2(x, ll_SELF));
   } else {
     ll_return(ll_SELF);
@@ -146,19 +139,25 @@ ll_define_primitive_end
 
 ll_define_primitive(object, clone_mutable, _1(object), _0())
 {
-  ll_v t = ll_call(ll_o(mutable_type), _1(ll_SELF));
-  size_t size = ll_unbox_fixnum(ll_call(ll_o(type_size), _1(t)));
-  ll_v x = _ll_allocate_type(t);
+  if ( ll_ISA_ref(ll_SELF) ) {
+    ll_v t = ll_call(ll_o(mutable_type), _1(ll_SELF));
+    size_t size = ll_unbox_fixnum(ll_call(ll_o(type_size), _1(t)));
+    ll_v x = _ll_allocate_type(t);
+    
+    /* Copy over all slots.
+     * This will also whack <object>:type slot (slot 0).
+     */
+    memcpy(ll_UNBOX_ref(x), ll_UNBOX_ref(ll_SELF), size);
+    
+    /* Set the type back. */
+    ll_TYPE_ref(x) = t;
+    
+    // ll_format(ll_f, "\n  clone_mutable ~S => ~S \n", 2, ll_SELF, x);
 
-  /* Copy over all slots.
-   * This will also whack <object>:type slot (slot 0).
-   */
-  memcpy(ll_UNBOX_ref(x), ll_UNBOX_ref(ll_SELF), size);
-
-  /* Set the type back. */
-  ll_TYPE_ref(x) = t;
-
-  ll_call_tail(ll_o(initialize_clone_mutable), _2(x, ll_SELF));
+    ll_call_tail(ll_o(initialize_clone_mutable), _2(x, ll_SELF));
+  } else {
+    ll_return(ll_SELF);
+  }
 }
 ll_define_primitive_end
 
