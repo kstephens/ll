@@ -29,6 +29,7 @@ C_DEBUG=-g3
 #C_DEBUG+=-fverbose-asm 
 C_PROFILE=-pg
 #C_PROFILE=--coverage
+C_PROFILE=
 C_OPTIMIZE=-O3
 #C_OPTIMIZE=-O2
 #C_OPTIMIZE=
