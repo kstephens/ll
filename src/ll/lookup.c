@@ -324,7 +324,7 @@ void _ll_lookup()
   ll_tsa_operation *op;
   ll_v isa = ll_RCVR_TYPE;
 
-  ll_assert_ref(isa);
+  ll_assert_msg(lookup, ll_TAG(isa) == ll_TAG_ref, ("corrupted type? for %s: argc %d", ll_po(ll_AR_ARGV[0]), ll_AR_ARGC));
   ll_assert_msg(lookup, 0 <= ll_AR_ARGC, ("corrupted ar?"));
   ll_assert_msg(lookup, ll_AR_ARGC <= 256, ("corrupted ar?"));
 
