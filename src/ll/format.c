@@ -14,18 +14,17 @@ ll_v _ll_formatv(ll_v port, const char *f, size_t fsize, const ll_v *argv, size_
 
   if ( ll_EQ(port, ll_undef) || ll_EQ(port, ll_nil) ) {
     port = ll_call(ll_o(current_output_port), _0());
-    ll_assert_ref(port);
   }
 
   if ( ll_EQ(port, ll_f) ) {
     port = ll_call(ll_o(current_error_port), _0());
-    ll_assert_ref(port);
   }
 
   if ( ll_EQ(ll_TYPE(port), ll_type(mutable_string)) ) {
     port = ll_call(ll_o(make), _2(ll_type(output_port), port));
-    ll_assert_ref(port);
   }
+  
+  ll_assert_ref(port);
 
   e = f;
   while ( e < f_end ) {
@@ -45,7 +44,7 @@ ll_v _ll_formatv(ll_v port, const char *f, size_t fsize, const ll_v *argv, size_
 
 	e ++;
 	switch ( *(e ++) ) {
-#define GET (argc -- < 0 ? _ll_error(ll_re(format), 1, ll_s(reason), ll_s(too_many_formats)) : *(argv ++))
+#define GET (argc -- == 0 ? _ll_error(ll_re(format), 1, ll_s(reason), ll_s(too_many_formats)) : *(argv ++))
 
 	case '%':
 	  ll_call(ll_o(display), _2(ll_make_char('\n'), port));
@@ -144,6 +143,8 @@ ll_v _ll_formatv(ll_v port, const char *f, size_t fsize, const ll_v *argv, size_
     }
   }
  
+#undef GET
+
   if ( argc ) {
     return(_ll_error(ll_re(format), 1, ll_s(reason), ll_s(too_many_arguments)));
   }
@@ -159,8 +160,9 @@ ll_v ll_format(ll_v port, const char *f, int n, ...)
   ll_v *v;
   va_list vap;
   va_start(vap, n);
+  ll_v result;
 
-  if ( n > 64 || n < 0 ) {
+  if ( n < 0 || n > 64) {
     ll_abort("ll_format(): probably forgot arg_count before arguments");
   }
 
@@ -177,9 +179,10 @@ ll_v ll_format(ll_v port, const char *f, int n, ...)
     }
   }
 #endif
+  result = _ll_formatv(port, f, strlen(f), v, n);
   va_end(vap);
 
-  return _ll_formatv(port, f, strlen(f), v, n);
+  return result;
 }
 
 
