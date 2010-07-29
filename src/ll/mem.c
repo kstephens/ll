@@ -136,7 +136,9 @@ ll_INIT(gc, 0, "GC system")
 
 void _ll_finalize(void *obj, void *data)
 {
-  ll_format(ll_f, "\n_ll_finalize(~S, ~S)\n", 2, ll_BOX_ref(obj), ll_BOX_ref(data));
+  if ( ll_DEBUG(finalize) ) {
+    ll_format(ll_f, "\n  ll: (%finalize ~S ~S)\n", 2, ll_BOX_ref(obj), ll_BOX_ref(data));
+  }
   ll_call(ll_BOX_ref(data), _1(ll_BOX_ref(obj)));
 }
 
@@ -144,6 +146,9 @@ void _ll_finalize(void *obj, void *data)
 ll_define_primitive(object, _register_finalizer, __0(operation), _0())
 {
   ll_v op = ll_ARGC > 1 ? ll_ARG_1 : ll_o(_finalize);
+  if ( ll_DEBUG(finalize) ) {
+    ll_format(ll_f, "\n  ll: (%register_finalizer ~S, ~S)\n", 2, ll_SELF, op);
+  }
   if ( ll_ISA_ref(ll_SELF) && ll_ISA_ref(op) ) {
     _ll_gc_register_finalizer(ll_UNBOX_ref(ll_SELF),
 			      ll_UNBOX_ref(op));
