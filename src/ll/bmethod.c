@@ -187,7 +187,7 @@ int prompt(const char *pr)
 
  again:
   fflush(stderr);
-  fprintf(stderr, "\n  %s [q]uit, [d]ebug, [CR] continue%s: ", pr, _ll_bc_debug_at_start ? " + " : "");
+  fprintf(stderr, "\n    %s [q]uit, [d]ebug, [CR] continue%s: ", pr, _ll_bc_debug_at_start ? " + " : "");
   fflush(stderr);
 
   cmd[0] = '\0';
@@ -248,7 +248,7 @@ int _ll_bc_dump(const ll_bc_t **_pc, int *stack_depth, ll_v meth, int show_stack
   pc_save = pc;
   bcode = *pc;
 
-  sprintf(bp, "BC: %p: %04ld : %p : %03lu : %12s", 
+  sprintf(bp, "  BC: %p: %04ld : %p : %03lu : %12s", 
 	  (void*) ll_UNBOX_ref(METH->_code), 
 	  (long) (pc - CODE), 
 	  (void*) _ll_val_sp, 
@@ -601,7 +601,7 @@ ll_define_primitive(object, _bmethod_apply, __0(args), _0())
 
   if ( bcCdebug ) {
     if ( pc == CODE ) {
-      ll_format(ll_undef, "\n  BC: method ~W type-offset ~W\n", 2, ll_AR_METH, ll_AR_TYPE_OFFSET);
+      ll_format(ll_f, "\n  BC: method ~W type-offset ~W\n", 2, ll_AR_METH, ll_AR_TYPE_OFFSET);
     }
     if ( bcCdebugClines == 20 || *pc == 0 ) {
       if ( prompt("BC: RUN: ") ) {
@@ -612,7 +612,7 @@ ll_define_primitive(object, _bmethod_apply, __0(args), _0())
     bcCdebugClines ++;
 
     if ( bcCdebug > 1 ) {
-      ll_format(ll_undef, "\nBC: method ~W type-offset ~W\n", 2, ll_AR_METH, ll_AR_TYPE_OFFSET);
+      ll_format(ll_f, "\n  BC: method ~W type-offset ~W\n", 2, ll_AR_METH, ll_AR_TYPE_OFFSET);
     }
 
     if ( ll_NE(debug_expr_last, ll_undef) ) {
