@@ -8,9 +8,17 @@ LL_LOAD_PATH="${LL_LOAD_PATH:-`/bin/pwd`/lib/ll}"
 export LL_LOAD_PATH
 
 EXEC_WITH=''
-if [ -n "${VALGRIND}" ]
+VALGRIND="${VALGRIND:-valgrind}"
+VALGRIND_OPTS=
+#VALGRIND_OPTS="${VALGRIND_OPTS} -q"
+VALGRIND_OPTS="${VALGRIND_OPTS} --error-limit=no"
+VALGRIND_OPTS="${VALGRIND_OPTS} --track-origins=yes"
+VALGRIND_OPTS="${VALGRIND_OPTS} --track-fds=yes"
+VALGRIND_OPTS="${VALGRIND_OPTS} --read-var-info=yes"
+#VALGRIND_OPTS="${VALGRIND_OPTS} --heap=yes"
+if [ -n "${EXEC_WITH_VALGRIND}" ]
 then
-  EXEC_WITH="valgrind -q --error-limit=no "
+  EXEC_WITH="${VALGRIND} ${VALGRIND_OPTS} "
 fi
 EXEC_WITH_GDB="gdb -x ./run.gdb --args"#
 
@@ -22,7 +30,9 @@ errors=0
 
 tr() {
   echo "t $@"
+  (set -x
   ${EXEC_WITH} ${LLT} -p -e "$@"
+  )
 }
 t_passed() {
     echo "t $*: PASSED"
@@ -66,25 +76,13 @@ set -e
 t_fail '(10 20)'
 t_fail '(load "test/ll_test.scm") (ll:test:assert 5 10)'
 
-t '(get-type *bignum:min*)'
-t '(number->string *bignum:min*)'
-t '(negative? *bignum:min*)'
-t '(zero?     *bignum:min*)'
-t '(positive? *bignum:min*)'
-t '(exact->inexact *bignum:min*)'
-t '(number->string *bignum:max*)'
-t '(negative? *bignum:max*)'
-t '(zero?     *bignum:max*)'
-t '(positive? *bignum:max*)'
-t '(exact->inexact *bignum:max*)'
-t '(number->string (+ *bignum:max* 1)'
-t '(gcd (+ *fixnum:max* 1) 2)'
-t '(gcd 2 (+ *fixnum:max* 1))'
 t '(load "lib/ll/test/slot_closure.ll")'
 t '(load "lib/ll/test/locative.scm")'
 t '(load "lib/ll/test/lambda.scm")'
 t '(load "lib/ll/test/closed.scm")'
 t '(load "lib/ll/test/mycons.scm")'
+#t '(set! *debug:compile-emit* 1) (load "lib/ll/test/let.scm")'
+t '(load "lib/ll/test/let.scm")'
 t '(load "lib/ll/test/number.scm")'
 t '(load "lib/ll/test/body_define.scm")'
 t '(load "lib/ll/type.ll") (type-ancestors <fixnum>)'
