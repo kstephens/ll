@@ -17,8 +17,7 @@ static const char __rcs_id_ll_list_c[] = "$Id: list.c,v 1.19 2008/01/06 18:36:33
 
 ll_define_primitive(pair, listQ, _1(object), _1(no_side_effect,"#t"))
 {
-  ll_SELF = ll_THIS->_cdr;
-  __ll_call_tailv(ll_o(listQ), 1);
+  ll_call_tail(ll_o(listQ), _1(ll_THIS->_cdr));
 }
 ll_define_primitive_end
 
