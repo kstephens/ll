@@ -24,14 +24,14 @@ long ll_unbox_fixnum(ll_v x)
 
 ll_define_primitive(fixnum, oddQ, _1(x), _1(no_side_effect,"#t"))
 {
-  ll_return(ll_make_boolean(ll_UNBOX_fixnum(ll_SELF) % 2) != 0);
+  ll_return(ll_make_boolean(ll_UNBOX_fixnum(ll_SELF) % 2 != 0));
 }
 ll_define_primitive_end
 
 
 ll_define_primitive(fixnum, evenQ, _1(x), _1(no_side_effect,"#t"))
 {
-  ll_return(ll_make_boolean((ll_UNBOX_fixnum(ll_SELF) % 2) == 0));
+  ll_return(ll_make_boolean(ll_UNBOX_fixnum(ll_SELF) % 2 == 0));
 }
 ll_define_primitive_end
 
