@@ -1,8 +1,21 @@
-; $Id: mycons.scm,v 1.4 2008/01/01 10:19:17 stephens Exp $
 (load "ll_test.scm")
 
 ;(let ((x #f))
 (define x #f)
+
+'(
+t "(get-type *bignum:min*)"
+t "(number->string *bignum:min*)"
+t "(negative? *bignum:min*)"
+t "(zero?     *bignum:min*)"
+t "(positive? *bignum:min*)"
+t "(exact->inexact *bignum:min*)"
+t "(number->string *bignum:max*)"
+t "(exact->inexact *bignum:max*)"
+t "(number->string (+ *bignum:max* 1))"
+t "(gcd (+ *fixnum:max* 1) 2)"
+t "(gcd 2 (+ *fixnum:max* 1))'
+)
 
 (newline)(write 'read)(newline)
 (ll:test:assert <fixnum> (get-type 0))
@@ -33,6 +46,22 @@
 (ll:test:assert #t (real?     x))
 (ll:test:assert #t (rational? x))
 (ll:test:assert #f (integer?  x))
+
+(newline)(write 'number->string)(newline)
+(ll:test:assert "0"
+		(number->string 0))
+(ll:test:assert "FF"      
+		(number->string 255 16))
+(ll:test:assert "11111111"      
+		(number->string 255 2))
+(ll:test:assert "-10"
+		(number->string -10))
+(ll:test:assert "-A"      
+		(number->string -10 16))
+(ll:test:assert "123456789012345678901234567890" 
+		(number->string 123456789012345678901234567890))
+(ll:test:assert "-123456789012345678901234567890" 
+		(number->string -123456789012345678901234567890))
 
 (newline)(write '*?)(newline)
 (ll:test:assert #f       (negative? 0))
