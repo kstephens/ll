@@ -41,6 +41,14 @@
 /*************************************************************************/
 /* mem mgmt */
 
+extern void *(*_ll_malloc)(size_t);
+extern void *(*_ll_realloc)(void*, size_t);
+extern void  (*_ll_free)(void*);
+
+extern void *ll_malloc(size_t);
+extern void *ll_realloc(void *, size_t);
+extern void  ll_free(void *);
+
 #ifndef ll_USE_GC
 #define ll_USE_GC 1
 #endif
@@ -57,19 +65,10 @@
 
 #if ll_USE_GC_BOEHM
 #include "gc.h"
-#define _ll_malloc(X) GC_malloc(X)
-#define _ll_realloc(X,Y) GC_realloc(X,Y)
-#define _ll_free(X) (void)(X)
-#define ll_gcollect() GC_gcollect()
 #endif
 
 #if ll_USE_GC_TREADMILL
 #include "tredmill/tm.h"
-#define _ll_gc_init(ARGC,ARGV,ENVP)tm_init((ARGC),(ARGV),(ENVP))
-#define _ll_malloc(X)tm_alloc(X)
-#define _ll_realloc(X,Y)tm_realloc(X,Y)
-#define _ll_free(X) (void)(X)
-#define ll_gcollect() tm_gc_full()
 #define ll_write_barrier_ptr(X)tm_write_barrier(X)
 #define ll_write_barrier_ptr_pure(X)tm_write_barrier_pure(X)
 #define ll_write_root(X)tm_write_root(X)
@@ -77,39 +76,8 @@
 
 #else /* ! ll_USE_GC */
 
-#define _ll_malloc(X) malloc(X)
-#define _ll_realloc(X,Y) realloc(X,Y)
-#define _ll_free(X) free(X)
-#define ll_gcollect() (void)0
-
 #endif /* ll_USE_GC */
 
-#ifndef _ll_gc_init
-#define _ll_gc_init(ARGC,ARGV,ENVP)((void)0)
-#endif
-
-#ifndef ll_gcollect
-#define ll_gcollect()((void)0)
-#endif
-
-#if 1
-extern void *ll_malloc(size_t);
-extern void *ll_realloc(void *, size_t);
-extern void ll_free(void *);
-#else
-
-#ifndef ll_malloc
-#define ll_malloc(X) _ll_malloc(X)
-#endif
-
-#ifndef ll_realloc
-#define ll_realloc(X,Y) _ll_realloc(X,Y)
-#endif
-#endif
-
-#ifndef ll_free
-#define ll_free(X) _ll_free(X)
-#endif
 
 /***********************************************************************/
 /* Write barrier support for treadmill allocator. */
