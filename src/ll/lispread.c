@@ -259,6 +259,25 @@ READ_DECL
 	READ_CALL();
 	goto try_again;
 
+	/* #| ... |# balanced comment. */
+      case '|':
+	{
+	  unsigned int nesting = 0;
+	  GETC(stream);
+	  while ( nesting > 0 && (c = GETC(stream)) != EOF ) {
+	    if ( (c == '#') && (c = GETC(stream)) == '|' ) {
+	      nesting ++;
+	    } else
+	    if ( (c == '|') && (c = GETC(stream)) == '#' ) {
+	      nesting --;
+	    }
+	  }
+	  if ( c == EOF && nesting > 0 ) {
+	    RETURN(ERROR("EOS in #| ... |# comment"));
+	  }
+	}
+	goto try_again;
+
       case '(':
 	RETURN(IMMUTABLE_VECTOR(LIST_2_VECTOR(READ_CALL())));
         
