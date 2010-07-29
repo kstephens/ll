@@ -104,26 +104,26 @@ ll_define_primitive_end
 
 ll_define_primitive(ratnum, negativeQ, _1(x), _1(no_side_effect, "#t"))
 {
-  ll_return(ll_negativeQ(Xn));
+  ll_call_tail(ll_o(negativeQ), _1(Xn));
 }
 ll_define_primitive_end
 
 ll_define_primitive(ratnum, zeroQ, _1(x), _1(no_side_effect, "#t"))
 {
-  ll_return(ll_zeroQ(Xn));
+  ll_call_tail(ll_o(zeroQ), _1(Xn));
 }
 ll_define_primitive_end
 
 ll_define_primitive(ratnum, positiveQ, _1(x), _1(no_side_effect, "#t"))
 {
-  ll_return(ll_negativeQ(Xn));
+  ll_call_tail(ll_o(positiveQ), _1(Xn));
 }
 ll_define_primitive_end
 
 
 ll_define_primitive(ratnum, oneQ, _1(x), _1(no_side_effect, "#t"))
 {
-  ll_return(ll_oneQ(Xn));
+  ll_call_tail(ll_o(ll_equalQ), _2(Xn, Xd));
 }
 ll_define_primitive_end
 
