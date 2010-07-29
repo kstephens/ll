@@ -1,13 +1,21 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_ll_error_c__
-#define __rcs_id_ll_error_c__
-static const char __rcs_id_ll_error_c[] = "$Id: error.c,v 1.39 2008/05/26 08:27:16 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-
-
 #include "ll.h"
 #include <stdarg.h>
+
+
+/* Add debugger breakpoint on this function. */
+void 
+_ll_abort_stop_at()
+{
+}
+
+/* Add debugger breakpoint on this function. */
+void 
+_ll_error_stop_at()
+{
+}
+
+
+/********************************************************************/
 
 
 ll_define_primitive(error, initialize, __2(self, value, values), _0())
@@ -77,7 +85,7 @@ ll_define_primitive(error, initialize, __2(self, value, values), _0())
   }
   ll_LIST_LOOP_END;
 
-  //ll_format(ll_undef, "<error>:initialize self->ar = ~S\n", 1, ll_THIS->_ar);
+  //ll_format(ll_f, "<error>:initialize self->ar = ~S\n", 1, ll_THIS->_ar);
   
   ll_return(ll_SELF);
 }
@@ -145,7 +153,7 @@ ll_define_primitive(error, error_start_debugger, _1(self), _0())
 
     /* ll_DEBUG_SET(trace, ll_make_fixnum(2)); */
     fflush(stdout);
-    ll_format(ll_undef, "\nll: ~S\n~S\n", 2, ll_TYPE(ll_SELF), ll_SELF);
+    ll_format(ll_f, "\nll: ~S\n~S\n", 2, ll_TYPE(ll_SELF), ll_SELF);
     result = ll_call(ll_o(debugger), _1(ll_THIS->_ar));
   }
   ll_let_fluid_END();
@@ -159,7 +167,7 @@ ll_define_primitive(error, error_abort, _1(self), _0())
 {
   fflush(stdout);
   fflush(stderr);
-  ll_format(ll_undef, "\nll: abort: ~S\n~S\n", 2, ll_TYPE(ll_SELF), ll_SELF);
+  ll_format(ll_f, "\nll: abort: ~S\n~S\n", 2, ll_TYPE(ll_SELF), ll_SELF);
   ll_abort("<error>:error-abort");
 }
 ll_define_primitive_end
@@ -168,7 +176,7 @@ ll_define_primitive_end
 ll_define_primitive(error, _handle_error, _1(self), _0())
 {
   ll_v proc = ll_fluid(ll_s(error_handler));
-  // ll_format(ll_undef, "  using error-handler ~S\n", 1, proc);
+  // ll_format(ll_f, "  using error-handler ~S\n", 1, proc);
   ll_call_tail(proc, _1(ll_SELF));
 }
 ll_define_primitive_end
@@ -239,6 +247,9 @@ void _ll_abort(const char *file, int lineno, const char *msg)
     ll_call(ll_o(print_backtrace), _1(ll_make_ref(_ll_ar_sp)));
   }
   fprintf(stderr, "\nll: aborting\n");
+
+  _ll_abort_stop_at();
+  // exit(-1);
 #ifdef SIGILL
   kill(getpid(), SIGILL);
 #endif
@@ -300,7 +311,10 @@ ll_v _ll_errorv(ll_v type, int argc, const ll_v *argv)
   }
 #endif
 
+  _ll_error_stop_at();
+
   if ( ! ll_initializing && ll_EQ(ll_g(__building_internal_error), ll_f) ) {
+    /* NOT_THREAD_SAFE */
     ll_set_g(__building_internal_error, ll_t);
 
     /* Create an assocation list of values for the error */
@@ -317,6 +331,7 @@ ll_v _ll_errorv(ll_v type, int argc, const ll_v *argv)
 
     rtn = ll_call(ll_o(make), _2(type, values));
 
+    /* NOT_THREAD_SAFE */
     ll_set_g(__building_internal_error, ll_f);
 
     rtn = ll_call(ll_o(handle_error), _1(rtn));
@@ -404,14 +419,17 @@ ll_v _ll_range_error(ll_v name, ll_v value, long low, long high)
 		   ll_s(name), name, 
 		   ll_s(value), value, 
 		   ll_s(range), range,
-		   ll_s(return_action), ll_listn(2, ll_make_string("specify a value within the range", -1), range)
+		   ll_s(return_action), ll_listn(2, 
+						 ll_make_string("specify a value within the range", -1), 
+						 range)
 		   ));
 }
 
 
 ll_v _ll_rangecheck(ll_v name, ll_v *value, long low, long high)
 {
-  while ( ! (ll_ISA_fixnum(*value) && low <= ll_UNBOX_fixnum(*value) && ll_UNBOX_fixnum(*value) <= high) ) { 
+  while ( ! (ll_ISA_fixnum(*value) && 
+	     low <= ll_UNBOX_fixnum(*value) && ll_UNBOX_fixnum(*value) <= high) ) { 
     *value = _ll_range_error(name, *value, low, high);
   }
 
