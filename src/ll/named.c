@@ -37,7 +37,9 @@ const char *ll_po_(ll_v x)
      for ( i = 0; i < _ll_env_bindings_n; i ++ ) {
        ll_v binding = _ll_env_bindings[i];
        ll_v loc = ll_THIS_ISA(binding, binding)->_locative;
-       if ( ll_ISA_locative(loc) && ll_EQ(*ll_UNBOX_locative(loc), x) ) {
+       if ( ll_ISA_locative(loc) && 
+	    ll_ISA_ref(*ll_UNBOX_locative(loc)) &&
+	    ll_EQ(*ll_UNBOX_locative(loc), x) ) {
 	 ll_v sym = ll_THIS_ISA(binding, binding)->_symbol;
 	 return ll_ptr_string(ll_THIS_ISA(symbol, sym)->_name);
        }
