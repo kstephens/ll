@@ -375,6 +375,7 @@ ll_v ll_quote(ll_v x);
 #define ll_STRING_LOOP(L,X)ll_STRING_LOOP_REF(L,_##X) char X = *(_##X ++)
 #define ll_STRING_LOOP_END }}while(0)
 
+const char *ll_cstr_string(ll_v x);
 
 /*************************************************************************/
 /* vector */

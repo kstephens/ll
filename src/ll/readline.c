@@ -118,7 +118,7 @@ ll_define_primitive(readline_port, _fill_buffer, _1(port), _0())
       rl_attempted_completion_function = (CPPFunction *)_ll_completion;
 
       /* Call readline */
-      s = readline(ll_ptr_string(ll_THIS->_prompt_buffer));
+      s = readline(ll_cstr_string(ll_THIS->_prompt_buffer));
       if ( s ) {
 	if ( *s ) {
 #if HAS_HISTORY

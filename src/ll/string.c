@@ -17,6 +17,37 @@ static const char __rcs_id_ll_string_c[] = "$Id: string.c,v 1.23 2008/01/06 18:3
 /***************************************************************************/
 
 
+const char *ll_cstr_string(ll_v x)
+{
+ again: {
+    char *xp = ll_ptr_string(x);
+    size_t xl = ll_len_string(x);
+    if ( xp[xl] != '\0' ) {
+      x = ll_make_copy_string(xp, xl);
+      goto again;
+    }
+
+    /* Scan for embedded null. */
+    {
+      char *sp = xp;
+      size_t sl = xl;
+      while ( sl -- ) {
+	if ( *(sp ++) == '\0' ) { 
+	  x = _ll_error(ll_re(coersion_error),
+			2,
+			ll_s(value), x,
+			ll_s(reason), ll_make_string("contains null", -1),
+			ll_undef
+			);
+	  goto again;
+	}
+      }
+    }
+    return xp;
+  }
+}
+
+
 #define _ll_VEC string
 #define _ll_VEC_ELEM_TYPE char
 #define _ll_VEC_COMPUTE_SIZE(v) (v ? strlen(v) : 0)
@@ -437,37 +468,55 @@ ll_define_primitive_end
 
 /***************************************************************************/
 
+#define _SGN(X) ((X) < 0 ? -1 : (X) > 0 ? 1 : 0)
+
+ll_define_primitive(string, _string_cmp, _2(string1,string2), _1(no_side_effect,"#t"))
+{
+  size_t i, l;
+  const char *v;
+  _ll_typecheck(ll_type(string), &ll_ARG_1);
+  l = ll_THIS_ISA(string, ll_ARG_1)->_length;
+  v = ll_THIS_ISA(string, ll_ARG_1)->_array;
+  for ( i = 0; i < ll_THIS->_length && i < l; i ++) {
+    int c;
+    if ( ! ( c = ll_THIS->_array[i] - v[i]) ) {
+      ll_return(ll_BOX_fixnum(_SGN(c)));
+    }
+  }
+  ll_return(ll_BOX_fixnum(_SGN(ll_THIS->_length - l)));
+}
+ll_define_primitive_end
+
+
+ll_define_primitive(string, _string_cmp_ci, _2(string1, string2), _1(no_side_effect,"#t"))
+{
+  size_t i, l;
+  const char *v;
+  _ll_typecheck(ll_type(string), &ll_ARG_1);
+  l = ll_THIS_ISA(string, ll_ARG_1)->_length;
+  v = ll_THIS_ISA(string, ll_ARG_1)->_array;
+  for ( i = 0; i < ll_THIS->_length && i < l; i ++) {
+    int c;
+    if ( ! (c = tolower(ll_THIS->_array[i]) - tolower(v[i])) ) {
+      ll_return(ll_BOX_fixnum(_SGN(c)));
+    }
+  }
+  ll_return(ll_BOX_fixnum(_SGN(ll_THIS->_length - l)));
+}
+ll_define_primitive_end
 
 #define CHAR_CMP_PRED(NAME,OP) \
-ll_define_primitive(string,string##NAME##Q, _2(string1,string2), _1(no_side_effect,"#t")) \
-{ \
-  size_t i, l; \
-  const char *v; \
-  _ll_typecheck(ll_type(string), &ll_ARG_1); \
-  l = ll_THIS_ISA(string, ll_ARG_1)->_length; \
-  v = ll_THIS_ISA(string, ll_ARG_1)->_array; \
-  for ( i = 0; i < ll_THIS->_length && i < l; i ++) { \
-    if ( ! (ll_THIS->_array[i] OP v[i]) ) { \
-      ll_return(ll_f); \
-    } \
-  } \
-  ll_return(ll_make_boolean(ll_THIS->_length OP l)); \
-} \
-ll_define_primitive_end \
-ll_define_primitive(string,string_ci##NAME##Q, _2(string1,string2), _1(no_side_effect,"#t")) \
-{ \
-   size_t i, l; \
-  const char *v; \
-  _ll_typecheck(ll_type(string), &ll_ARG_1); \
-  l = ll_THIS_ISA(string, ll_ARG_1)->_length; \
-  v = ll_THIS_ISA(string, ll_ARG_1)->_array; \
-  for ( i = 0; i < ll_THIS->_length && i < l; i ++) { \
-    if ( ! (tolower(ll_THIS->_array[i]) OP tolower(v[i])) ) { \
-      ll_return(ll_f); \
-    } \
-  } \
-  ll_return(ll_make_boolean(ll_THIS->_length OP l)); \
-} \
+ll_define_primitive(string, string##NAME##Q, _2(string1, string2), _1(no_side_effect,"#t")) \
+{									\
+  ll_v c = ll_call(ll_o(_string_cmp), _2(ll_ARG_0, ll_ARG_1));		\
+  ll_return(ll_make_boolean(c OP 0));					\
+}									\
+ ll_define_primitive_end						\
+ ll_define_primitive(string, string_ci##NAME##Q, _2(string1, string2), _1(no_side_effect,"#t")) \
+ {									\
+   ll_v c = ll_call(ll_o(_string_cmp_ci), _2(ll_ARG_0, ll_ARG_1));	\
+   ll_return(ll_make_boolean(c OP 0));					\
+ }									\
 ll_define_primitive_end
 
 

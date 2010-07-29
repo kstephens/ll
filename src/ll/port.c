@@ -270,8 +270,8 @@ ll_define_primitive(string, _open_file, _2(filename, mode), _0())
   ll_v impl;
   ll_v type;
 
-  filename = ll_ptr_string(ll_SELF);
-  mode = ll_ptr_string(ll_ARG_1);
+  filename = ll_cstr_string(ll_SELF);
+  mode = ll_cstr_string(ll_ARG_1);
   type = strchr(mode, 'w') ? ll_type(output_file_port) : ll_type(input_file_port);
 
   if ( (fp = fopen(filename, mode)) ) {

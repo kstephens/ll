@@ -113,9 +113,8 @@ ll_define_primitive(bignum, initialize, __1(r, y), _1(no_side_effect, "#t"))
       mpz_init_set_d(Xn, ll_UNBOX_flonum(Y));
     }
     else if ( ll_ISA_string(Y) ) {
-      assert(ll_ptr_string(Y)[ll_len_string(Y)] == '\0');
       mpz_init_set_str(Xn, 
-		       ll_ptr_string(Y), 
+		       ll_cstr_string(Y), 
 		       ll_ARGC > 2 ? ll_unbox_fixnum(ll_ARG_2) : 10);
       // ll_format(ll_f, "  bignum str ~S => ~S\n", 2, Y, ll_SELF);
     }

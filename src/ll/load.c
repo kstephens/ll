@@ -56,7 +56,7 @@ ll_define_primitive(string, load, _1(file), _0())
   ll_v load_path = ll_nil;
   ll_v port;
 
-  const char *file = ll_ptr_string(path);
+  const char *file = ll_cstr_string(path);
 
   /* Scan in directories for readable file, if filename is not absolute. */
   if ( file[0] != '/' ) {
@@ -74,7 +74,7 @@ ll_define_primitive(string, load, _1(file), _0())
       {
 	char buf[1024];
 
-	snprintf(buf, sizeof(buf) - 1, "%s/%s", ll_ptr_string(x), file);
+	snprintf(buf, sizeof(buf) - 1, "%s/%s", ll_cstr_string(x), file);
 	
 	if ( access(buf, R_OK) >= 0 ) {
 	  path = ll_make_copy_string(buf, -1);
@@ -94,7 +94,7 @@ ll_define_primitive(string, load, _1(file), _0())
      * be loaded.
      */
     {
-      char *p = ll_ptr_string(path);
+      char *p = (char*) ll_cstr_string(path);
       char *x = strrchr(p, '/');
       
       path_dir = x ? 
