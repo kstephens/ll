@@ -78,7 +78,7 @@ ll_define_primitive_end
 ll_define_primitive(flonum, round, _1(x), _1(no_side_effect,"#t"))
 {
   /* IMPLEMENT: CHECK FOR X.5 */
-  ll_return(ll_make_integer_d(floor(ll_UNBOX_flonum(ll_SELF) + 0.5)));
+  ll_return(ll_make_flonum(floor(ll_UNBOX_flonum(ll_SELF) + 0.5)));
 }
 ll_define_primitive_end
 
