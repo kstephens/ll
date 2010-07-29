@@ -182,13 +182,6 @@ ll_define_primitive_end
 /************************************************************************/
 
 
-ll_define_primitive(_ll_VEC, clone, _1(_ll_VEC), _0())
-{
-  ll_return(ll_SELF);
-}
-ll_define_primitive_end
-
-
 ll_define_primitive(_ll_VEC, initialize_clone_mutable, _2(_ll_VEC, src), _0())
 {
   ll_call_tail(ll_o(deepen), _1(ll_SELF));
