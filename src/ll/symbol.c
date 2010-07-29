@@ -1,11 +1,3 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_ll_symbol_c__
-#define __rcs_id_ll_symbol_c__
-static const char __rcs_id_ll_symbol_c[] = "$Id: symbol.c,v 1.28 2008/05/24 20:54:39 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-
-
 #include "ll.h"
 #include "symbol.h"
 #include <stdlib.h>
@@ -33,10 +25,12 @@ static const char __rcs_id_ll_symbol_c[] = "$Id: symbol.c,v 1.28 2008/05/24 20:5
 #define HASH_MALLOC(X) ll_malloc(X)
 #define HASH_REALLOC(X,Y) ll_realloc(X,Y)
 #define HASH_FREE(X) ll_free(X)
+// #define HASH_WRITE_BARRIER(X) FIXME
+
+typedef struct HASH(Table) ll_symbol_table;
 
 #include "hash/hash.c"
 #include "hash/hash_end.def"
-
 
 /************************************************************************/
 
@@ -47,7 +41,7 @@ static const char __rcs_id_ll_symbol_c[] = "$Id: symbol.c,v 1.28 2008/05/24 20:5
 void _ll_symtable_init(int size)
 {
   if ( ! symtable ) {
-    symtable = ll_malloc(sizeof(*symtable));
+    symtable = ll_malloc(sizeof(ll_symbol_table));
     _ll_symbol_TableInit(symtable, size);
     _ll_symbol_TableSize(symtable);
     _ll_symbol_TableNEntries(symtable);
