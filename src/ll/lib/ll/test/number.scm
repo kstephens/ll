@@ -1,7 +1,8 @@
 (load "ll_test.scm")
 
-;(let ((x #f))
-(define x #f)
+(let ((x #f))
+
+; (%bc:debug)
 
 '(
 t "(get-type *bignum:min*)"
@@ -152,19 +153,20 @@ t "(gcd 2 (+ *fixnum:max* 1))'
 (ll:test:assert 246913578024691357802469135780 (* 2 123456789012345678901234567890))
 (ll:test:assert 246913578024691357802469135780 (* 123456789012345678901234567890 2))
 
-(newline)(write '<ratnum>)(newline)
-
 (newline)(write '/)(newline)
 (ll:test:assert 1 (/ 1))
-(ll:test:assert 1/2 (/ 2))
 (ll:test:assert 0.5 (/ 2.0))
-(ll:test:assert 2 (/ 1/2))
-
-(ll:test:assert 2 (/ 4 2))
-(ll:test:assert 4/3 (/ 4 3))
 (ll:test:assert 123456789012345678901234567890 (/ 246913578024691357802469135780 2))
+
+(newline)(write '<ratnum>)(newline)
+(ll:test:assert 1/2 (/ 2))
+(ll:test:assert 2 (/ 1/2))
+(ll:test:assert 2 (/ 4 2))
+(ll:test:assert 1/2 (/ 4 8))
+(ll:test:assert 4/3 (/ 4 3))
 (ll:test:assert 246913578024691357802469135780 (/ 123456789012345678901234567890 1/2))
 
-; )
+
+)
 
 (newline)'ok
