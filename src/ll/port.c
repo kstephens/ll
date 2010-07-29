@@ -163,6 +163,13 @@ ll_define_primitive(file_port, _close_port, _1(port), _0())
 ll_define_primitive_end
 
 
+ll_define_primitive(file_port, _finalize, _1(port), _0())
+{
+  ll_call_tail(ll_o(close_port), _1(ll_SELF));
+}
+ll_define_primitive_end
+
+
 /******************************************************************/
 
 
@@ -269,6 +276,7 @@ ll_define_primitive(string, _open_file, _2(filename, mode), _0())
 
   if ( (fp = fopen(filename, mode)) ) {
     impl = (ll_v) fp;
+    ll_call(ll_o(_register_finalizer), _1(ll_SELF));
   } else {
     ll_return(_ll_error(ll_re(file_open), 
 			4, 
