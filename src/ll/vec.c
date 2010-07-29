@@ -327,6 +327,10 @@ ll_define_primitive(_ll_VEC, _equalQ, _2(_ll_VEC,_ll_VEC), _1(no_side_effect,"#t
   /* XXX: typechecking */
   v2 = (ll_THIS_ISA(_ll_VEC, ll_ARG_1)->_array);
 
+  if ( v1 == v2 ) {
+    ll_return(ll_t);
+  }
+
   while ( l1 && l2 ) {
     if ( ! _ll_VEC_ELEM_EQUAL(*v1, *v2) )
       ll_return(ll_f);
@@ -335,7 +339,7 @@ ll_define_primitive(_ll_VEC, _equalQ, _2(_ll_VEC,_ll_VEC), _1(no_side_effect,"#t
     l1 --;
     l2 --;
   }
-  ll_return(ll_f);
+  ll_return(ll_t);
 }
 ll_define_primitive_end
 
@@ -391,6 +395,8 @@ ll_define_primitive(_ll_VEC, deepen, _1(_ll_VEC), _0())
 #endif
   }
   ll_write_barrier(v);
+
+  // ll_format(ll_f, "\n  deepen ~S \n", 1, ll_SELF);
 
   ll_THIS->_array = v;
   ll_write_barrier_SELF();
