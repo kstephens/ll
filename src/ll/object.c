@@ -124,11 +124,15 @@ ll_define_primitive_end
 
 ll_define_primitive(object, clone, _1(object), _0())
 {
-  ll_v t = ll_TYPE(ll_SELF);
-  size_t size = ll_unbox_fixnum(ll_call(ll_o(type_size), _1(t)));
-  ll_v x = _ll_allocate_type(t);
-  memcpy(ll_UNBOX_ref(x), ll_UNBOX_ref(ll_SELF), size);
-  ll_call_tail(ll_o(initialize_clone), _2(x, ll_SELF));
+  if ( ll_ISA_ref(ll_SELF) ) {
+    ll_v t = ll_TYPE(ll_SELF);
+    size_t size = ll_unbox_fixnum(ll_call(ll_o(type_size), _1(t)));
+    ll_v x = _ll_allocate_type(t);
+    memcpy(ll_UNBOX_ref(x), ll_UNBOX_ref(ll_SELF), size);
+    ll_call_tail(ll_o(initialize_clone), _2(x, ll_SELF));
+  } else {
+    ll_return(ll_SELF);
+  }
 }
 ll_define_primitive_end
 
