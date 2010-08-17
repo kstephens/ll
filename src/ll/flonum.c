@@ -74,11 +74,27 @@ ll_define_primitive(flonum, truncate, _1(x), _1(no_side_effect,"#t"))
 }
 ll_define_primitive_end
 
+#include "fenv.h"
 
 ll_define_primitive(flonum, round, _1(x), _1(no_side_effect,"#t"))
 {
-  /* IMPLEMENT: CHECK FOR X.5 */
-  ll_return(ll_make_flonum(floor(ll_UNBOX_flonum(ll_SELF) + 0.5)));
+#if 1
+  int old_round_mode = fegetround();
+#endif
+
+  double x = round(ll_UNBOX_flonum(ll_SELF));
+
+#if 1
+  fesetround(FE_TONEAREST);
+#endif
+
+  x = round(x);
+
+#if 1
+  fesetround(old_round_mode);
+#endif
+
+  ll_return(ll_make_flonum(x));
 }
 ll_define_primitive_end
 
