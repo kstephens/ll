@@ -87,8 +87,8 @@ t '(load "lib/ll/test/string.scm")'
 t '(load "lib/ll/test/number.scm")'
 t '(load "lib/ll/test/body_define.scm")'
 t '(load "lib/ll/type.ll") (type-ancestors <fixnum>)'
-t '(load "lib/ll/test/tak_test.scm")'
 t '(posix:chdir "lib/ll/test") (load "test.scm") (test-sc4)'
+t '(load "lib/ll/test/tak_test.scm")'
 t '(load "pp.scm") (pretty-print nil)'
 
 ###########################################################
