@@ -1,11 +1,6 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_ll_ar_c__
-#define __rcs_id_ll_ar_c__
-static const char __rcs_id_ll_ar_c[] = "$Id: ar.c,v 1.15 2008/05/26 06:35:03 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #include "ll.h"
+
+/* Activation Record (message) */
 
 ll_define_primitive(message, _write_default_contents, _3(obj, port, op), _0())
 {
@@ -20,42 +15,42 @@ ll_define_primitive(message, _write_default_contents, _3(obj, port, op), _0())
 ll_define_primitive_end
 
 
-ll_define_primitive(message, _ar_op, _1(ar), _1(no_side_effect, "#t"))
+ll_define_primitive(message, message_op, _1(ar), _1(no_side_effect, "#t"))
 {
   ll_return(ll_THIS->_op);
 }
 ll_define_primitive_end
 
 
-ll_define_primitive(message, _ar_argc, _1(ar), _1(no_side_effect, "#t"))
+ll_define_primitive(message, message_argc, _1(ar), _1(no_side_effect, "#t"))
 {
   ll_return(ll_make_fixnum(ll_THIS->_argc));
 }
 ll_define_primitive_end
 
 
-ll_define_primitive(message, _ar_type, _1(ar), _1(no_side_effect, "#t"))
+ll_define_primitive(message, message_type, _1(ar), _1(no_side_effect, "#t"))
 {
   ll_return(ll_THIS->_type);
 }
 ll_define_primitive_end
 
 
-ll_define_primitive(message, _ar_type_offset, _1(ar), _1(no_side_effect, "#t"))
+ll_define_primitive(message, message_type_offset, _1(ar), _1(no_side_effect, "#t"))
 {
   ll_return(ll_THIS->_type_offset);
 }
 ll_define_primitive_end
 
 
-ll_define_primitive(message, _ar_meth, _1(ar), _1(no_side_effect,"#t"))
+ll_define_primitive(message, message_meth, _1(ar), _1(no_side_effect,"#t"))
 {
   ll_return(ll_THIS->_meth);
 }
 ll_define_primitive_end
 
 
-ll_define_primitive(message, _ar_file, _1(ar), _1(no_side_effect, "#t"))
+ll_define_primitive(message, message_file, _1(ar), _1(no_side_effect, "#t"))
 {
 #if ll_USE_FILE_LINE
   const char *x = ll_THIS->_file ? ll_THIS->_file : "?";
@@ -67,7 +62,7 @@ ll_define_primitive(message, _ar_file, _1(ar), _1(no_side_effect, "#t"))
 ll_define_primitive_end
 
 
-ll_define_primitive(message, _ar_line, _1(ar), _1(no_side_effect, "#t"))
+ll_define_primitive(message, message_line, _1(ar), _1(no_side_effect, "#t"))
 {
 #if ll_USE_FILE_LINE
   ll_return(ll_make_fixnum(ll_THIS->_line));
@@ -121,8 +116,8 @@ ll_define_primitive(message, print_frame, __1(self, port), _0())
 
   ll_format(port, ")\n        ~A:~A", 
 	    2, 
-	    ll_call(ll_o(_ar_file), _1(ll_SELF)),
-	    ll_call(ll_o(_ar_line), _1(ll_SELF))
+	    ll_call(ll_o(message_file), _1(ll_SELF)),
+	    ll_call(ll_o(message_line), _1(ll_SELF))
 	    );
 
   ll_format(port, "\n        ~N ~N\n", 
