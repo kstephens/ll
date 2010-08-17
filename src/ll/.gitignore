@@ -15,4 +15,5 @@ floatcfg
 *.i
 *.ic
 gmon.out
+count_bits
 
