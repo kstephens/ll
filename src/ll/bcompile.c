@@ -331,15 +331,15 @@ ll_define_primitive(_ir, _ir_allocate_export, _2(ir, var), _0())
     /* Allocate and remember a slot in our environment vector */
     set_var_closed_overQ(x, ll_THIS->_env_length);
 
-    ll_THIS->_env_length = ll_call(ll_o(_ADD), _2(ll_THIS->_env_length, ll_make_fixnum(1)));
-    ll_write_barrier_SELF();
-
     /* Append to the environment list */
     /*
     ** Keep the environment list in reverse environment vector order
     ** because the environment vector is built on the stack.  
     */
     ll_THIS->_env = ll_cons(x, ll_THIS->_env);
+    ll_write_barrier_SELF();
+
+    ll_THIS->_env_length = ll_call(ll_o(_ADD), _2(ll_THIS->_env_length, ll_make_fixnum(1)));
     ll_write_barrier_SELF();
   }
 }
