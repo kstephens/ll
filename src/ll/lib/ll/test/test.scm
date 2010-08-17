@@ -75,8 +75,8 @@
 	  disjoint-type-functions)
 (define type-matrix
   (map (lambda (x)
-	 (let ((t (map (lambda (f) (f x)) disjoint-type-functions)))
-	   (write t)
+	 (let ((t (map (lambda (f) (if (f x) "T " "  ")) disjoint-type-functions)))
+	   (display t)
 	   (write x)
 	   (newline)
 	   t))
