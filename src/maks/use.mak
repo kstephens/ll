@@ -1,4 +1,3 @@
-# $Id: use.mak,v 1.4 2001/03/21 02:04:14 stephens Exp $
 #
 # Use a package.
 #
