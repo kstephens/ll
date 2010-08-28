@@ -1,5 +1,7 @@
 #include "ll.h"
 #include <stdarg.h>
+#include <signal.h> /* kill() */
+#include <unistd.h> /* getpid() */
 
 
 /* Add debugger breakpoint on this function. */

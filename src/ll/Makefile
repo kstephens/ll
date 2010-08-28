@@ -15,7 +15,7 @@ MAKEFILES=Makefile $(CONFIG_MAK)
 
 PERL = perl
 MAKE_DEFS = sh ./defs.sh - CPP "$(CPP)" - CPPFLAGS "$(CPPFLAGS)"
-LLCC=llcc - od $(DEF_DIR) 
+LLCC=./llcc - od $(DEF_DIR) 
 LLCC_COMPILE=$(LLCC) - CPP '$(CPP)' - CPPFLAGS '$(CPPFLAGS)'
 LLCC_COLLECT=$(LLCC) --collect
 
@@ -209,14 +209,25 @@ DEF_FILES =
 MAKE_SAVE_I=YES
 MAKE_SAVE_I=
 
+CC_ASSEMBLY_FLAGS=-Wa,-adlh
+CC_ASSEMBLY_FLAGS=#
+
 %.o : %.c 
 	if test '$*.c' -nt '$*.c.llcc/_' -o ! -e '$*.c.llcc/_'; then make '$*.c.llcc/_' $(COLLECT); fi
 ifneq "$(MAKE_SAVE_I)" ""
 	$(CPP) $(CPPFLAGS) -CC $*.c | sed -e 's/^#.*//' -e 's/;/;@/g' | tr '@' '\012' > $*.i
-	$(CC) $(CFLAGS) -Wa,-adlh -c -S -o $*.s $*.i >$*.sc
-	$(CC) $(CFLAGS) -Wa,-adlh -c -o $*.o $*.s >$*.oc
+ifneq "$(CC_ASSEMBLY_FLAGS)" ""
+	$(CC) $(CFLAGS) $(CC_ASSEMBLY_FLAGS) -c -S -o $*.s $*.i >$*.sc
+	$(CC) $(CFLAGS) $(CC_ASSEMBLY_FLAGS) -c    -o $@   $*.s >$*.oc
 else
+	$(CC) $(CFLAGS) -c -o $@ $*.c
+endif
+else
+ifneq "$(CC_ASSEMBLY_FLAGS)" ""
 	$(CC) $(CFLAGS) -Wa,-adlh -c -o $@ $*.c >$*.oc || ( rm -rf '$*.c.llcc'; exit 1 )
+else
+	$(CC) $(CFLAGS) -c -o $@ $*.c || ( rm -rf '$*.c.llcc'; exit 1 )
+endif
 	make '$*.c.llcc/_' $(COLLECT)
 endif
 
@@ -234,10 +245,10 @@ O_FILES = $(C_FILES:.c=.o)
 
 ########################################################################
 
-ifeq "$(strip $(shell uname))" "Linux"
-EXE=
-else
+ifeq "$(strip $(shell uname))" "CYGWIN"
 EXE=.exe
+else
+EXE=
 endif
 
 ########################################################################
@@ -282,7 +293,7 @@ libll.a : .lldefs $(ll_COLLECT_FILES_LLCC) $(O_FILES) $(DEFS) $(GC_DEPS)
 #	$(LLCC) --collect
 
 llt$(EXE) : .lldefs llt.c $(DEFS) $(ll_COLLECT_FILES) libll.a 
-	$(CC) $(CFLAGS) -o $@ llt.c $(ll_COLLECT_FILES) -L . -l ll $(LIBS) $(GC_LIB)
+	$(CC) $(CFLAGS) -o $@ llt.c $(ll_COLLECT_FILES) -L. -l ll $(LIBS) $(GC_LIB)
 	-cp -p $@ $@-save$(EXE)
 	-cp -p $@ $@.strip$(EXE)
 	-strip $@.strip$(EXE)
