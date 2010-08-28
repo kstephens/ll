@@ -178,7 +178,7 @@ GC_END = $(GC)/gc.c $(GC)/gc_end.c
 GC_LIB =
 
 ifneq "$(strip $(ll_USE_GC_BOEHM))" "0"
-GC=../gc_boehm/gc-7.0
+GC:=$(shell echo ../gc_boehm/gc-*/)
 CPPFLAGS+= -I$(GC)/include
 GC_BEGIN =
 GC_END =
@@ -292,7 +292,7 @@ libll.a : .lldefs $(ll_COLLECT_FILES_LLCC) $(O_FILES) $(DEFS) $(GC_DEPS)
 	ranlib $@
 #	$(LLCC) --collect
 
-llt$(EXE) : .lldefs llt.c $(DEFS) $(ll_COLLECT_FILES) libll.a 
+llt$(EXE) : llt.c .lldefs $(DEFS) $(ll_COLLECT_FILES) libll.a 
 	$(CC) $(CFLAGS) -o $@ llt.c $(ll_COLLECT_FILES) -L. -l ll $(LIBS) $(GC_LIB)
 	-cp -p $@ $@-save$(EXE)
 	-cp -p $@ $@.strip$(EXE)
