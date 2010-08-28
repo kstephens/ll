@@ -409,10 +409,10 @@ static void _ct_init()
 
   _ct_cntx->inited ++;
   
-  _ct_cntx->name_2_ct_t = ct_malloc(sizeof(charP_int_Table));
+  _ct_cntx->name_2_ct_t = ct_malloc(sizeof(*_ct_cntx->name_2_ct_t));
   charP_int_TableInit(_ct_cntx->name_2_ct_t, 64);
 
-  _ct_cntx->ct_t_2_ct_tdef = ct_malloc(sizeof(int_voidP_Table));
+  _ct_cntx->ct_t_2_ct_tdef = ct_malloc(sizeof(*_ct_cntx->ct_t_2_ct_tdef));
   int_voidP_TableInit(_ct_cntx->ct_t_2_ct_tdef, 64);
 
   /***********************************************************************/
