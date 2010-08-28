@@ -1,5 +1,3 @@
-/* $Id */
-
 #ifndef ct_t_D
 #define ct_t_D(N) ct_t_##N,
 #endif

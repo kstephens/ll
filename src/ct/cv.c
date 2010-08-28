@@ -1,4 +1,3 @@
-
 #include "cv.h"
 
 #include "bitfield.h"

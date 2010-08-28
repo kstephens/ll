@@ -1,10 +1,3 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_ct_ct_c__
-#define __rcs_id_ct_ct_c__
-static const char __rcs_id_ct_ct_c[] = "$Id: ct.c,v 1.9 1999/10/13 17:13:06 stephensk Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #include "ct_cntx.h"
 #include <string.h>
 #include <ctype.h>
