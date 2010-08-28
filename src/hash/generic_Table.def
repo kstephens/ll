@@ -1,11 +1,3 @@
-
-#ifndef __rcs_id__
-#ifndef __rcs_id_hash_generic_Table_def__
-#define __rcs_id_hash_generic_Table_def__
-static const char __rcs_id_hash_generic_Table_def[] = "$Id: generic_Table.def,v 1.2 1999/02/19 09:25:42 stephensk Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #define HASH(X)generic_##X
 
 struct generic_TableMethods;

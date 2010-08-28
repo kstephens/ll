@@ -1,11 +1,3 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_hash_hash_c__
-#define __rcs_id_hash_hash_c__
-static const char __rcs_id_hash_hash_c[] = "$Id: hash.c,v 1.9 1999/11/04 10:38:29 stephensk Exp $";
-#endif
-#endif /* __rcs_id__ */
-
-
 #include <stddef.h> /* size_t */
 #include <stdlib.h> /* malloc(), realloc(), free() */
 #include <assert.h>

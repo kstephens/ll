@@ -1,15 +1,8 @@
 /* -*- c -*- */
-#ifndef __rcs_id__
-#ifndef __rcs_id_hash_hash_def__
-#define __rcs_id_hash_hash_def__
-static const char __rcs_id_hash_hash_def[] = "$Id: hash.def,v 1.7 2007/09/17 07:01:45 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
 
 /*
 ** Hash table template
 ** Copyright 1998, 1999 Kurt A. Stephens, http://www.acm.org/~stephensk
-** $Id: hash.def,v 1.7 2007/09/17 07:01:45 stephens Exp $
 */
 #ifndef HASH
 #define HASH(X) Hash##X
