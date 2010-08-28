@@ -79,7 +79,7 @@ int main(int argc, char **argv)
 #define OFFSETOF(T,X) ((size_t)&(((T *)0)->X))*8
 
 #define PO(N) \
-    P("%d", OFFSETOF(struct test1, N));
+    P("%lu", OFFSETOF(struct test1, N));
     PO(a);
     PO(b);
     PO(c);

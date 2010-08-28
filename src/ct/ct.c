@@ -689,7 +689,8 @@ ct_t ct_t_struct_endv(ct_t t, int nelements, const char **names, const ct_t *typ
 
   assert(ct_t_STRUCTQ(t) || ct_t_UNIONQ(t));
   d = ct_t_def(t);
-  
+
+  /* FIXME: 64bit sizeof(pointers) > sizeof(long) */ 
   assert(sizeof(types[0]) == sizeof(d->_elements[0]));
   ct_tdef_setElements(d, nelements, (const long *) types, names);
 
