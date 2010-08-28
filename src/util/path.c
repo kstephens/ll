@@ -1,10 +1,3 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_util_path_c__
-#define __rcs_id_util_path_c__
-static const char __rcs_id_util_path_c[] = "$Id: path.c,v 1.5 1999/06/28 14:04:14 stephensk Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #include "util/path.h"
 #include <string.h>
 #include <ctype.h>

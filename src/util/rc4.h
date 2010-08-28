@@ -1,8 +1,6 @@
 #ifndef _rc4_h
 #define _rc4_h
 
-/* $Id: rc4.h,v 1.4 2000/05/10 03:55:22 stephensk Exp $ */
-
 #include <stddef.h>
 
 typedef struct rc4_state {

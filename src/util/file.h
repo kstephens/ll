@@ -1,14 +1,6 @@
 #ifndef _util_file_h
 #define _util_file_h
 
-#ifndef __rcs_id__
-#ifndef __rcs_id_util_file_h__
-#define __rcs_id_util_file_h__
-static const char __rcs_id_util_file_h[] = "$Id: file.h,v 1.4 2001/02/01 06:22:18 ion Exp $";
-#endif
-#endif /* __rcs_id__ */
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif

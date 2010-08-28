@@ -3,14 +3,6 @@
 #ifndef _util_enum_h
 #define _util_enum_h
 
-#ifndef __rcs_id__
-#ifndef __rcs_id_util_enum_h__
-#define __rcs_id_util_enum_h__
-static const char __rcs_id_util_enum_h[] = "$Id: enum.h,v 1.7 2000/01/13 13:58:11 stephensk Exp $";
-#endif
-#endif /* __rcs_id__ */
-
-
 #include <stddef.h> /* size_t */
 
 typedef struct C_enum {

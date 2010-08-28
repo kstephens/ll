@@ -1,14 +1,8 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_util_ssprintf_c__
-#define __rcs_id_util_ssprintf_c__
-static const char __rcs_id_util_path_c[] = "$Id: ssprintf.c,v 1.2 2000/01/04 06:22:24 stephensk Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <assert.h>
+#include <string.h> /* strlen() */
 
 #include "ssprintf.h"
 

@@ -1,10 +1,3 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_util_setenv_c__
-#define __rcs_id_util_setenv_c__
-static const char __rcs_id_util_setenv_c[] = "$Id: setenv.c,v 1.3 1999/04/05 19:04:22 stephensk Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #include <string.h>
 #include <stdlib.h>
 

@@ -1,5 +1,4 @@
 #!/bin/perl
-# $Id: sigs.pl,v 1.4 2000/01/04 05:53:51 stephensk Exp $
 print "/* DO NOT MODIFY: Created by perl $0 @ARGV */\n";
 while ( <> ) {
 #print;

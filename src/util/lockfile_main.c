@@ -1,4 +1,3 @@
-/* $Id: lockfile_main.c,v 1.1 1999/06/09 05:43:31 stephensk Exp $ */
 #include "lockfile.h"
 #include <stdio.h>
 #include <fcntl.h>

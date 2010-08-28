@@ -1,10 +1,3 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_util_host_c__
-#define __rcs_id_util_host_c__
-static const char __rcs_id_util_host_c[] = "$Id: host.c,v 1.2 2000/01/04 06:22:24 stephensk Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #include "host.h"
 #include <string.h>
 #include <sys/param.h> /* MAXHOSTNAMELEN */

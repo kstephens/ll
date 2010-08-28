@@ -72,9 +72,9 @@ public:
   refcntptr& operator = (const refcntptr& x) { return (*this) = x._p; }
 
   operator void* () const { return (void*) _p; }
-  operator int () const { return (int) _p; }
+  operator int () const { return _p != 0; }
   operator T* () const { return _p; }
-  int operator ! () const { return ! (int) _p; }
+  int operator ! () const { return _p == 0; }
 
   T& operator *() const { return *_p; }
   T* operator ->() const { return _p; }

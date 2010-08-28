@@ -1,7 +1,7 @@
 #ifndef BITSET_H
 #define BITSET_H
 
-/* $Id: bitset.h,v 1.2 2008/01/15 05:19:00 stephens Exp $ */
+#include <stddef.h>
 
 /* Bitset ops. */
 typedef unsigned int bitset_t;

@@ -1,5 +1,3 @@
-/* $Id: host.h,v 1.3 2000/01/04 06:34:47 stephensk Exp $ */
-
 #ifndef _util_host_h
 #define _util_host_h
 

@@ -1,5 +1,3 @@
-/* $Id: prime.c,v 1.6 2000/01/13 13:29:50 stephensk Exp $ */
-
 #include "prime.h"
 
 #ifdef UNIT_TEST

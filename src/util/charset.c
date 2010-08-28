@@ -1,12 +1,3 @@
-
-#ifndef __rcs_id__
-#ifndef __rcs_id_misc_charset_c__
-#define __rcs_id_misc_charset_c__
-static const char __rcs_id_misc_charset_c[] = "$Id: charset.c,v 1.2 1999/09/30 18:53:44 stephensk Exp $";
-#endif
-#endif /* __rcs_id__ */
-
-
 #include <stdio.h>
 #include <string.h> /* strchr() */
 #include <ctype.h> /* isdigit(), isxdigit(), isprint(), iscntrl() */

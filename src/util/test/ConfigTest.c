@@ -1,5 +1,3 @@
-static char *_version_id = "$Id: ConfigTest.c,v 1.1 1999/05/07 13:29:31 stephensk Exp $";
-
 #include "ConfigInfo.h"
 #include "config.h"
 #include <stdio.h>

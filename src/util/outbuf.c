@@ -1,5 +1,3 @@
-/* $Id: outbuf.c,v 1.3 2000/01/04 06:22:24 stephensk Exp $ */
-
 #include "outbuf.h"
 #include <stdlib.h>
 #ifdef MEMDEBUG
