@@ -36,7 +36,7 @@ C_OPTIMIZE=-O3
 C_WARNINGS=-Wall -Werror
 CC = gcc
 export CC
-CPPFLAGS = -I.. -I$(dir $(DEF_DIR)) -Isrc/include# -I/usr/include 
+CPPFLAGS = -I.. -I$(dir $(DEF_DIR)) -Isrc/include -I/opt/local/include# -I/usr/include 
 CFLAGS = $(C_OPTIMIZE) $(C_DEBUG) $(C_PROFILE) $(C_WARNINGS) $(CPPFLAGS)
 CPP = $(CC) -E
 
@@ -115,11 +115,12 @@ LIBS += -lncurses
 endif
 
 ifneq "$(strip $(HAS_HISTORY))" "0"
-LIBS += -lhistory
+LIBS += -lhistory #
 endif
 
-LIBS += -lgmp
-LIBS += -lm
+LIBS += -L/opt/local/lib # OS X macports: sudo port install gmp
+LIBS += -lgmp #
+LIBS += -lm #
 
 EARLY_H = \
 	../util/signals.h \
