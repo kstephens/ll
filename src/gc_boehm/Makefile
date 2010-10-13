@@ -8,8 +8,8 @@ all : gc
 
 clean distclean:	
 	-[ -f $(GC)/Makefile ] && $(MAKE_GC) $@
-	cd $(GC) && find . -name '.deps' -o -name '.libs' | xargs rm -rf
-	cd $(GC) && find . -name '*.o' -o -name '*.lo' -o -name '*.Plo' | xargs rm -rf
+	if [ -d $(GC) ]; then cd $(GC) && find . -name '.deps' -o -name '.libs' | xargs rm -rf; fi
+	if [ -d $(GC) ]; then cd $(GC) && find . -name '*.o' -o -name '*.lo' -o -name '*.Plo' | xargs rm -rf; fi
 
 veryclean : distclean
 	rm -rf $(GC)/
