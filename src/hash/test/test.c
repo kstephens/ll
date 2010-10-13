@@ -1,10 +1,3 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_test_test_c__
-#define __rcs_id_test_test_c__
-static const char __rcs_id_test_test_c[] = "$Id: test.c,v 1.3 1999/10/12 07:27:08 stephensk Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>

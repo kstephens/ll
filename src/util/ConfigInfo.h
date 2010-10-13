@@ -1,13 +1,6 @@
 #ifndef _ConfigInfo_h
 #define _ConfigInfo_h
 
-#ifndef __rcs_id__
-#ifndef __rcs_id_util_ConfigInfo_h__
-#define __rcs_id_util_ConfigInfo_h__
-static const char __rcs_id_util_ConfigInfo_h[] = "$Id: ConfigInfo.h,v 1.4 1999/04/05 19:04:21 stephensk Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #include <stddef.h> /* size_t */
 #include <stdio.h> /* FILE */
 

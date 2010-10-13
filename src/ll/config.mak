@@ -2,7 +2,7 @@
 # Has GNU Readline.
 HAS_READLINE=1
 # Has GNU Readline History.
-HAS_HISTORY=1
+HAS_HISTORY=0
 
 # Enable assertions.
 ll_ASSERT_ENABLE=1

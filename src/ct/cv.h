@@ -1,13 +1,6 @@
 #ifndef _ct_cv_h
 #define _ct_cv_h
 
-#ifndef __rcs_id__
-#ifndef __rcs_id_ct_cv_h__
-#define __rcs_id_ct_cv_h__
-static const char __rcs_id_ct_cv_h[] = "$Id: cv.h,v 1.3 1999/04/22 05:04:30 stephensk Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #include "ct/ct.h"
 
 typedef struct ct_v {

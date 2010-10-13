@@ -1,4 +1,3 @@
-# $Id: Makefile.use,v 1.5 2001/07/07 04:12:11 stephens Exp $
 #OPENGL_ROOT:=$(APPS)/dev#
 OPENGL_LIBDIR:=$(OPENGL_ROOT)#
 OPENGL_INCL:=$(OPENGL_ROOT)#

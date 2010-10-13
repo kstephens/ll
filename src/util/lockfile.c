@@ -1,5 +1,3 @@
-/* $Id: lockfile.c,v 1.6 2000/01/04 06:22:24 stephensk Exp $ */
-
 #include "lockfile.h"
 #include <sys/file.h>
 #include <sys/stat.h>

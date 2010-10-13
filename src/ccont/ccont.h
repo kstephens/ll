@@ -1,12 +1,4 @@
 #ifndef _kslib_ccont_h
-
-#ifndef __rcs_id__
-#ifndef __rcs_id_ccont_ccont_h__
-#define __rcs_id_ccont_ccont_h__
-static const char __rcs_id_ccont_ccont_h[] = "$Id: ccont.h,v 1.3 2007/09/11 15:55:09 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #define _kslib_ccont_h
 
 #include <setjmp.h>	/* setjmp(), jmp_buf */

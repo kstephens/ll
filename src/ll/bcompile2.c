@@ -462,11 +462,11 @@ ll_define_primitive(_ir, _ir_compile2_body, _3(self, ir, tail_posQ), _0())
       ll_LIST_LOOP(ll_THIS->_env, x);
       {
 	if ( ll_DEBUG(compile_emit) ) {
-	  ll_format(ll_undef, "  ~O create-env ~S\n", 2, ll_SELF, x);
+	  // ll_format(ll_undef, "  ~O create-env ~S\n", 2, ll_SELF, x);
 	}
 	ll_call(ll_o(_ir_compile2_export), _2(x, ll_SELF));
 	if ( ll_DEBUG(compile_emit) ) {
-	  ll_format(ll_undef, "  ~O create-env ~S : DONE\n", 2, ll_SELF, x);
+	  // ll_format(ll_undef, "  ~O create-env ~S : DONE\n", 2, ll_SELF, x);
 	}
       }
       ll_LIST_LOOP_END;

@@ -1,5 +1,3 @@
-# $Id: Makefile,v 1.5 1999/04/22 05:15:07 stephensk Exp $
-
 C_FILES = \
 	charP_int_Table.c \
 	charP_voidP_Table.c \

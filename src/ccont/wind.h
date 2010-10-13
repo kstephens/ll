@@ -1,10 +1,3 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_ccont_wind_h__
-#define __rcs_id_ccont_wind_h__
-static const char __rcs_id_ccont_wind_h[] = "$Id: wind.h,v 1.2 1999/02/19 09:25:27 stephensk Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #ifndef WIND1
 #define WIND1(x) WIND(x)
 #endif

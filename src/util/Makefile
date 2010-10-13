@@ -1,5 +1,3 @@
-# $Id: Makefile,v 1.17 2006/03/08 04:56:37 stephens Exp $
-
 MAKS=../maks
 
 INCLS += ..

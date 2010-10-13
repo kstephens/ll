@@ -87,7 +87,7 @@ do
 	set -e
 	mkdir -p "`dirname $d_file`"
 	_file="$cd$1.llcc/_"
-	defs.sh - CPP "${CPP}" - CPPFLAGS "${CPPFLAGS}" - o "$d_file.tmp" $d_opts "$1" >/dev/null
+	./defs.sh - CPP "${CPP}" - CPPFLAGS "${CPPFLAGS}" - o "$d_file.tmp" $d_opts "$1" >/dev/null
 	set +e
 	# set -x
 	if mv_if_changed "$d_file.tmp" "$d_file"

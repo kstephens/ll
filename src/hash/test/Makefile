@@ -1,5 +1,3 @@
-# $Id: Makefile,v 1.3 1999/10/12 07:27:08 stephensk Exp $
-
 C_FILES = ../charP_int_Table.c
 
 CFLAGS = -I.. -I../.. -g

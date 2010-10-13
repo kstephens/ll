@@ -1,5 +1,3 @@
-# $Id: Makefile,v 1.5 1999/05/07 12:38:34 stephensk Exp $
-
 C_FILES = \
 	ct.c \
 	ct_sym.c \

@@ -1,12 +1,5 @@
 /* Copyright (c) 1998, 1999 Kurt A. Stephens and Ion, Inc. */
 
-#ifndef __rcs_id__
-#ifndef __rcs_id_util_enum_c__
-#define __rcs_id_util_enum_c__
-static const char __rcs_id_util_enum_c[] = "$Id: enum.c,v 1.8 2000/01/13 14:03:55 stephensk Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #include "enum.h"
 #include <stdio.h>
 #include <stdlib.h>

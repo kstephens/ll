@@ -1,15 +1,6 @@
 #ifndef _ct_ct_h
 #define _ct_ct_h
 
-#ifndef __rcs_id__
-#ifndef __rcs_id_ct_ct_h__
-#define __rcs_id_ct_ct_h__
-static const char __rcs_id_ct_ct_h[] = "$Id: ct.h,v 1.7 1999/05/07 12:38:34 stephensk Exp $";
-#endif
-#endif /* __rcs_id__ */
-
-/* $Id: ct.h,v 1.7 1999/05/07 12:38:34 stephensk Exp $ */
-
 #include <stddef.h> /* size_t */
 
 enum {

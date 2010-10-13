@@ -1,4 +1,3 @@
-# $Id: lib.mak,v 1.6 2001/04/03 18:42:08 stephens Exp $
 #
 # Usage:
 #
@@ -19,6 +18,10 @@ LIB:=$(LIB_DIR)/$(LIB_PREFIX)$(LIB_NAME)$(LIB_SUFFIX)#
 
 ifeq "$(strip $(LIB_O_FILES))" ""
 LIB_O_FILES:=$(O_FILES)#
+endif
+
+ifeq "$(strip $(LIB_H_FILES))" ""
+LIB_H_FILES:=$(H_FILES)#
 endif
 
 ifeq "$(strip $(LIB_LIB_FLAGS))" ""
@@ -83,7 +86,7 @@ $(LIB_NAME) : $(LIB)
 
 LOCAL_LIBS:=$(LOCAL_LIBS) $(LIB)#
 LIB_PRODUCTS:=$(LIB_PRODUCTS) $(LIB) $(LIB_DLL)#
-PRODUCTS:=$(PRODUCTS) $(LIB) $(LIB_DLL)#
+PRODUCTS:=$(PRODUCTS) $(LIB_H_FILES) $(LIB) $(LIB_DLL)#
 
 libs :: $(LIB_PRODUCTS)
 	@$(MSG) Made $@: $(LIB_PRODUCTS)

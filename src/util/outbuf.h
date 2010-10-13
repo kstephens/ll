@@ -1,5 +1,3 @@
-/* $Id: outbuf.h,v 1.2 1999/09/30 18:49:28 stephensk Exp $ */
-
 #ifndef _util_outbuf_h
 #define _util_outbuf_h
 

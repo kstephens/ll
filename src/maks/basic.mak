@@ -1,5 +1,3 @@
-# $Id: basic.mak,v 1.9 2001/04/04 09:09:10 stephens Exp $
-
 Makefile=Makefile
 Makefile.use=Makefile.use
 

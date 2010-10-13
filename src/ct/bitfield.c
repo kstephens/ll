@@ -1,11 +1,3 @@
-
-#ifndef __rcs_id__
-#ifndef __rcs_id_ct_bitfield_c__
-#define __rcs_id_ct_bitfield_c__
-static const char __rcs_id_ct_bitfield_c[] = "$Id: bitfield.c,v 1.4 1999/04/22 05:02:42 stephensk Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #include "bitfield.h"
 
 #define static

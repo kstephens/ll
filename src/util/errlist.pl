@@ -1,5 +1,4 @@
 #!/bin/perl
-# $Id: errlist.pl,v 1.6 1999/10/26 23:41:37 stephensk Exp $
 
 @errs = ();
 

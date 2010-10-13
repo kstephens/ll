@@ -1,10 +1,3 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_ccont_ccont_c__
-#define __rcs_id_ccont_ccont_c__
-static const char __rcs_id_ccont_ccont_c[] = "$Id: ccont.c,v 1.7 2007/09/17 16:10:19 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #include "ccont.h"
 #include <setjmp.h> /* jmp_buf, setjmp() */
 #include <stdlib.h> /* malloc(), free() */

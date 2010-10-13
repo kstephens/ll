@@ -1,7 +1,5 @@
 #include "rc4.h"
 
-/* $Id: rc4.c,v 1.6 2006/08/31 06:01:56 stephens Exp $ */
-
 RC4_EXPORT int rc4_init(rc4_state *s, const char *_key, size_t keylen)
 {
   int i;

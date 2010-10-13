@@ -1,5 +1,3 @@
-# $Id: Makefile,v 1.6 1999/04/22 05:05:00 stephensk Exp $
-
 C_FILES = test.c cthc_test.c
 
 CFLAGS = -I../.. -g

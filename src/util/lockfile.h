@@ -1,8 +1,6 @@
 #ifndef _util_lockfile_h
 #define _util_lockfile_h
 
-/* $Id: lockfile.h,v 1.3 1999/06/09 05:43:23 stephensk Exp $ */
-
 /* Options */
 extern const char *lockfile_progname;
 extern int lockfile_mode; /* Lockfile creation perms */

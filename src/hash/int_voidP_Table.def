@@ -1,11 +1,3 @@
-
-#ifndef __rcs_id__
-#ifndef __rcs_id_hash_int_voidP_Table_def__
-#define __rcs_id_hash_int_voidP_Table_def__
-static const char __rcs_id_hash_int_voidP_Table_def[] = "$Id: int_voidP_Table.def,v 1.2 1999/02/19 09:25:42 stephensk Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #define HASH(X)int_voidP_##X
 #define HASH_KEY int
 #define HASH_KEY_HASH(X) inthash(X)

@@ -1,10 +1,3 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_ct_ct_c__
-#define __rcs_id_ct_ct_c__
-static const char __rcs_id_ct_ct_c[] = "$Id: ct.c,v 1.9 1999/10/13 17:13:06 stephensk Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #include "ct_cntx.h"
 #include <string.h>
 #include <ctype.h>
@@ -416,10 +409,10 @@ static void _ct_init()
 
   _ct_cntx->inited ++;
   
-  _ct_cntx->name_2_ct_t = ct_malloc(sizeof(charP_int_Table));
+  _ct_cntx->name_2_ct_t = ct_malloc(sizeof(*_ct_cntx->name_2_ct_t));
   charP_int_TableInit(_ct_cntx->name_2_ct_t, 64);
 
-  _ct_cntx->ct_t_2_ct_tdef = ct_malloc(sizeof(int_voidP_Table));
+  _ct_cntx->ct_t_2_ct_tdef = ct_malloc(sizeof(*_ct_cntx->ct_t_2_ct_tdef));
   int_voidP_TableInit(_ct_cntx->ct_t_2_ct_tdef, 64);
 
   /***********************************************************************/
@@ -610,17 +603,21 @@ ct_tdef *ct_tdef_setElements(ct_tdef *d, int nelements, const long *elements, co
   return d;
 }
 
+typedef struct ct_va_list {
+  va_list v;
+} ct_va_list;
+
 static
-ct_t ct_t_struct_endvap(ct_t t, va_list _vap)
+ct_t ct_t_struct_endvap(ct_t t, ct_va_list _vap)
 {
   int nelements = 0;
   ct_t *types;
   char **names;
-  va_list vap;
+  ct_va_list vap;
 
   vap = _vap;
-  while ( va_arg(vap, ct_t) ) {
-    (void) va_arg(vap, const char *);
+  while ( va_arg(vap.v, ct_t) ) {
+    (void) va_arg(vap.v, const char *);
     nelements ++;
   }
 
@@ -633,8 +630,8 @@ ct_t ct_t_struct_endvap(ct_t t, va_list _vap)
       
       vap = _vap;
       while ( i < nelements ) {
-	types[i] = va_arg(vap, ct_t);
-	names[i] = va_arg(vap, char*);
+	types[i] = va_arg(vap.v, ct_t);
+	names[i] = va_arg(vap.v, char*);
 	i ++;
       }
       
@@ -669,11 +666,11 @@ ct_t ct_t_struct(int unionQ, const char *name, ...)
   
   /* try va list */
   {
-    va_list vap;
+    ct_va_list vap;
 
-    va_start(vap, name);
+    va_start(vap.v, name);
     t = ct_t_struct_endvap(t, vap);
-    va_end(vap);
+    va_end(vap.v);
   }
 
   return t;
@@ -685,7 +682,8 @@ ct_t ct_t_struct_endv(ct_t t, int nelements, const char **names, const ct_t *typ
 
   assert(ct_t_STRUCTQ(t) || ct_t_UNIONQ(t));
   d = ct_t_def(t);
-  
+
+  /* FIXME: 64bit sizeof(pointers) > sizeof(long) */ 
   assert(sizeof(types[0]) == sizeof(d->_elements[0]));
   ct_tdef_setElements(d, nelements, (const long *) types, names);
 
@@ -694,15 +692,15 @@ ct_t ct_t_struct_endv(ct_t t, int nelements, const char **names, const ct_t *typ
 
 ct_t ct_t_struct_env(ct_t t, ...)
 {
-  va_list vap;
+  ct_va_list vap;
   ct_tdef *d;
 
   assert(ct_t_STRUCTQ(t) || ct_t_UNIONQ(t));
   d = ct_t_def(t);
   
-  va_start(vap, t);
+  va_start(vap.v, t);
   t = ct_t_struct_endvap(t, vap);
-  va_end(vap);
+  va_end(vap.v);
 
   assert(d->_completed == 0);
   d->_completed ++;

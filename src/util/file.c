@@ -1,10 +1,3 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_util_file_c__
-#define __rcs_id_util_file_c__
-static const char __rcs_id_util_file_c[] = "$Id: file.c,v 1.6 2003/02/21 21:18:42 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #include "util/file.h"
 #include <string.h>
 #include <ctype.h>

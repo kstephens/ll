@@ -1,10 +1,3 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_ll_mem_c__
-#define __rcs_id_ll_mem_c__
-static const char __rcs_id_ll_mem_c[] = "$Id: mem.c,v 1.10 2008/05/25 22:36:42 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #include "ll/ll.h"
 
 #include "assert.h"
@@ -113,8 +106,8 @@ ll_INIT(gc, 0, "GC system")
 #define _ll_gc_init(ARGC,ARGV,ENVP)((void)0)
 #endif
 
-#ifndef ll_gcollect
-#define ll_gcollect()((void)0)
+#ifndef _ll_gcollect
+#define _ll_gcollect()((void)0)
 #endif
 
 #ifndef _ll_gc_register_finalizer

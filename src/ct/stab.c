@@ -1,12 +1,3 @@
-
-#ifndef __rcs_id__
-#ifndef __rcs_id_ct_stab_c__
-#define __rcs_id_ct_stab_c__
-static const char __rcs_id_ct_stab_c[] = "$Id: stab.c,v 1.2 1999/02/19 09:25:28 stephensk Exp $";
-#endif
-#endif /* __rcs_id__ */
-
-
 #include <stdio.h>
 #include <a.out.h>
 #include <string.h>

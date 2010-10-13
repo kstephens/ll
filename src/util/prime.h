@@ -1,8 +1,6 @@
 #ifndef _util_prime_h
 #define _util_prime_h
 
-/* $Id: prime.h,v 1.3 2000/01/13 13:25:04 stephensk Exp $ */
-
 #ifndef prime_t
 typedef unsigned long prime_t;
 #endif

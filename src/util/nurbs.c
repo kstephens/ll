@@ -1,4 +1,3 @@
-/* $Id: nurbs.c,v 1.2 2001/08/06 11:15:39 stephens Exp $ */
 /* Author: kurtstephens@acm.org 2001/08/06 */
 
 #ifndef _util_NURBS_H

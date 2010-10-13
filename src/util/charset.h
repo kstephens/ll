@@ -1,12 +1,5 @@
 #ifndef _charset_h
 
-#ifndef __rcs_id__
-#ifndef __rcs_id_misc_charset_h__
-#define __rcs_id_misc_charset_h__
-static const char __rcs_id_misc_charset_h[] = "$Id: charset.h,v 1.1 1999/04/22 05:45:47 stephensk Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #define _charset_h
 
 #ifndef BITS_PER_CHAR

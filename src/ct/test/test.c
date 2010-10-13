@@ -1,11 +1,3 @@
-
-#ifndef __rcs_id__
-#ifndef __rcs_id_test_test_c__
-#define __rcs_id_test_test_c__
-static const char __rcs_id_test_test_c[] = "$Id: test.c,v 1.5 1999/04/22 05:05:00 stephensk Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #include "ct/ct.h"
 #include "ct/ct_sym.h"
 
@@ -79,7 +71,7 @@ int main(int argc, char **argv)
 #define OFFSETOF(T,X) ((size_t)&(((T *)0)->X))*8
 
 #define PO(N) \
-    P("%d", OFFSETOF(struct test1, N));
+    P("%lu", OFFSETOF(struct test1, N));
     PO(a);
     PO(b);
     PO(c);

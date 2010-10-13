@@ -1,10 +1,3 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_ll_eq_c__
-#define __rcs_id_ll_eq_c__
-static const char __rcs_id_ll_eq_c[] = "$Id: eq.c,v 1.12 2007/12/20 09:43:31 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #include "ll.h"
 #include "call_int.h"
 

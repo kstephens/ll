@@ -15,7 +15,7 @@ MAKEFILES=Makefile $(CONFIG_MAK)
 
 PERL = perl
 MAKE_DEFS = sh ./defs.sh - CPP "$(CPP)" - CPPFLAGS "$(CPPFLAGS)"
-LLCC=llcc - od $(DEF_DIR) 
+LLCC=./llcc - od $(DEF_DIR) 
 LLCC_COMPILE=$(LLCC) - CPP '$(CPP)' - CPPFLAGS '$(CPPFLAGS)'
 LLCC_COLLECT=$(LLCC) --collect
 
@@ -36,7 +36,7 @@ C_OPTIMIZE=-O3
 C_WARNINGS=-Wall -Werror
 CC = gcc
 export CC
-CPPFLAGS = -I.. -I$(dir $(DEF_DIR)) -Isrc/include# -I/usr/include 
+CPPFLAGS = -I.. -I$(dir $(DEF_DIR)) -Isrc/include -I/opt/local/include# -I/usr/include 
 CFLAGS = $(C_OPTIMIZE) $(C_DEBUG) $(C_PROFILE) $(C_WARNINGS) $(CPPFLAGS)
 CPP = $(CC) -E
 
@@ -115,11 +115,12 @@ LIBS += -lncurses
 endif
 
 ifneq "$(strip $(HAS_HISTORY))" "0"
-LIBS += -lhistory
+LIBS += -lhistory #
 endif
 
-LIBS += -lgmp
-LIBS += -lm
+LIBS += -L/opt/local/lib # OS X macports: sudo port install gmp
+LIBS += -lgmp #
+LIBS += -lm #
 
 EARLY_H = \
 	../util/signals.h \
@@ -178,7 +179,7 @@ GC_END = $(GC)/gc.c $(GC)/gc_end.c
 GC_LIB =
 
 ifneq "$(strip $(ll_USE_GC_BOEHM))" "0"
-GC=../gc_boehm/gc-7.0
+GC:=$(shell echo ../gc_boehm/gc-*/)
 CPPFLAGS+= -I$(GC)/include
 GC_BEGIN =
 GC_END =
@@ -209,14 +210,25 @@ DEF_FILES =
 MAKE_SAVE_I=YES
 MAKE_SAVE_I=
 
+CC_ASSEMBLY_FLAGS=-Wa,-adlh
+CC_ASSEMBLY_FLAGS=#
+
 %.o : %.c 
 	if test '$*.c' -nt '$*.c.llcc/_' -o ! -e '$*.c.llcc/_'; then make '$*.c.llcc/_' $(COLLECT); fi
 ifneq "$(MAKE_SAVE_I)" ""
 	$(CPP) $(CPPFLAGS) -CC $*.c | sed -e 's/^#.*//' -e 's/;/;@/g' | tr '@' '\012' > $*.i
-	$(CC) $(CFLAGS) -Wa,-adlh -c -S -o $*.s $*.i >$*.sc
-	$(CC) $(CFLAGS) -Wa,-adlh -c -o $*.o $*.s >$*.oc
+ifneq "$(CC_ASSEMBLY_FLAGS)" ""
+	$(CC) $(CFLAGS) $(CC_ASSEMBLY_FLAGS) -c -S -o $*.s $*.i >$*.sc
+	$(CC) $(CFLAGS) $(CC_ASSEMBLY_FLAGS) -c    -o $@   $*.s >$*.oc
 else
+	$(CC) $(CFLAGS) -c -o $@ $*.c
+endif
+else
+ifneq "$(CC_ASSEMBLY_FLAGS)" ""
 	$(CC) $(CFLAGS) -Wa,-adlh -c -o $@ $*.c >$*.oc || ( rm -rf '$*.c.llcc'; exit 1 )
+else
+	$(CC) $(CFLAGS) -c -o $@ $*.c || ( rm -rf '$*.c.llcc'; exit 1 )
+endif
 	make '$*.c.llcc/_' $(COLLECT)
 endif
 
@@ -234,10 +246,10 @@ O_FILES = $(C_FILES:.c=.o)
 
 ########################################################################
 
-ifeq "$(strip $(shell uname))" "Linux"
-EXE=
-else
+ifeq "$(strip $(shell uname))" "CYGWIN"
 EXE=.exe
+else
+EXE=
 endif
 
 ########################################################################
@@ -281,8 +293,8 @@ libll.a : .lldefs $(ll_COLLECT_FILES_LLCC) $(O_FILES) $(DEFS) $(GC_DEPS)
 	ranlib $@
 #	$(LLCC) --collect
 
-llt$(EXE) : .lldefs llt.c $(DEFS) $(ll_COLLECT_FILES) libll.a 
-	$(CC) $(CFLAGS) -o $@ llt.c $(ll_COLLECT_FILES) -L . -l ll $(LIBS) $(GC_LIB)
+llt$(EXE) : llt.c .lldefs $(DEFS) $(ll_COLLECT_FILES) libll.a 
+	$(CC) $(CFLAGS) -o $@ llt.c $(ll_COLLECT_FILES) -L. -l ll $(LIBS) $(GC_LIB)
 	-cp -p $@ $@-save$(EXE)
 	-cp -p $@ $@.strip$(EXE)
 	-strip $@.strip$(EXE)
