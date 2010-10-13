@@ -293,14 +293,9 @@ void  _ll_lookup_op_check(void)
 #if 0
   if ( ! ll_initializing ) {
 #endif
-    ll_v op_type;
-    
-    while ( op_type = ll_TYPE(ll_AR_OP), 
-	    (ll_NE(op_type, ll_type(operation)) && 
-	     ll_NE(op_type, ll_type(settable_operation)) && 
-	     ll_NE(op_type, ll_type(locatable_operation))) ) {
-      ll_AR_OP = _ll_typecheck_error(ll_type(operation), ll_AR_OP);
-    }
+    ll_v op = ll_AR_OP;
+    _ll_typecheck_procedure(&op);
+    ll_AR_OP = op;
 #if 0
   }
 #endif
@@ -309,7 +304,7 @@ void  _ll_lookup_op_check(void)
 }
 
 
-#if 1
+#if 0
 #define _ll_lookup_op_check() ((void)0)
 #endif
 

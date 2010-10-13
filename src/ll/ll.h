@@ -159,6 +159,7 @@ ll_v _ll_error(ll_v name, int nargs, ...);
 ll_v _ll_range_error(ll_v name, ll_v value, long low, long high);
 ll_v _ll_rangecheck(ll_v name, ll_v *value, long low, long high);
 ll_v _ll_typecheck(ll_v type, ll_v *value);
+ll_v _ll_typecheck_procedure(ll_v *valuep);
 ll_v _ll_readonly_variable(ll_v var);
 ll_v _ll_undefined_variable(ll_v var);
 

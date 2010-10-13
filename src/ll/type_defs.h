@@ -186,7 +186,7 @@ ll_type_def_end(locative)
 
 /******************************************************************/
 
-     /* <procedure> is a mixin of all objects that are applicable.  Currently the only instantiable <procedure> type is <operation> */
+     /* <procedure> is a mixin of all objects that are applicable.  Currently the only instantiable <procedure> types are the top-wired subtypes of <operation> */
 
 ll_type_def(procedure, type)
 ll_type_def_supers(procedure)

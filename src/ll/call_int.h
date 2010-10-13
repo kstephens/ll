@@ -189,7 +189,6 @@ do { \
 #define _ll_call_tailv_w_cache(OP, ARGC, CACHE) \
 do { \
   __ll_call_tail_MOVE_ARGS(OP, ARGC); \
-  ll_assert_ref(__op); \
   ___ll_call_tailv(__op, __argc, _ll_lookup_w_cache(CACHE));    \
 } while(0)
 

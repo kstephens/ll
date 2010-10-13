@@ -479,6 +479,7 @@ ll_define_primitive(object, _bad_typecheck, _2(self, type), _0())
 ll_define_primitive_end
 
 
+__inline
 ll_v _ll_typecheck(ll_v type, ll_v *valuep)
 {
   ll_v value_type = ll_TYPE(*valuep);
@@ -493,6 +494,22 @@ ll_v _ll_typecheck(ll_v type, ll_v *valuep)
   return *valuep;
 }
 
+
+ll_v _ll_typecheck_procedure(ll_v *valuep)
+{
+  ll_v value_type = ll_TYPE(*valuep);
+
+  /* Quick short-circuit on known procedure subclasses */
+  if ( ! (ll_EQ(value_type, ll_type(operation)) ||
+	  ll_EQ(value_type, ll_type(settable_operation)) ||
+	  ll_EQ(value_type, ll_type(locatable_operation))
+	  )
+       ) {
+	 _ll_typecheck(ll_type(procedure), valuep); 
+       }
+
+  return *valuep;
+}
 
 /***********************************************************************/
 
