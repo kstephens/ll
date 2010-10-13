@@ -756,7 +756,8 @@ ll_define_primitive(pair, _ir_compile2, _3(self, ir, tail_posQ), _0())
 ll_define_primitive_end
 
 
-/* Emit code for argument list in reverse order */
+/* Emit code for argument list (including operation in car) in reverse order */
+
 ll_define_primitive(null, _ir_compile2_args, _4(self, ir, tail_posQ, pop), _1(no_side_effect,"#t"))
 {
   ll_assert_ref(IR);
@@ -769,6 +770,11 @@ ll_define_primitive(pair, _ir_compile2_args, _4(self, ir, tail_posQ, pop), _0())
   size_t l = _ll_list_length(ll_SELF);
 
   ll_assert_ref(IR);
+
+  /* Check for syntax errors like: ("bogus" 1 2 3) */
+  if ( ll_unbox_boolean(ll_call(ll_o(constantQ), _1(ll_THIS->_car))) ) {
+    _ll_error(ll_ee(syntax), 1, ll_s(form), ll_SELF);
+  }
 
   /* Emit val stack buffer probe for argument list. */
   ll_call(ll_o(_ir_emit_with_int), 
