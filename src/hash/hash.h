@@ -1,6 +1,6 @@
 /*
 ** Template Hash Table
-** Copyright 1998, 1999, Kurt A. Stephens, http://www.acm.org/~stephensk
+** Copyright 1998-2011, Kurt A. Stephens, http://kurtstephens.com/
 */
 
 #include "hash.def"
