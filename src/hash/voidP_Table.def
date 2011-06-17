@@ -1,0 +1,7 @@
+#define HASH(X)voidP_##X
+#define HASH_KEY void*
+#define HASH_KEY_HASH(X) voidP_hash(X)
+#undef  HASH_DATA
+#define HASH_KEEP_HASH 0
+#define HASH_CACHE 0
+#define HASH_TABLE_COLLISIONS 0

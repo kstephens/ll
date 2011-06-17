@@ -20,13 +20,13 @@
 #error "you must define HASH_KEY to a type"
 #endif
 #ifndef HASH_KEY_SET
-#define HASH_KEY_SET(X,Y) X = Y
+#define HASH_KEY_SET(X,Y) (X) = (Y)
 #endif
 #ifndef HASH_KEY_FREE
 #define HASH_KEY_FREE(X)
 #endif
 #ifndef HASH_KEY_EQUAL
-#define HASH_KEY_EQUAL(X,Y) (X)=(Y)
+#define HASH_KEY_EQUAL(X,Y) ((X)==(Y))
 #endif
 #ifndef HASH_KEY_HASH
 #error "you must define HASH_KEY_HASH(X) to a function that returns a HASH_VAL such that if HASH_KEY_EQUAL(X,Y) then HASH_KEY_HASH(X) == HASH_KEY_HASH(Y)"
@@ -89,16 +89,18 @@
 #define HASH_TABLE_COLLISIONS HASH_TABLE_COLLISIONS_THRESHOLD
 #endif
 
-#ifdef HASH_TABLE_COLLISIONS_THRESHOLD
-
+#if HASH_TABLE_COLLISIONS
 #define HASH_TABLE_COLLISIONS_THRESHOLD_CHECK(HT) \
 	(((HT)->_collisions * 100 / (HT)->_entriesLen) > HASH_TABLE_COLLISIONS_THRESHOLD)
+#else
+#define HASH_TABLE_COLLISIONS_THRESHOLD_CHECK(HT) 0
+#endif
+
+#if HASH_TABLE_COLLISIONS_THRESHOLD
 #define HASH_TABLE_NEW_CAPACITY(HT) \
 	(HASH_TABLE_COLLISIONS_THRESHOLD_CHECK(HT) ? \
 		(HT)->_entriesLen * (100 + HASH_TABLE_COLLISIONS_THRESHOLD) / 100 : \
 		(HT)->_nentries)
-#else
-#define HASH_TABLE_COLLISIONS_THRESHOLD_CHECK(HT) 0
 #endif
 
 #ifndef HASH_TABLE_NEW_CAPACITY
@@ -169,7 +171,7 @@ typedef struct HASH(Table) {
 
 typedef struct HASH(TableIterator) {
   unsigned int _i;
-  const struct HASH(TableEntry) *_e;
+  const struct HASH(TableEntry) *_e, *_e_next;
 } HASH(TableIterator);
 
 HASH_EXTERN void HASH(TableInit) ( HASH(Table) *ht, int capacity );
@@ -186,6 +188,9 @@ HASH_EXTERN size_t HASH(TableCollisions) ( HASH(Table) *ht );
 
 HASH_EXTERN void HASH(TableResize) ( HASH(Table) *ht, int capacity );
 /* Resize the table */
+
+HASH_EXTERN void HASH(TableClear) ( HASH(Table) *ht );
+/* Clear the table, but does not change capacity. */
 
 HASH_EXTERN void HASH(TableDestroy) ( HASH(Table) *ht );
 /* Destroy the table */
@@ -221,7 +226,7 @@ HASH_EXTERN void HASH(TableStats) (HASH(Table) *ht, FILE *fp);
 **
 ** HASH(TableIterator) i;
 ** HASH(TableIteratorInit)(ht, &i)
-** while ( HASH(TableInteratorNext)(ht, &i) ) {
+** while ( HASH(TableIteratorNext)(ht, &i) ) {
 **   HASH_KEY key = *HASH(TableIteratorKey)(ht, &i);
 **   HASH_DATA data = *HASH(TableIteratorData)(ht, &i);
 ** }
