@@ -3,7 +3,7 @@
 #include <string.h>
 
 static
-unsigned int inthash(int _x)
+unsigned int voidP_hash(void *_x)
 {
   const unsigned char *x = (const unsigned char*) &_x;
   unsigned int hash = x[0];
@@ -32,6 +32,6 @@ unsigned int inthash(int _x)
   return hash;
 }
 
-#include "int_voidP_Table.def"
+#include "voidP_Table.def"
 #include "hash.c"
 

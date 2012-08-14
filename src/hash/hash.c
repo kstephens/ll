@@ -11,6 +11,15 @@
 #undef EXTERN
 #endif
 
+#ifndef HASH_DEBUG_MALLOC
+#define HASH_DEBUG_MALLOC 0
+#endif
+
+#if HASH_DEBUG_MALLOC
+#define malloc(X) ({ void *__ptr = malloc(X); fprintf(stderr, "  malloc(%lu /* %s */) => %p %s:%d\n", (unsigned long) (X), #X, __ptr, __FUNCTION__, __LINE__); __ptr; })
+#define free(X)   ({ fprintf(stderr, "  free(%p /* %s */) %s:%d\n", (X), #X, __FUNCTION__, __LINE__); free(X); })
+#endif
+
 #ifndef HASH_MALLOC
 #define HASH_MALLOC(X) malloc(X)
 #endif
@@ -154,15 +163,13 @@ HASH_EXTERN HASH(TableEntry) ** HASH(TableSearch) ( HASH(Table) *ht, HASH_KEY _k
 	HASH(TableEntry) *ee = *e;
 	*e = ee->_next;
 	HASH_WRITE_BARRIER(e);
-	ee->_next = ht->_entries[i];
-	HASH_WRITE_BARRIER(ee);
-	ht->_entries[i] = ee;
-	HASH_WRITE_BARRIER(ht->entries);
 	e = &(ht->_entries[i]);
-	HASH_WRITE_BARRIER(e);
+	ee->_next = *e;
+	HASH_WRITE_BARRIER(ee);
+	*e = ee;
+	HASH_WRITE_BARRIER(ht->entries);
       }
 #endif
-
       return e;
     }
     e = &((*e)->_next);
@@ -175,6 +182,9 @@ HASH_EXTERN HASH(TableEntry) ** HASH(TableSearch) ( HASH(Table) *ht, HASH_KEY _k
 HASH_EXTERN void HASH(TableAddEntry) ( HASH(Table) *ht, HASH(TableEntry) *e )
 {
   unsigned int i = ((unsigned int) HASH_ENTRY_HASH(e)) % HASH_TABLE_SIZE(ht);
+#if HASH_CACHE
+  ht->_cache = 0;
+#endif
 #if HASH_TABLE_COLLISIONS != 0
   if ( ht->_entries[i] )
     ht->_collisions ++;
@@ -239,7 +249,7 @@ HASH_EXTERN size_t HASH(TableNEntries) ( HASH(Table) *ht )
     HASH(TableEntry) *e;
 
     for ( e = ht->_entries[i]; e; e = e->_next ) {
-      tne ++;
+      ++ tne;
     }
   }
 
@@ -309,7 +319,8 @@ HASH_EXTERN void HASH(TableResize) ( HASH(Table) *ht, int capacity )
 #endif
 }
 
-HASH_EXTERN void HASH(TableDestroy) ( HASH(Table) *ht )
+
+HASH_EXTERN void HASH(TableClear) ( HASH(Table) *ht )
 {
   unsigned int i;
 
@@ -318,9 +329,10 @@ HASH_EXTERN void HASH(TableDestroy) ( HASH(Table) *ht )
 #endif
 
   for ( i = 0; i < HASH_TABLE_SIZE(ht); i ++ ) {
-    HASH(TableEntry) *e, *e_next;
+    HASH(TableEntry) *e = ht->_entries[i], *e_next;
 
-    for ( e = ht->_entries[i]; e; e = e_next ) {
+    ht->_entries[i] = 0;
+    for ( ; e; e = e_next ) {
       e_next = e->_next;
 
       /* free the key */
@@ -336,20 +348,26 @@ HASH_EXTERN void HASH(TableDestroy) ( HASH(Table) *ht )
     }
   }
 
-  /* Delete the table */
-#if HASH_TABLE_FIXED_SIZE
-  HASH_FREE((void*) ht->_entries);
-  ht->_entries = 0;
-  HASH_WRITE_BARRIER(ht);
-  ht->_entriesLen = 0;
-#endif
-
 #if HASH_TABLE_NENTRIES != 0
   ht->_nentries = 0;
 #endif
 
 #if HASH_TABLE_COLLISIONS != 0
   ht->_collisions = 0;
+#endif
+
+}
+
+HASH_EXTERN void HASH(TableDestroy) ( HASH(Table) *ht )
+{
+  HASH(TableClear)(ht);
+
+  /* Delete the table */
+#if HASH_TABLE_FIXED_SIZE == 0
+  HASH_FREE((void*) ht->_entries);
+  ht->_entries = 0;
+  HASH_WRITE_BARRIER(ht);
+  ht->_entriesLen = 0;
 #endif
 
 #ifdef HASH_TABLE_DESTROY
@@ -393,9 +411,6 @@ HASH_EXTERN int HASH(TableAdd_) (HASH(Table) *ht, HASH_KEY _key HASH_DATA_ARG ,H
   if ( en ) {
 #ifdef HASH_DATA_DECL
     HASH_DATA_SET((*en)->_data, _data);
-    HASH_WRITE_BARRIER(*en);
-#else
-    HASH_KEY_SET((*en)->_key, _key);
     HASH_WRITE_BARRIER(*en);
 #endif
     return 0;
