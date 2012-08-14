@@ -1,6 +1,6 @@
 /*
 ** lispread.c - a generic lisp reader.
-** Copyright 1998, 1999 Kurt A. Stephens http://www.acm.org/~stephensk
+** Copyright 1998, 1999, 2011, 2012 Kurt A. Stephens http://kurtstephens.com/
 */
 /*
 This lisp reader is very minimal, it does not implement the full Common Lisp syntax.  In general it is compliant with the Revised 5 Scheme Report.  
@@ -9,19 +9,21 @@ The ';', '(', ')', '#' and whitespace characters are token terminators.
 Tokens that are not numbers are assumed to be symbols.
 This reader does not decaseify symbols before calling STRING_2_SYMBOL.
 ';' comments are treated as whitespace.
-Note: the "#!" comment allows lisp files to executable scripts on unix systems that support '#!/usr/local/bin/lisp'.
+Note: the "#!" comment allows lisp files to execute scripts on unix systems that support '#!/usr/local/bin/lisp'.
 
 The following synactic structures can be read:
 
 Comments      ;...\n, #!...\n
 Quote         'x
-Lists         (a b ...), (a b ... '.' c)
+Lists         (a b ...)
+Conses        (a . d)
 Vectors       #(a b ...)
 Characters    #\b (#\space and #\newline are not IMPLEMENTED)
 False         #f, #F
 True          #t, #T
 Unspecified   #u, #U (Opt.)
-Numbers       #b0101002, #o1726m #d2349, #x0123456789abcedf, 1234, 1234.00, etc.
+Logical EOF   ## (Opt.)
+Numbers       #b0101001, #o1726m #d2349, #x0123456789abcedf, 1234, 1234.00, etc.
 Strings       "...", "\"\\"
 Symbols       asdf, +, etc.
 
@@ -49,7 +51,6 @@ GETC(stream)        Read a C char or EOF from the stream.
 
 EOS                 The end-of-stream VALUE.
 CONS(X,Y)           Return a new lisp CONS object.
-IMMUTABLE_CONS(X)   Converts pair X to an immutable cons.  Opt.
 CAR(CONS)           Get the car field of a pair VALUE as in: (car CONS)
 SET_CDR(CONS,V)     Set the cdr field of a pair VALUE as in: (set-cdr! CONS V)
 SET(LOC,V)          Set a local variable as in (set! VARIABLE V).  Opt.  
@@ -57,10 +58,8 @@ SET(LOC,V)          Set a local variable as in (set! VARIABLE V).  Opt.
 MAKE_CHAR(I)        Create a lisp CHARACTER VALUE from a C integer.
 
 LIST_2_VECTOR(X)    Convert list VALUE X into a VECTOR VALUE.
-IMMUTABLE_VECTOR(X) Convert VECTOR VALUE X into an immutable VECTOR VALUE.  Opt.
 
 STRING(char*,int)   Create a new lisp STRING VALUE from a MALLOCed buffer.
-IMMUTABLE_STRING(X) Convert STRING VALUE X to an immutable STRING VALUE.  Opt.
 ESCAPE_STRING(X)    Return a new STRING VALUE with escaped characters (\\, \") replaced.  Opt.
 STRING_2_NUMBER(X)  Convert string VALUE X into a NUMBER VALUE, or return F.
 STRING_2_SYMBOL(X)  Convert string VALUE X into a SYMBOL VALUE.
@@ -96,8 +95,18 @@ ERROR(format,...)   Raise an error using the printf() format.
   ({ int _pc = GETC(stream); if ( _pc != EOF ) UNGETC(stream, _pc); _pc; })
 #endif
 
-#ifndef READ_DEBUG_WHITESPACE
-#define READ_DEBUG_WHITESPACE 0
+#ifndef READ_DEBUG
+#ifdef READ_DEBUG_WHITESPACE
+#define READ_DEBUG 1
+#endif
+#endif
+
+#ifndef READ_DEBUG
+#define READ_DEBUG 0
+#endif
+
+#ifndef F
+#define F NIL
 #endif
 
 static
@@ -107,46 +116,34 @@ int eat_whitespace_peekchar(VALUE stream)
 
  more_whitespace:
   while ( (c = PEEKC(stream)) != EOF && isspace(c) ) {
-#if READ_DEBUG_WHITESPACE
-    fprintf(stderr, "  read: eat_whitespace_peekchar(): whitespace '%c'\n", (int) c);
-    fflush(stderr);
-#endif
+    if ( READ_DEBUG > 1 ) {
+      fprintf(stderr, "  read: eat_whitespace_peekchar(): whitespace '%c'\n", (int) c);
+      fflush(stderr);
+    }
     GETC(stream);
   }
   if ( c == ';' ) {
-#if READ_DEBUG_WHITESPACE
-    fprintf(stderr, "  read: eat_whitespace_peekchar(): comment start '%c'\n", (int) c);
-    fflush(stderr);
-#endif
-    while ( (c = PEEKC(stream)) != EOF && c != '\n' ) {
-#if READ_DEBUG_WHITESPACE
-      fprintf(stderr, "  read: eat_whitespace_peekchar(): comment in '%c'\n", (int) c);
+    if ( READ_DEBUG > 0 ) {
+      fprintf(stderr, "  read: eat_whitespace_peekchar(): comment start '%c'\n", (int) c);
       fflush(stderr);
-#endif
+    }
+    while ( (c = PEEKC(stream)) != EOF && c != '\n' ) {
+      if ( READ_DEBUG > 1 ) {
+	fprintf(stderr, "  read: eat_whitespace_peekchar(): comment in '%c'\n", (int) c);
+	fflush(stderr);
+      }
       GETC(stream);
     }
     goto more_whitespace;
   }
 
-#if READ_DEBUG_WHITESPACE
-  fprintf(stderr, "  read: eat_whitespace_peekchar(): done '%c'\n", (int) c);
-  fflush(stderr);
-#endif
+  if ( READ_DEBUG > 0 ) {
+    fprintf(stderr, "  read: eat_whitespace_peekchar(): done '%c'\n", (int) c);
+    fflush(stderr);
+  }
 
   return(c);
 }
-
-#ifndef IMMUTABLE_CONS
-#define IMMUTABLE_CONS(X) X
-#endif
-
-#ifndef IMMUTABLE_VECTOR
-#define IMMUTABLE_VECTOR(X) X
-#endif
-
-#ifndef IMMUTABLE_STRING
-#define IMMUTABLE_STRING(X) X
-#endif
 
 #ifndef RETURN
 #define RETURN(X) return (X)
@@ -156,6 +153,13 @@ int eat_whitespace_peekchar(VALUE stream)
 #define ESCAPE_STRING(X) X
 #endif
 
+#ifndef MALLOC
+#define MALLOC(S) malloc(S)
+#endif
+
+#ifndef REALLOC
+#define REALLOC(P,S) realloc(P,S)
+#endif
 
 READ_DECL
 {
@@ -163,6 +167,9 @@ READ_DECL
   int radix = 10;
 
  try_again:
+#ifdef READ_PROLOGUE
+  READ_PROLOGUE;
+#endif
   c = eat_whitespace_peekchar(stream);
   if ( c == EOF )
     RETURN(EOS);
@@ -171,24 +178,22 @@ READ_DECL
 
   switch ( c ) {
     case '\'':
-      RETURN(IMMUTABLE_CONS(CONS(SYMBOL(quote), IMMUTABLE_CONS(CONS(READ_CALL(), NIL)))));
+      RETURN(CONS(SYMBOL(quote), CONS(READ_CALL(), NIL)));
 
     case '`':
-      RETURN(IMMUTABLE_CONS(CONS(SYMBOL(quasiquote), IMMUTABLE_CONS(CONS(READ_CALL(), NIL)))));
+      RETURN(CONS(SYMBOL(quasiquote), CONS(READ_CALL(), NIL)));
 
     case ',':
       if ( PEEKC(stream) == '@' ) {
 	GETC(stream);
-	RETURN(IMMUTABLE_CONS(CONS(SYMBOL(unquote_splicing), IMMUTABLE_CONS(CONS(READ_CALL(), NIL)))));
+	RETURN(CONS(SYMBOL(unquote_splicing), CONS(READ_CALL(), NIL)));
       } else {
-	RETURN(IMMUTABLE_CONS(CONS(SYMBOL(unquote), IMMUTABLE_CONS(CONS(READ_CALL(), NIL)))));
+	RETURN(CONS(SYMBOL(unquote), CONS(READ_CALL(), NIL)));
       }
       break;
 
     case '(': {
-      VALUE l, lc;
-
-      l = lc = NIL;
+      VALUE l = NIL, lc = NIL;
       while ( (c = eat_whitespace_peekchar(stream)) != EOF ) {
         VALUE x;
         
@@ -205,7 +210,6 @@ READ_DECL
           }
 
           SET_CDR(lc, READ_CALL());
-	  (void) IMMUTABLE_CONS(lc);
 
           c = eat_whitespace_peekchar(stream);
           GETC(stream);
@@ -219,13 +223,10 @@ READ_DECL
             SET(l, y);
           } else {
             SET_CDR(lc, y);
-	    (void) IMMUTABLE_CONS(lc);
           }
           SET(lc, y);
-	  (void) IMMUTABLE_CONS(lc);
         }
       }
-      (void) IMMUTABLE_CONS(l);
       RETURN(l);
       }
 
@@ -248,6 +249,25 @@ READ_DECL
 	}
     	goto try_again;
 
+	/* #| nesting comment. |# */
+      case '|':
+	{
+	  int level = 1;
+	  GETC(stream);
+	  while ( (c = GETC(stream)) != EOF && level > 0 ) {
+	    if ( c == '|' && PEEKC(stream) == '#' ) {
+	      GETC(stream);
+	      -- level;
+	    } else if ( c == '#' && PEEKC(stream) == '|' ) {
+	      GETC(stream);
+	      ++ level;
+	    }
+	  }
+	  if ( level > 0 )
+	    RETURN(ERROR("eos inside #| comment |#"));
+	}
+	goto try_again;
+
 	/* s-expr comment ala chez scheme */
       case ';':
 #if READ_DEBUG_WHITESPACE
@@ -255,31 +275,11 @@ READ_DECL
 	fflush(stderr);
 #endif
 	GETC(stream);
-	GETC(stream);
 	READ_CALL();
 	goto try_again;
 
-	/* #| ... |# balanced comment. */
-      case '|':
-	{
-	  unsigned int nesting = 0;
-	  GETC(stream);
-	  while ( nesting > 0 && (c = GETC(stream)) != EOF ) {
-	    if ( (c == '#') && (c = GETC(stream)) == '|' ) {
-	      nesting ++;
-	    } else
-	    if ( (c == '|') && (c = GETC(stream)) == '#' ) {
-	      nesting --;
-	    }
-	  }
-	  if ( c == EOF && nesting > 0 ) {
-	    RETURN(ERROR("EOS in #| ... |# comment"));
-	  }
-	}
-	goto try_again;
-
       case '(':
-	RETURN(IMMUTABLE_VECTOR(LIST_2_VECTOR(READ_CALL())));
+	RETURN(LIST_2_VECTOR(READ_CALL()));
         
       case '\\':
 	GETC(stream);
@@ -325,11 +325,9 @@ READ_DECL
 	}
 	RETURN(MAKE_CHAR(c));
 
-#ifdef F
       case 'f': case 'F':
 	GETC(stream);
 	RETURN(F);
-#endif
 
 #ifdef T
       case 't': case 'T':
@@ -343,30 +341,38 @@ READ_DECL
 	RETURN(U);
 #endif
 
+#ifdef E
+      case '#':
+	GETC(stream);
+	RETURN(E);
+#endif
+
       case 'e': case 'E':
       case 'i': case 'I':
         GETC(stream);
 	goto hash_again;
 
       case 'b': case 'B':
-	GETC(stream);
 	radix = 2;
-	goto read_number;
+	GETC(stream);
+	goto read_radix_number;
 	
       case 'o': case 'O':
-	GETC(stream);
 	radix = 8;
-	goto read_number;
+	GETC(stream);
+	goto read_radix_number;
 
       case 'd': case 'D':
-	GETC(stream);
 	radix = 10;
-	goto read_number;
+	GETC(stream);
+	goto read_radix_number;
 	
       case 'x': case 'X':
-	GETC(stream);
 	radix = 16;
-	goto read_number;
+
+      read_radix_number:
+        c = GETC(stream);
+        goto read_number;
 
       default:
 #ifdef CALL_MACRO_CHAR
@@ -409,7 +415,7 @@ READ_DECL
       }
 
       buf[len] = '\0';
-      RETURN(IMMUTABLE_STRING(ESCAPE_STRING(STRING(buf, len))));
+      RETURN(ESCAPE_STRING(STRING(buf, len)));
     }
 
     read_number:

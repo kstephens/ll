@@ -169,7 +169,7 @@ typedef struct HASH(Table) {
 
 typedef struct HASH(TableIterator) {
   unsigned int _i;
-  const struct HASH(TableEntry) *_e;
+  const struct HASH(TableEntry) *_e, *_e_next;
 } HASH(TableIterator);
 
 HASH_EXTERN void HASH(TableInit) ( HASH(Table) *ht, int capacity );
@@ -221,7 +221,7 @@ HASH_EXTERN void HASH(TableStats) (HASH(Table) *ht, FILE *fp);
 **
 ** HASH(TableIterator) i;
 ** HASH(TableIteratorInit)(ht, &i)
-** while ( HASH(TableInteratorNext)(ht, &i) ) {
+** while ( HASH(TableIteratorNext)(ht, &i) ) {
 **   HASH_KEY key = *HASH(TableIteratorKey)(ht, &i);
 **   HASH_DATA data = *HASH(TableIteratorData)(ht, &i);
 ** }

@@ -490,23 +490,23 @@ HASH_EXTERN int HASH(TableRemove) (HASH(Table) *ht, HASH_KEY _key)
 HASH_EXTERN void HASH(TableIteratorInit)(HASH(Table) *ht, HASH(TableIterator) *i)
 {
   i->_i = -1;
-  i->_e = 0;
+  i->_e = i->_e_next = 0;
 }
 
 HASH_EXTERN int HASH(TableIteratorNext)(HASH(Table) *ht, HASH(TableIterator) *i)
 {
-  if ( i->_i >= HASH_TABLE_SIZE(ht) )
+  if ( i->_i != -1 && i->_i >= HASH_TABLE_SIZE(ht) )
     return 0;
   
-  if ( i->_e )
-    i->_e = i->_e->_next;
+  i->_e = i->_e_next;
   
   while ( ! i->_e ) {
     if ( ++ i->_i >= HASH_TABLE_SIZE(ht) )
       return 0;
     i->_e = ht->_entries[i->_i];
   }
-  
+  i->_e_next = i->_e ? i->_e->_next : 0;
+
   return 1;
 }
 
