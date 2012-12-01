@@ -87,42 +87,24 @@ ll_v *ll_unbox_locative(ll_v x);
 /***********************************************************************/
 /* flonum */
 
-#define ll_TAG_flonum        2
 
 #if defined(i386) /* && sizeof(float) == sizeof(long) */
-
-union ll_v_flonum {
-  ll_v  v;
-  float f;
-};
-
-static __inline ll_v ll_BOX_flonum(float f)
-{
-  union ll_v_flonum vf;
-  vf.f = f;
-  vf.v &= ~ ll_TAG_MASK;
-  vf.v |= ll_TAG_flonum;
-  return vf.v;
-}
-
-static __inline float ll_UNBOX_flonum(ll_v v)
-{
-  union ll_v_flonum vf;
-  vf.v = v;
-  vf.v &= ~ ll_TAG_MASK;
-  return vf.f;
-}
-#define _ll_flonum_supported 1
+typedef float ll_flonum_imm_t;
+#define _ll_flonum_imm_supported 4
 #endif
-
 #if defined(__x86_64) /* && sizeof(double) == sizeof(long long) */
+typedef double ll_flonum_t;
+#define _ll_flonum_imm_supported 8
+#endif
 
+#if _ll_flonum_imm_supported
+#define ll_TAG_flonum        2
 union ll_v_flonum {
   ll_v  v;
-  double f;
+  ll_flonum_t f;
 };
 
-static __inline ll_v ll_BOX_flonum(double f)
+static __inline ll_v ll_BOX_flonum(ll_flonum_t f)
 {
   union ll_v_flonum vf;
   vf.f = f;
@@ -131,18 +113,13 @@ static __inline ll_v ll_BOX_flonum(double f)
   return vf.v;
 }
 
-static __inline double ll_UNBOX_flonum(ll_v v)
+static __inline ll_flonum_t ll_UNBOX_flonum(ll_v v)
 {
   union ll_v_flonum vf;
   vf.v = v;
   vf.v &= ~ ll_TAG_MASK;
   return vf.f;
 }
-#define _ll_flonum_supported 1
-#endif
-
-#ifndef _ll_flonum_supported
-#error flonum only implemented for i386 and x86_64
 #endif
 
 #define ll_make_flonum(X)    ll_BOX_flonum(X)
