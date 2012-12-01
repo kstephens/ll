@@ -131,7 +131,7 @@ static __inline ll_v ll_BOX_flonum(double f)
   return vf.v;
 }
 
-static __inline float ll_UNBOX_flonum(ll_v v)
+static __inline double ll_UNBOX_flonum(ll_v v)
 {
   union ll_v_flonum vf;
   vf.v = v;
