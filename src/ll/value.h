@@ -108,16 +108,13 @@ static __inline ll_v ll_BOX_flonum(ll_flonum_t f)
 {
   union ll_v_flonum vf;
   vf.f = f;
-  vf.v &= ~ ll_TAG_MASK;
-  vf.v |= ll_TAG_flonum;
-  return vf.v;
+  return (vf.v & ~ ll_TAG_MASK) | ll_TAG_flonum;
 }
 
 static __inline ll_flonum_t ll_UNBOX_flonum(ll_v v)
 {
   union ll_v_flonum vf;
-  vf.v = v;
-  vf.v &= ~ ll_TAG_MASK;
+  vf.v = v & ~ ll_TAG_MASK;
   return vf.f;
 }
 #endif
