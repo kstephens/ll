@@ -1,10 +1,3 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_ll_floatcfg_c__
-#define __rcs_id_ll_floatcfg_c__
-static const char __rcs_id_ll_floatcfg_c[] = "$Id: floatcfg.c,v 1.5 2006/03/08 02:22:14 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #include "ll/value.h"
 #include <stdio.h>
 #include <math.h>

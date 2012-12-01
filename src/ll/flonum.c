@@ -45,10 +45,7 @@ ll_v ll_coerce_flonum(ll_v x)
   }
 }
 
-
-
 /**************************************************************************/
-
 
 ll_define_primitive(flonum, floor, _1(x), _1(no_side_effect,"#t"))
 {
@@ -56,13 +53,11 @@ ll_define_primitive(flonum, floor, _1(x), _1(no_side_effect,"#t"))
 }
 ll_define_primitive_end
 
-
 ll_define_primitive(flonum, ceiling, _1(x), _1(no_side_effect,"#t"))
 {
   ll_return(ll_make_integer_d(ceil(ll_UNBOX_flonum(ll_SELF))));
 }
 ll_define_primitive_end
-
 
 ll_define_primitive(flonum, truncate, _1(x), _1(no_side_effect,"#t"))
 {
@@ -83,26 +78,19 @@ ll_define_primitive(flonum, round, _1(x), _1(no_side_effect,"#t"))
 #if 1
   int old_round_mode = fegetround();
 #endif
-
   double x = round(ll_UNBOX_flonum(ll_SELF));
-
 #if 1
   fesetround(FE_TONEAREST);
 #endif
-
   x = round(x);
-
 #if 1
   fesetround(old_round_mode);
 #endif
-
   ll_return(ll_make_flonum(x));
 }
 ll_define_primitive_end
 
-
 /************************************************************************/
-
 
 ll_define_primitive(flonum, exact__inexact, _1(z), _1(no_side_effect,"#t"))
 {
@@ -110,16 +98,13 @@ ll_define_primitive(flonum, exact__inexact, _1(z), _1(no_side_effect,"#t"))
 }
 ll_define_primitive_end
 
-
 ll_define_primitive(flonum, inexact__exact, _1(z), _1(no_side_effect,"#t"))
 {
   ll_return(ll_SELF);
 }
 ll_define_primitive_end
 
-
 /************************************************************************/
-
 
 ll_define_primitive(flonum, number__string, __1(z,radix), _1(no_side_effect,"#t"))
 {
@@ -132,9 +117,7 @@ ll_define_primitive(flonum, number__string, __1(z,radix), _1(no_side_effect,"#t"
 }
 ll_define_primitive_end
 
-
 /************************************************************************/
-
 
 #define BOP(N,O) \
 ll_define_primitive(flonum, _##N, _2(self, x), _1(no_side_effect,"#t")) \
@@ -151,14 +134,12 @@ ll_define_primitive(flonum, _##N, _2(self, x), _1(no_side_effect,"#t")) \
 }									\
 ll_define_primitive_end
 
-
 #define UOP(N,O) \
 ll_define_primitive(flonum, _##N, _1(self), _1(no_side_effect,"#t")) \
 { \
   ll_return(ll_make_flonum( O ll_UNBOX_flonum(ll_SELF))); \
 } \
 ll_define_primitive_end
-
 
 #define ROP(N,OP) \
 ll_define_primitive(flonum, _##N, _2(self, x), _1(no_side_effect,"#t")) \
@@ -176,7 +157,6 @@ ll_define_primitive(flonum, _##N, _2(self, x), _1(no_side_effect,"#t")) \
 ll_define_primitive_end
 
 #include "cops.h"
-
 
 /**************************************************************************/
 
