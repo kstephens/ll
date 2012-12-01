@@ -1,19 +1,21 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_ll_flonum_c__
-#define __rcs_id_ll_flonum_c__
-static const char __rcs_id_ll_flonum_c[] = "$Id: flonum.c,v 1.12 2008/01/06 18:36:33 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #include "ll.h"
 #include <math.h>
 #include "ll/floatcfg.h"
 #include <string.h> /* strchr, strcat */
 
-
 /************************************************************************/
 
-float ll_unbox_flonum(ll_v x)
+#if ! _ll_flonum_imm_supported
+ll_v ll_make_flonum(double x)
+{
+  ll_v *obj = ll_malloc(sizeof(ll_v) + sizeof(x));
+  *obj = ll_type(flonum);
+  *(double*) (obj + 1) = x;
+  return ll_BOX_ref(obj);
+}
+#endif
+
+double ll_unbox_flonum(ll_v x)
 {
   while ( ! ll_ISA_flonum(x) ) {
     x = _ll_typecheck_error(ll_type(flonum), x);

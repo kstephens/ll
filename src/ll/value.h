@@ -87,14 +87,18 @@ ll_v *ll_unbox_locative(ll_v x);
 /***********************************************************************/
 /* flonum */
 
-
 #if defined(i386) /* && sizeof(float) == sizeof(long) */
 typedef float ll_flonum_imm_t;
 #define _ll_flonum_imm_supported 4
 #endif
 #if defined(__x86_64) /* && sizeof(double) == sizeof(long long) */
-typedef double ll_flonum_t;
+typedef double ll_flonum_imm_t;
 #define _ll_flonum_imm_supported 8
+#endif
+
+#if 0
+#undef  _ll_flonum_imm_supported
+#define _ll_flonum_imm_supported 0
 #endif
 
 #if _ll_flonum_imm_supported
@@ -117,13 +121,28 @@ static __inline ll_flonum_t ll_UNBOX_flonum(ll_v v)
   vf.v = v & ~ ll_TAG_MASK;
   return vf.f;
 }
-#endif
 
 #define ll_make_flonum(X)    ll_BOX_flonum(X)
-float ll_unbox_flonum(ll_v x);
-/* #define ll_unbox_flonum(X)ll_UNBOX_flonum(X) */
 #define ll_ISA_flonum(X)     (ll_TAG(X) == ll_TAG_flonum)
+
+#define ll_TYPE_CLAUSE_flonum(X) \
+  ll_ISA_flonum(X) ? ll_TYPE_flonum(X) :
+
+#else
+
+/* Boxed as object */
+ll_v ll_make_flonum(double x);
+#define ll_BOX_flonum(X)     ll_make_flonum(X)
+#define ll_UNBOX_flonum(X)   (*(const double*)(ll_SLOTS(X)+1))
+#define ll_ISA_flonum(X)     (ll_TYPE(X) == ll_type(flonum))
+
+#define ll_TYPE_CLAUSE_flonum(X)
+
+#endif
+
+double ll_unbox_flonum(ll_v x);
 #define ll_TYPE_flonum(X)    ll_type(flonum)
+
 
 /***********************************************************************/
 /* boxed object reference */
@@ -144,8 +163,7 @@ float ll_unbox_flonum(ll_v x);
    ll_TYPE_ref(X) :					\
    ll_ISA_fixnum(X) ?					\
    ll_TYPE_fixnum(X) :					\
-   ll_ISA_flonum(X) ?					\
-   ll_TYPE_flonum(X) :					\
+   ll_TYPE_CLAUSE_flonum(X)                             \
    ll_TYPE_locative(X)					\
 							)
 
