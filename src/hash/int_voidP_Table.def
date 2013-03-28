@@ -1,4 +1,4 @@
 #define HASH(X)int_voidP_##X
 #define HASH_KEY int
-#define HASH_KEY_HASH(X) inthash(X)
+#define HASH_KEY_HASH(X) int_hash(X)
 #define HASH_DATA void*
