@@ -1,10 +1,3 @@
-#ifndef __rcs_id__
-#ifndef __rcs_id_ll_floatcfg_c__
-#define __rcs_id_ll_floatcfg_c__
-static const char __rcs_id_ll_floatcfg_c[] = "$Id: floatcfg.c,v 1.5 2006/03/08 02:22:14 stephens Exp $";
-#endif
-#endif /* __rcs_id__ */
-
 #include "ll/value.h"
 #include <stdio.h>
 #include <math.h>
@@ -18,8 +11,13 @@ int main(int argc, char **argv)
 
   while ( 1.0 + eps != 1.0 && i < 1000 ) {
     double x = 1.0 + eps;
+#if _ll_flonum_imm_supported
     ll_v v = ll_BOX_flonum(x);
     double vx = ll_UNBOX_flonum(v);
+#else
+    ll_v v = 0;
+    double vx = x;
+#endif
     double abs_err = fabs(x - vx);
     double rel_err = abs_err / x;
     
