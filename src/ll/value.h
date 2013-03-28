@@ -105,17 +105,17 @@ typedef double ll_flonum_imm_t;
 #define ll_TAG_flonum        2
 union ll_v_flonum {
   ll_v  v;
-  ll_flonum_t f;
+  ll_flonum_imm_t f;
 };
 
-static __inline ll_v ll_BOX_flonum(ll_flonum_t f)
+static __inline ll_v ll_BOX_flonum(ll_flonum_imm_t f)
 {
   union ll_v_flonum vf;
   vf.f = f;
   return (vf.v & ~ ll_TAG_MASK) | ll_TAG_flonum;
 }
 
-static __inline ll_flonum_t ll_UNBOX_flonum(ll_v v)
+static __inline ll_flonum_imm_t ll_UNBOX_flonum(ll_v v)
 {
   union ll_v_flonum vf;
   vf.v = v & ~ ll_TAG_MASK;
